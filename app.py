@@ -1,5 +1,8 @@
 import os
+import secrets
 
+from litestar.config.cors import CORSConfig
+from litestar.config.csrf import CSRFConfig
 from litestar.openapi import OpenAPIConfig
 from litestar.openapi.plugins import SwaggerRenderPlugin
 
@@ -40,6 +43,18 @@ async def close_database_connection_pool():
         print("Unable to connect to the database")
 
 
+cors_config = CORSConfig(
+    allow_origins=[],
+    allow_headers=[],
+    allow_methods=[],
+    allow_credentials=False,
+)
+csrf_config = CSRFConfig(
+    secret=secrets.token_hex(16),
+    cookie_secure=True,
+    cookie_httponly=True,
+)
+
 app = Litestar(
     route_handlers=[admin, home, ProjectController],
     template_config=TemplateConfig(
@@ -57,4 +72,6 @@ app = Litestar(
         render_plugins=[SwaggerRenderPlugin()],
         path="/docs",
     ),
+    cors_config=cors_config,
+    csrf_config=csrf_config,
 )

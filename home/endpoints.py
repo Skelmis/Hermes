@@ -14,7 +14,7 @@ ENVIRONMENT = jinja2.Environment(
 @get(path="/", include_in_schema=False, sync_to_thread=False)
 def home(request: Request) -> Response:
     template = ENVIRONMENT.get_template("home.jinja")
-    content = template.render(title="Piccolo + ASGI")
+    content = template.render(projects=[{"id": "1", "title": "Project one"}])
     return Response(
         content,
         media_type=MediaType.HTML,

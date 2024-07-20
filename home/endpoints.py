@@ -13,7 +13,7 @@ ENVIRONMENT = jinja2.Environment(
 
 @get(path="/", include_in_schema=False, sync_to_thread=False)
 def home(request: Request) -> Response:
-    template = ENVIRONMENT.get_template("home.html.jinja")
+    template = ENVIRONMENT.get_template("home.jinja")
     content = template.render(title="Piccolo + ASGI")
     return Response(
         content,

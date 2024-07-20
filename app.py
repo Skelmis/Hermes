@@ -1,3 +1,4 @@
+import os
 import typing as t
 
 from home.endpoints import home
@@ -12,6 +13,9 @@ from litestar.types import Receive, Scope, Send
 from piccolo.engine import engine_finder
 from piccolo.utils.pydantic import create_pydantic_model
 from piccolo_admin.endpoints import create_admin
+from dotenv import load_dotenv
+
+load_dotenv()
 
 TaskModelIn: t.Any = create_pydantic_model(
     table=Task,
@@ -95,4 +99,5 @@ app = Litestar(
     ],
     on_startup=[open_database_connection_pool],
     on_shutdown=[close_database_connection_pool],
+    debug=bool(os.environ.get("DEBUG", False)),
 )

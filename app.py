@@ -55,6 +55,7 @@ csrf_config = CSRFConfig(
     secret=secrets.token_hex(16),
     cookie_secure=True,
     cookie_httponly=True,
+    exclude=["/admin"],
 )
 rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
 

@@ -1,21 +1,6 @@
-# piccolo_project
+# Hermes
 
-## Setup
+A single pane of glass for static code analysis
 
-### Install requirements
+---
 
-```bash
-pip install -r requirements.txt
-```
-
-### Getting started guide
-
-```bash
-python main.py
-```
-
-### Running tests
-
-```bash
-piccolo tester run
-```

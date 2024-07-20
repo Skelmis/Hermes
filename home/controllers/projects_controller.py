@@ -22,7 +22,7 @@ class ProjectController(Controller):
 
     @get(tags=["Projects"])
     async def projects(self, request: Request) -> t.List[ProjectModelOut]:
-        return await Project.select().order_by(Project.id, ascending=False)
+        return Project.select().order_by(Project.id, ascending=False)
 
     @post("/tasks", tags=["Projects"])
     async def create_project(self, data: ProjectModelIn) -> ProjectModelOut:

@@ -1,11 +1,8 @@
+import uuid
+
 from piccolo.table import Table
-from piccolo.columns import Varchar, Boolean
+from piccolo.columns import UUID
 
 
-class Task(Table):
-    """
-    An example table.
-    """
-
-    name = Varchar()
-    completed = Boolean(default=False)
+class Project(Table):
+    id = UUID(primary_key=True, default=uuid.uuid4, index=True)

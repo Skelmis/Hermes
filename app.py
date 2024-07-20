@@ -56,7 +56,7 @@ csrf_config = CSRFConfig(
     cookie_secure=True,
     cookie_httponly=True,
 )
-rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/schema"])
+rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
 
 app = Litestar(
     route_handlers=[admin, home, ProjectController],

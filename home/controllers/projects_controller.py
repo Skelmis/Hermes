@@ -24,24 +24,24 @@ class ProjectController(Controller):
     async def projects(self, request: Request) -> t.List[ProjectModelOut]:
         return Project.select().order_by(Project.id, ascending=False)
 
-    @post("/tasks", tags=["Projects"])
+    @post("/projects", tags=["Projects"])
     async def create_project(self, data: ProjectModelIn) -> ProjectModelOut:
         project = Project(**data.dict())
         await project.save()
         return project.to_dict()
 
-    @patch("/tasks/{task_id:int}", tags=["Projects"])
+    @patch("/projects/{task_id:int}", tags=["Projects"])
     async def update_task(self, task_id: int, data: ProjectModelIn) -> ProjectModelOut:
         project = await Project.objects().get(Project.id == task_id)
         if not project:
-            raise NotFoundException("Task does not exist")
+            raise NotFoundException("Project does not exist")
         for key, value in data.dict().items():
             setattr(project, key, value)
 
         await project.save()
         return project.to_dict()
 
-    @delete("/tasks/{task_id:int}", tags=["Projects"])
+    @delete("/projects/{task_id:int}", tags=["Projects"])
     async def delete_task(self, task_id: int) -> None:
         project = await Project.objects().get(Project.id == task_id)
         if not project:

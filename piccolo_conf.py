@@ -23,4 +23,11 @@ if os.environ.get("PROD", None) is not None:
 else:
     DB = SQLiteEngine()
 
-APP_REGISTRY = AppRegistry(apps=["home.piccolo_app", "piccolo_admin.piccolo_app"])
+APP_REGISTRY = AppRegistry(
+    apps=[
+        "home.piccolo_app",
+        "piccolo_admin.piccolo_app",
+        "piccolo_api.session_auth.piccolo_app",
+        "piccolo.apps.user.piccolo_app",
+    ]
+)

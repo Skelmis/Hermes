@@ -12,6 +12,7 @@ class Project(Table):
     description = Text(default="")
 
 
+# TODO Add status fields
 class Vulnerability(Table):
     id = UUID(primary_key=True, default=uuid.uuid4, index=True)
     project = ForeignKey(

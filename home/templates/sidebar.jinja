@@ -77,6 +77,22 @@
                             d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path></svg>') }}
 
 
+            {% if project %}
+{#                We are in a project not home page here#}
+                {{ start_dropdown(project.title, '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+         stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path><path d="M12 12l8 -4.5"></path><path
+            d="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path
+            d="M16 5.25l-8 4.5"></path></svg>') }}
+                {{ dropdown_item('Overview', '/projects/'+project.id) }}
+                {{ nested_dropdown_menu("Vulnerabilities") }}
+                {% for id, vuln_type in project.get_vuln_types() %}
+                	{{ dropdown_item(vuln_type, '/projects/'+project.id+'/vulnerabilities/'+id) }}
+                {% endfor %}
+                {{ end_nested_dropdown_menu() }}
+
+            {% else %}
                 {{ start_dropdown('Projects', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
          stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
@@ -87,7 +103,7 @@
                     {{ create_project(project.title, project.id) }}
                 {% endfor %}
                 {{ end_dropdown() }}
-
+            {% endif %}
 
                 {{ base_item('Settings', '#') }}
 

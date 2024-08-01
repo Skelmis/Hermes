@@ -59,7 +59,8 @@ csrf_config = CSRFConfig(
     cookie_secure=True,
     cookie_httponly=True,
     # Exclude routes Piccolo handles itself
-    exclude=["/admin", "/login", "/logout"],
+    # and our api routes
+    exclude=["/admin", "/login", "/logout", "/api/v1"],
 )
 rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
 app = Litestar(

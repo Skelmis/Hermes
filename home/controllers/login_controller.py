@@ -75,7 +75,7 @@ class LoginController(Controller):
         else:
             return PlainTextResponse(status_code=401, content=f"Login failed: {error}")
 
-    @get()
+    @get(include_in_schema=False)
     async def get(self, request: Request) -> HTMLResponse:
         return self._render_template(request)
 

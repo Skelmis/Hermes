@@ -174,6 +174,10 @@ class LoginController(Controller):
             max_expiry_date=max_expiry_date,
         )
 
+        # Basic open redirect checks
+        if not next_route.startswith("/"):
+            next_route = "/"
+
         response: Response = RedirectResponse(
             url=next_route, status_code=HTTP_303_SEE_OTHER
         )

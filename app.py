@@ -20,7 +20,12 @@ from litestar.types import Receive, Scope, Send
 from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin
 
-from home.controllers import ProjectController, LoginController, LogoutController
+from home.controllers import (
+    ProjectController,
+    LoginController,
+    LogoutController,
+    SignUpController,
+)
 from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
@@ -59,13 +64,20 @@ cors_config = CORSConfig(
     allow_methods=[],
     allow_credentials=False,
 )
+CSRF_TOKEN = os.environ.get("CSRF_TOKEN", secrets.token_hex(32))
 csrf_config = CSRFConfig(
-    secret=secrets.token_hex(16),
+    secret=CSRF_TOKEN,
+    cookie_name="csrf_token",
     cookie_secure=True,
     cookie_httponly=True,
     # Exclude routes Piccolo handles itself
     # and our api routes
-    exclude=["/admin", "/login", "/logout", "/api/v1"],
+    exclude=[
+        "/admin",
+        "/login",
+        "/logout",
+        "/api/v1",
+    ],
 )
 rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
 ENVIRONMENT = jinja2.Environment(
@@ -87,6 +99,7 @@ app = Litestar(
         ProjectController,
         LoginController,
         LogoutController,
+        SignUpController,
     ],
     template_config=template_config,
     static_files_config=[

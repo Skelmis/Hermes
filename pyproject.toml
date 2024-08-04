@@ -8,12 +8,13 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-piccolo = {extras = ["all"], version = "^1.13.1"}
+piccolo = {extras = ["all"], version = "^1.15.0"}
 litestar = {extras = ["cryptography"], version = "^2.10.0"}
 uvicorn = "^0.30.3"
 piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
 orjson = "^3.10.6"
+skelmis-commons = "^1.2.1"
 
 
 [tool.poetry.group.dev.dependencies]

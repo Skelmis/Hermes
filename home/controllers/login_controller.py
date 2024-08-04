@@ -65,7 +65,7 @@ class LoginController(Controller):
         alert(request, error, level="error")
         return Redirect(f"/login")
 
-    @get(include_in_schema=False)
+    @get(include_in_schema=False, name="login")
     async def get(self, request: Request) -> Template:
         return self._render_template(request)
 

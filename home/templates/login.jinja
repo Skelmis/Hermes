@@ -3,11 +3,6 @@
 {% block content %}
 <div class="page page-center">
       <div class="container container-tight py-4">
-        <div class="text-center mb-4">
-          <a href="." class="navbar-brand navbar-brand-autodark">
-            <img src="./static/logo.svg" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-          </a>
-        </div>
       {% include 'alerts.jinja' %}
         <div class="card card-md">
           <div class="card-body">
@@ -18,7 +13,7 @@
                 {% endif %}
               <div class="mb-3">
                 <label class="form-label">Username</label>
-                <input name="username" type="text" class="form-control" placeholder="your@email.com" autocomplete="off">
+                <input name="username" type="text" class="form-control" placeholder="Your username" autocomplete="off">
               </div>
               <div class="mb-2">
                 <label class="form-label">
@@ -34,13 +29,13 @@
               <div class="form-footer">
                 <button type="submit" class="btn btn-primary w-100">Sign in</button>
               </div>
-            <!-- This tells the endpoint to returns a HTML reponse if login fails. -->
+            <!-- This tells the endpoint to returns a HTML response if login fails. -->
         <input type="hidden" value="html" name="format" />
             </form>
           </div>
         </div>
         <div class="text-center text-secondary mt-3">
-          Don't have account yet? <a href="./sign-up.html" tabindex="-1">Sign up</a>
+          Don't have account yet? <a href="{{ url_for('signup') }}" tabindex="-1">Sign up</a>
         </div>
       </div>
     </div>

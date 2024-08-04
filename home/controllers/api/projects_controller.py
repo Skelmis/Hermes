@@ -50,8 +50,11 @@ class APIProjectController(Controller):
     async def update_project(
         self, request: Request, project_id: str, data: ProjectModelIn
     ) -> ProjectModelOut:
-        project = await Project.objects().get(
-            Project.id == project_id and Project.owner == request.user
+        project = (
+            await Project.objects()
+            .where(Project.id == project_id)
+            .where(Project.owner == request.user)  # type: ignore
+            .first()
         )
         if not project:
             raise NotFoundException("Project does not exist")
@@ -64,8 +67,11 @@ class APIProjectController(Controller):
 
     @delete("/{project_id:str}", tags=["Projects API"])
     async def delete_project(self, request: Request, project_id: str) -> None:
-        project: Project | None = await Project.objects().get(
-            Project.id == project_id and Project.owner == request.user
+        project: Project | None = (
+            await Project.objects()
+            .where(Project.id == project_id)
+            .where(Project.owner == request.user)  # type: ignore
+            .first()
         )
         if not project:
             raise NotFoundException("Project does not exist")

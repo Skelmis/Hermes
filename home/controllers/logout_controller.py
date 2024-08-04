@@ -24,7 +24,7 @@ class LogoutController(Controller):
         csrf_cookie_name = request.scope.get("csrf_cookie_name")
 
         return Template(
-            "logout.jinja",
+            "auth/logout.jinja",
             context={
                 "csrftoken": csrftoken,
                 "csrf_cookie_name": csrf_cookie_name,

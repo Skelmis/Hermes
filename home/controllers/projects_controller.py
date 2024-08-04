@@ -39,7 +39,7 @@ class ProjectsController(Controller):
             return Redirect("/")
 
         return Template(
-            "project_overview.jinja",
+            "projects/overview.jinja",
             context={
                 "csp_nonce": nonce,
                 "project": project,

@@ -21,7 +21,7 @@ class SignUpController(Controller):
     async def get(self) -> Template:
         csp, nonce = get_csp()
         return Template(
-            "signup.jinja",
+            "auth/signup.jinja",
             context={
                 "csp_nonce": nonce,
             },

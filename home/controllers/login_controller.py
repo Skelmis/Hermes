@@ -38,7 +38,7 @@ class LoginController(Controller):
         csrftoken = request.scope.get("csrftoken")
         csrf_cookie_name = request.scope.get("csrf_cookie_name")
         return Template(
-            "login.jinja",
+            "auth/login.jinja",
             context={
                 "csrftoken": csrftoken,
                 "csrf_cookie_name": csrf_cookie_name,

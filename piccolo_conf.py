@@ -6,6 +6,7 @@ from piccolo.engine import SQLiteEngine
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.conf.apps import AppRegistry
 
+from home.analysis import AnalysisInterface, Bandit
 
 load_dotenv()
 
@@ -31,3 +32,5 @@ APP_REGISTRY = AppRegistry(
         "piccolo.apps.user.piccolo_app",
     ]
 )
+
+REGISTERED_INTERFACES: list[type[AnalysisInterface]] = [Bandit]

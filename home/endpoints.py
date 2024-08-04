@@ -6,6 +6,7 @@ from litestar import MediaType, Request, Response, get
 from home.middleware import EnsureAuth
 from home.util import get_csp
 from home.controllers import ProjectController
+from piccolo_conf import REGISTERED_INTERFACES
 
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -43,7 +44,9 @@ async def settings(request: Request) -> Response:
     content = template.render(
         csp_nonce=nonce,
         projects=await ProjectController.get_user_projects(request.user),
+        registered_interfaces=REGISTERED_INTERFACES,
     )
+
     return Response(
         content,
         media_type=MediaType.HTML,

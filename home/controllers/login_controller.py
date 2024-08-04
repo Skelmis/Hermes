@@ -3,11 +3,10 @@ import typing as t
 import warnings
 from datetime import timedelta, datetime
 
-from jinja2 import Environment, FileSystemLoader
-from litestar import Controller, get, Request, post
+from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
+from litestar.response import Template, Redirect
 from piccolo.apps.user.tables import BaseUser
-from piccolo_api.session_auth.endpoints import LOGIN_TEMPLATE_PATH
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
@@ -19,9 +18,7 @@ from starlette.responses import (
 )
 from starlette.status import HTTP_303_SEE_OTHER
 
-directory, filename = os.path.split(LOGIN_TEMPLATE_PATH)
-environment = Environment(loader=FileSystemLoader(directory), autoescape=True)
-login_template = environment.get_template(filename)
+from home.util.flash import alert
 
 
 # Taken from the underlying Piccolo class and modified to work with Litestar
@@ -34,7 +31,6 @@ class LoginController(Controller):
     _redirect_to = "/"
     _production = not bool(os.environ.get("DEBUG", False))
     _cookie_name = "id"
-    _login_template = login_template
     _hooks = None
     _captcha = None
     _styles = Styles()
@@ -44,42 +40,39 @@ class LoginController(Controller):
         request: Request,
         template_context: t.Dict[str, t.Any] = {},
         status_code=200,
-    ) -> HTMLResponse:
+    ) -> Template:
         # If CSRF middleware is present, we have to include a form field with
         # the CSRF token. It only works if CSRFMiddleware has
         # allow_form_param=True, otherwise it only looks for the token in the
         # header.
         csrftoken = request.scope.get("csrftoken")
         csrf_cookie_name = request.scope.get("csrf_cookie_name")
-
-        return HTMLResponse(
-            self._login_template.render(
-                csrftoken=csrftoken,
-                csrf_cookie_name=csrf_cookie_name,
-                request=request,
-                captcha=self._captcha,
-                styles=self._styles,
+        return Template(
+            "login.jinja",
+            context={
+                "csrftoken": csrftoken,
+                "csrf_cookie_name": csrf_cookie_name,
+                "request": request,
+                "captcha": self._captcha,
+                "styles": self._styles,
                 **template_context,
-            ),
+            },
             status_code=status_code,
+            media_type=MediaType.HTML,
         )
 
-    def _get_error_response(
-        self, request, error: str, response_format: t.Literal["html", "plain"]
-    ) -> Response:
-        if response_format == "html":
-            return self._render_template(
-                request, template_context={"error": error}, status_code=401
-            )
-        else:
-            return PlainTextResponse(status_code=401, content=f"Login failed: {error}")
+    def _get_error_response(self, request, error: str) -> Redirect:
+        alert(request, error, level="error")
+        return Redirect(f"/login")
 
     @get(include_in_schema=False)
-    async def get(self, request: Request) -> HTMLResponse:
+    async def get(self, request: Request) -> Template:
         return self._render_template(request)
 
     @post(tags=["Auth"])
-    async def post(self, request: Request, next_route: str = "/") -> Response:
+    async def post(
+        self, request: Request, next_route: str = "/"
+    ) -> Template | Redirect:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
         body: t.Any = request.scope.get("form")
@@ -97,10 +90,8 @@ class LoginController(Controller):
         if (not username) or (not password):
             error_message = "Missing username or password"
             if return_html:
-                return self._render_template(
-                    request,
-                    template_context={"error": error_message},
-                )
+                alert(request, error_message, level="error")
+                return self._render_template(request)
             else:
                 raise HTTPException(status_code=422, detail=error_message)
 
@@ -111,21 +102,7 @@ class LoginController(Controller):
                 return self._get_error_response(
                     request=request,
                     error=hooks_response,
-                    response_format="html" if return_html else "plain",
                 )
-
-        # Check CAPTCHA
-        if self._captcha:
-            token = body.get(self._captcha.token_field, None)
-            validate_response = await self._captcha.validate(token=token)
-            if isinstance(validate_response, str):
-                if return_html:
-                    return self._render_template(
-                        request,
-                        template_context={"error": validate_response},
-                    )
-                else:
-                    raise HTTPException(status_code=401, detail=validate_response)
 
         # Attempt login
         user_id = await self._auth_table.login(username=username, password=password)
@@ -140,7 +117,6 @@ class LoginController(Controller):
                     return self._get_error_response(
                         request=request,
                         error=hooks_response,
-                        response_format="html" if return_html else "plain",
                     )
         else:
             # Run login_failure hooks
@@ -150,16 +126,11 @@ class LoginController(Controller):
                     return self._get_error_response(
                         request=request,
                         error=hooks_response,
-                        response_format="html" if return_html else "plain",
                     )
 
             if return_html:
-                return self._render_template(
-                    request,
-                    template_context={
-                        "error": "The username or password is incorrect."
-                    },
-                )
+                alert(request, "The username or password is incorrect.", level="error")
+                return self._render_template(request)
             else:
                 raise HTTPException(status_code=401, detail="Login failed")
 
@@ -177,9 +148,7 @@ class LoginController(Controller):
         if not next_route.startswith("/"):
             next_route = "/"
 
-        response: Response = RedirectResponse(
-            url=next_route, status_code=HTTP_303_SEE_OTHER
-        )
+        response: Redirect = Redirect(next_route)
 
         if not self._production:
             message = (

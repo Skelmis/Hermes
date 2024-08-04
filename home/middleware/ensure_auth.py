@@ -11,6 +11,7 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.authentication import AuthCredentials
 
 from home.exception_handlers import RedirectForAuth
+from home.util.flash import alert
 
 
 class EnsureAuth(AbstractAuthenticationMiddleware):
@@ -34,6 +35,7 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
         )
         token = connection.cookies.get(self.cookie_name, None)
         if not token:
+            alert(connection, "Please authenticate to view this resource")
             raise RedirectForAuth(possible_redirect)
 
         user_id = await self.session_table.get_user_id(
@@ -41,6 +43,7 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
         )
 
         if not user_id:
+            alert(connection, "Please authenticate to view this resource")
             raise RedirectForAuth(possible_redirect)
 
         piccolo_user = (

@@ -11,6 +11,10 @@ class Project(Table):
     title = Text()
     description = Text(default="")
 
+    @property
+    def uuid(self) -> str:
+        return str(self.id)
+
 
 # TODO Add status fields
 class Vulnerability(Table):
@@ -33,3 +37,7 @@ class Vulnerability(Table):
         default="",
         help_text="The code related to this issue",
     )
+
+    @property
+    def uuid(self) -> str:
+        return str(self.id)

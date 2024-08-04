@@ -2,6 +2,7 @@ import typing as t
 
 from litestar import Controller, get, Request, post, patch, delete
 from litestar.exceptions import NotFoundException
+from piccolo.apps.user.tables import BaseUser
 from piccolo.utils.pydantic import create_pydantic_model
 
 from home.middleware import EnsureAuth
@@ -24,13 +25,17 @@ class ProjectController(Controller):
     path = "/api/v1/projects"
     middleware = [EnsureAuth]
 
-    @get(tags=["Projects"])
-    async def projects(self, request: Request) -> t.List[ProjectModelOut]:
-        return (
-            Project.select()
-            .where(Project.owner == request.user)
+    @classmethod
+    async def get_user_projects(cls, user: BaseUser) -> t.List[Project]:
+        return await (
+            Project.objects()
+            .where(Project.owner == user)
             .order_by(Project.id, ascending=False)
         )
+
+    @get(tags=["Projects"])
+    async def projects(self, request: Request) -> t.List[ProjectModelOut]:
+        return await self.get_user_projects(request.user)
 
     @post("/", tags=["Projects"])
     async def create_project(

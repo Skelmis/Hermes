@@ -80,7 +80,7 @@ class LoginController(Controller):
         return self._render_template(request)
 
     @post()
-    async def post(self, request: Request) -> Response:
+    async def post(self, request: Request, next_route: str = "/") -> Response:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
         body: t.Any = request.scope.get("form")
@@ -174,12 +174,9 @@ class LoginController(Controller):
             max_expiry_date=max_expiry_date,
         )
 
-        if self._redirect_to is not None:
-            response: Response = RedirectResponse(
-                url=self._redirect_to, status_code=HTTP_303_SEE_OTHER
-            )
-        else:
-            response = JSONResponse(content={"message": "logged in"}, status_code=200)
+        response: Response = RedirectResponse(
+            url=next_route, status_code=HTTP_303_SEE_OTHER
+        )
 
         if not self._production:
             message = (

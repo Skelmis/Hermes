@@ -85,10 +85,10 @@
             d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path><path d="M12 12l8 -4.5"></path><path
             d="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path
             d="M16 5.25l-8 4.5"></path></svg>') }}
-                {{ dropdown_item('Overview', '/projects/'+project.id) }}
+                {{ dropdown_item('Overview', '/projects/'+project.uuid) }}
                 {{ nested_dropdown_menu("Vulnerabilities") }}
                 {% for id, vuln_type in project.get_vuln_types() %}
-                	{{ dropdown_item(vuln_type, '/projects/'+project.id+'/vulnerabilities/'+id) }}
+                	{{ dropdown_item(vuln_type, '/projects/'+project.uuid+'/vulnerabilities/'+id) }}
                 {% endfor %}
                 {{ end_nested_dropdown_menu() }}
 
@@ -100,12 +100,23 @@
             d="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path
             d="M16 5.25l-8 4.5"></path></svg>') }}
                 {% for project in projects %}
-                    {{ create_project(project.title, project.id) }}
+                    {{ create_project(project.title, project.uuid) }}
                 {% endfor %}
                 {{ end_dropdown() }}
             {% endif %}
 
-                {{ base_item('Settings', '#') }}
+                {{ base_item('Settings', '/settings', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+  <path d="M4 10a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+  <path d="M6 4v4" />
+  <path d="M6 12v8" />
+  <path d="M10 16a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+  <path d="M12 4v10" />
+  <path d="M12 18v2" />
+  <path d="M16 7a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+  <path d="M18 4v1" />
+  <path d="M18 9v11" />
+</svg>') }}
 
 
                 {{ start_dropdown('Help', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"

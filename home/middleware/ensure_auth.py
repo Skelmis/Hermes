@@ -10,6 +10,8 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo_api.session_auth.tables import SessionsBase
 from starlette.authentication import AuthCredentials
 
+from home.exception_handlers import RedirectForAuth
+
 
 class EnsureAuth(AbstractAuthenticationMiddleware):
     def __init__(self, *args, **kwargs) -> None:
@@ -27,7 +29,7 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
     ) -> AuthenticationResult:
         token = connection.cookies.get(self.cookie_name, None)
         if not token:
-            raise NotAuthorizedException("No session cookie found.")
+            raise RedirectForAuth(f"{connection.url.path}?{connection.url.query}")
 
         user_id = await self.session_table.get_user_id(
             token, increase_expiry=self.increase_expiry

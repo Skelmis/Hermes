@@ -17,7 +17,8 @@ from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin
 
 from home.controllers import ProjectController, LoginController, LogoutController
-from home.endpoints import home
+from home.endpoints import home, settings
+from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
 
 load_dotenv()
@@ -67,6 +68,7 @@ app = Litestar(
     route_handlers=[
         admin,
         home,
+        settings,
         ProjectController,
         LoginController,
         LogoutController,
@@ -124,4 +126,5 @@ app = Litestar(
             documentation_only=True,
         ),
     ],
+    exception_handlers={RedirectForAuth: redirect_for_auth},
 )

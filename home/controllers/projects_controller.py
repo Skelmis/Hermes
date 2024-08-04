@@ -1,7 +1,7 @@
 from litestar import Controller, get, Request, MediaType
 from litestar.response import Template, Redirect
 
-from home.controllers.api import APIProjectController
+from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.middleware import EnsureAuth
 from home.tables import Project
 from home.util import get_csp
@@ -55,6 +55,11 @@ class ProjectsController(Controller):
             context={
                 "csp_nonce": nonce,
                 "project": project,
+                "active": "overview",
+                "projects": await APIProjectController.get_user_projects(request.user),
+                "vulnerabilities": await APIVulnerabilitiesController.get_project_vulnerabilities(
+                    request.user, project
+                ),
             },
             media_type=MediaType.HTML,
             status_code=200,
@@ -78,6 +83,8 @@ class ProjectsController(Controller):
             context={
                 "csp_nonce": nonce,
                 "project": project,
+                "active": "vulnerabilities",
+                "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,
             status_code=200,
@@ -98,6 +105,8 @@ class ProjectsController(Controller):
             context={
                 "csp_nonce": nonce,
                 "project": project,
+                "active": "settings",
+                "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,
             status_code=200,

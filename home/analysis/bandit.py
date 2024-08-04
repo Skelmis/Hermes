@@ -58,7 +58,8 @@ class BanditOutput(TypedDict):
 
 class Bandit(AnalysisInterface):
     id = "bandit"
-    name = "Bandit (Python)"
+    name = "Bandit"
+    language = "Python"
     short_description = "Security oriented static analyser for python code."
 
     async def scan(self) -> list[Vulnerability]:
@@ -70,10 +71,16 @@ class Bandit(AnalysisInterface):
             "-r",
             self.project.directory,
         ]
-        result_str: bytes = subprocess.check_output(
-            command,
-            stderr=subprocess.STDOUT,
-        )
+        try:
+            result_str: bytes = subprocess.check_output(
+                command,
+                stderr=subprocess.STDOUT,
+            )
+        except subprocess.CalledProcessError as e:
+            if e.returncode != 1:
+                raise e
+            # Lol this is likely fine
+            result_str = e.stdout
         result: BanditOutput = orjson.loads(result_str)
 
         vulns: list[Vulnerability] = []
@@ -86,6 +93,8 @@ class Bandit(AnalysisInterface):
                 code_file=issue["filename"],
                 code_line=issue["line_number"],
                 code_context=issue["code"],
+                severity=issue["issue_severity"],
+                confidence=issue["issue_confidence"],
             )
             await vuln.save()
             vulns.append(vuln)

@@ -1,1 +1,2 @@
 from .projects_controller import APIProjectController
+from .vulnerabilities_controller import APIVulnerabilitiesController

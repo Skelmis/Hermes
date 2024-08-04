@@ -16,6 +16,12 @@ class AnalysisInterface(abc.ABC):
     @classmethod
     @property
     @abc.abstractmethod
+    def language(cls) -> str:
+        raise NotImplementedError
+
+    @classmethod
+    @property
+    @abc.abstractmethod
     def name(cls) -> str:
         raise NotImplementedError
 

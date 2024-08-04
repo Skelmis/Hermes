@@ -35,6 +35,9 @@ async def home(request: Request) -> Template:
 )
 async def settings(request: Request) -> Template:
     csp, nonce = get_csp()
+    bt = REGISTERED_INTERFACES[0]
+    bandit = bt((await APIProjectController.get_user_projects(request.user))[0])
+    await bandit.scan()
     return Template(
         "settings.jinja",
         context={

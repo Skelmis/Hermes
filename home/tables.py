@@ -26,6 +26,12 @@ class Vulnerability(Table):
     )
     title = Text()
     description = Text(default="")
+    severity = Text(
+        default="", help_text="The scanner disclosed severity of this result"
+    )
+    confidence = Text(
+        default="", help_text="How confident the scanner is about this result"
+    )
     code_file = Text(
         default="",
         help_text="A path to the code at fault",

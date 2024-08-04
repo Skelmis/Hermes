@@ -86,7 +86,9 @@ csrf_config = CSRFConfig(
         "/api/v1",
     ],
 )
-rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
+rate_limit_config = RateLimitConfig(
+    rate_limit=("second", 5), exclude=["/docs", "/admin"]
+)
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
         searchpath=os.path.join(os.path.dirname(__file__), "home", "templates")

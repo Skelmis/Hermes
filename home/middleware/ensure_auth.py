@@ -27,16 +27,21 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
     async def authenticate_request(
         self, connection: ASGIConnection
     ) -> AuthenticationResult:
+        possible_redirect = (
+            f"{connection.url.path}?{connection.url.query}"
+            if connection.url.query
+            else connection.url.path
+        )
         token = connection.cookies.get(self.cookie_name, None)
         if not token:
-            raise RedirectForAuth(f"{connection.url.path}?{connection.url.query}")
+            raise RedirectForAuth(possible_redirect)
 
         user_id = await self.session_table.get_user_id(
             token, increase_expiry=self.increase_expiry
         )
 
         if not user_id:
-            raise NotAuthorizedException("No matching session found.")
+            raise RedirectForAuth(possible_redirect)
 
         piccolo_user = (
             await self.auth_table.objects()

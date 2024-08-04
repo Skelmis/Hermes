@@ -21,7 +21,7 @@
   </head>
   <body >
     {% include 'sidebar.jinja' %}
-    <script src="/static/theme.js"></script>
+    <script src="/static/theme.js" nonce="{{ csp_nonce }}"></script>
     {% block content %}{% endblock %}
   </body>
 </html>

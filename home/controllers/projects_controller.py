@@ -46,9 +46,9 @@ class ProjectController(Controller):
         await project.save()
         return project.to_dict()
 
-    @patch("/{project_id:int}", tags=["Projects"])
+    @patch("/{project_id:str}", tags=["Projects"])
     async def update_project(
-        self, request: Request, project_id: int, data: ProjectModelIn
+        self, request: Request, project_id: str, data: ProjectModelIn
     ) -> ProjectModelOut:
         project = (
             await Project.objects()
@@ -63,8 +63,8 @@ class ProjectController(Controller):
         await project.save()
         return project.to_dict()
 
-    @delete("/{project_id:int}", tags=["Projects"])
-    async def delete_project(self, request: Request, project_id: int) -> None:
+    @delete("/{project_id:str}", tags=["Projects"])
+    async def delete_project(self, request: Request, project_id: str) -> None:
         project = await Project.objects().where(
             Project.id == project_id and Project.owner == request.user
         )

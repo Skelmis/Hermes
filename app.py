@@ -1,6 +1,7 @@
 import os
 import secrets
 
+import jinja2
 from dotenv import load_dotenv
 from litestar import Litestar, asgi
 from litestar.config.cors import CORSConfig
@@ -8,8 +9,11 @@ from litestar.config.csrf import CSRFConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.datastructures import ResponseHeader
 from litestar.middleware.rate_limit import RateLimitConfig
+from litestar.middleware.session.client_side import CookieBackendConfig
+from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.openapi import OpenAPIConfig
 from litestar.openapi.plugins import SwaggerRenderPlugin
+from litestar.plugins.flash import FlashPlugin, FlashConfig
 from litestar.static_files import StaticFilesConfig
 from litestar.template import TemplateConfig
 from litestar.types import Receive, Scope, Send
@@ -64,6 +68,17 @@ csrf_config = CSRFConfig(
     exclude=["/admin", "/login", "/logout", "/api/v1"],
 )
 rate_limit_config = RateLimitConfig(rate_limit=("second", 5), exclude=["/docs"])
+ENVIRONMENT = jinja2.Environment(
+    loader=jinja2.FileSystemLoader(
+        searchpath=os.path.join(os.path.dirname(__file__), "home", "templates")
+    ),
+    autoescape=True,
+)
+template_config = TemplateConfig(
+    directory="home/templates", engine=JinjaTemplateEngine.from_environment(ENVIRONMENT)
+)
+flash_plugin = FlashPlugin(config=FlashConfig(template_config=template_config))
+session_config = CookieBackendConfig(secret=os.urandom(16))
 app = Litestar(
     route_handlers=[
         admin,
@@ -73,9 +88,7 @@ app = Litestar(
         LoginController,
         LogoutController,
     ],
-    template_config=TemplateConfig(
-        directory="home/templates", engine=JinjaTemplateEngine
-    ),
+    template_config=template_config,
     static_files_config=[
         StaticFilesConfig(directories=["static"], path="/static/"),
     ],
@@ -90,7 +103,8 @@ app = Litestar(
     ),
     cors_config=cors_config,
     csrf_config=csrf_config,
-    middleware=[rate_limit_config.middleware],
+    middleware=[rate_limit_config.middleware, session_config.middleware],
+    plugins=[flash_plugin],
     response_headers=[
         ResponseHeader(
             name="x-frame-options",

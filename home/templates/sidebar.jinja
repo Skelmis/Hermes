@@ -79,51 +79,21 @@
 
             {% if project %}
 {#                We are in a project not home page here#}
-                {{ dropdown_item('Project Overview', '/projects/'+project.uuid) }}
-                {{ start_dropdown('Vulnerabilities', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-alert-triangle">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M12 9v4" />
-  <path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" />
-  <path d="M12 16h.01" />
-</svg>') }}
-                {% for id, vuln_type in project.get_vuln_types() %}
-                	{{ dropdown_item(vuln_type, '/projects/'+project.uuid+'/vulnerabilities/'+id) }}
-                {% endfor %}
+                {{ base_item('Project Overview', '/projects/'+project.uuid, '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-eye"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" /><path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" /></svg>') }}
+                {{ base_item('Vulnerabilities', '/projects/'+project.uuid+'/vulnerabilities', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-alert-triangle"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 9v4" /><path d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z" /><path d="M12 16h.01" /></svg>') }}
+                {{ base_item('Project Settings', '/projects/'+project.uuid+'/settings', '<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="icon icon-tabler icons-tabler-outline icon-tabler-settings"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10.325 4.317c.426 -1.756 2.924 -1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543 -.94 3.31 .826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756 .426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543 -.826 3.31 -2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756 -2.924 1.756 -3.35 0a1.724 1.724 0 0 0 -2.573 -1.066c-1.543 .94 -3.31 -.826 -2.37 -2.37a1.724 1.724 0 0 0 -1.065 -2.572c-1.756 -.426 -1.756 -2.924 0 -3.35a1.724 1.724 0 0 0 1.066 -2.573c-.94 -1.543 .826 -3.31 2.37 -2.37c1 .608 2.296 .07 2.572 -1.065z" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>') }}
 
             {% else %}
-                {{ start_dropdown('Projects', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-         stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-            d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path><path d="M12 12l8 -4.5"></path><path
-            d="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path
-            d="M16 5.25l-8 4.5"></path></svg>') }}
+                {{ start_dropdown('Projects', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M12 3l8 4.5l0 9l-8 4.5l-8 -4.5l0 -9l8 -4.5"></path><path d="M12 12l8 -4.5"></path><pathd="M12 12l0 9"></path><path d="M12 12l-8 -4.5"></path><path d="M16 5.25l-8 4.5"></path></svg>') }}
                 {% for project in projects %}
                     {{ create_project(project.title, project.uuid) }}
                 {% endfor %}
                 {{ end_dropdown() }}
             {% endif %}
 
-                {{ base_item('Settings', '/settings', '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-adjustments">
-  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-  <path d="M4 10a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-  <path d="M6 4v4" />
-  <path d="M6 12v8" />
-  <path d="M10 16a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-  <path d="M12 4v10" />
-  <path d="M12 18v2" />
-  <path d="M16 7a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-  <path d="M18 4v1" />
-  <path d="M18 9v11" />
-</svg>') }}
 
-
-                {{ start_dropdown('Help', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                         stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
-                            d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path><path
-                            d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M15 15l3.35 3.35"></path><path
-                            d="M9 15l-3.35 3.35"></path><path d="M5.65 5.65l3.35 3.35"></path><path
-                            d="M18.35 5.65l-3.35 3.35"></path></svg>') }}
+                {{ start_dropdown('Help', '<svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path  d="M12 12m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0"></path><path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0"></path><path d="M15 15l3.35 3.35"></path><path d="M9 15l-3.35 3.35"></path><path d="M5.65 5.65l3.35 3.35"></path><path  d="M18.35 5.65l-3.35 3.35"></path></svg>') }}
+                            {{ dropdown_item('Settings', '/settings') }}
                 {{ dropdown_item('Documentation', '/docs') }}
                 {{ dropdown_item('Source Code', 'https://github.com/skelmis/hermes') }}
                         <a class="dropdown-item text-pink" href="https://github.com/sponsors/skelmis" target="_blank"

@@ -10,7 +10,6 @@ from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.datastructures import ResponseHeader
 from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.middleware.session.client_side import CookieBackendConfig
-from litestar.middleware.session.server_side import ServerSideSessionConfig
 from litestar.openapi import OpenAPIConfig
 from litestar.openapi.plugins import SwaggerRenderPlugin
 from litestar.plugins.flash import FlashPlugin, FlashConfig
@@ -21,11 +20,12 @@ from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin
 
 from home.controllers import (
-    ProjectController,
     LoginController,
     LogoutController,
     SignUpController,
+    ProjectsController,
 )
+from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
@@ -103,10 +103,11 @@ app = Litestar(
         admin,
         home,
         settings,
-        ProjectController,
+        APIProjectController,
         LoginController,
         LogoutController,
         SignUpController,
+        ProjectsController,
     ],
     template_config=template_config,
     static_files_config=[

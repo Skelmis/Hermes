@@ -46,7 +46,7 @@ class LogoutController(Controller):
             )
         )
 
-    @get(include_in_schema=False)
+    @get(include_in_schema=False, name="signout")
     async def get(self, request: Request) -> HTMLResponse:
         return self._render_template(request)
 

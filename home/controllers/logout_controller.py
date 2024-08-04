@@ -4,6 +4,8 @@ from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.status import HTTP_303_SEE_OTHER
 
+from home.util import get_csp
+
 
 class LogoutController(Controller):
     path = "/logout"
@@ -12,14 +14,12 @@ class LogoutController(Controller):
     _cookie_name = "id"
     _styles = Styles()
 
-    def _render_template(
-        self,
-        request: Request,
-    ) -> Template:
+    def _render_template(self, request: Request) -> Template:
         # If CSRF middleware is present, we have to include a form field with
         # the CSRF token. It only works if CSRFMiddleware has
         # allow_form_param=True, otherwise it only looks for the token in the
         # header.
+        csp, nonce = get_csp()
         csrftoken = request.scope.get("csrftoken")
         csrf_cookie_name = request.scope.get("csrf_cookie_name")
 
@@ -30,8 +30,10 @@ class LogoutController(Controller):
                 "csrf_cookie_name": csrf_cookie_name,
                 "request": request,
                 "styles": self._styles,
+                "csp_nonce": nonce,
             },
             media_type=MediaType.HTML,
+            headers={"content-security-policy": csp},
         )
 
     @get(include_in_schema=False, name="signout")

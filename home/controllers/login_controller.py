@@ -10,14 +10,8 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
-from starlette.responses import (
-    HTMLResponse,
-    Response,
-    PlainTextResponse,
-    RedirectResponse,
-)
-from starlette.status import HTTP_303_SEE_OTHER
 
+from home.util import get_csp
 from home.util.flash import alert
 
 
@@ -35,16 +29,12 @@ class LoginController(Controller):
     _captcha = None
     _styles = Styles()
 
-    def _render_template(
-        self,
-        request: Request,
-        template_context: t.Dict[str, t.Any] = {},
-        status_code=200,
-    ) -> Template:
+    def _render_template(self, request: Request, status_code=200) -> Template:
         # If CSRF middleware is present, we have to include a form field with
         # the CSRF token. It only works if CSRFMiddleware has
         # allow_form_param=True, otherwise it only looks for the token in the
         # header.
+        csp, nonce = get_csp()
         csrftoken = request.scope.get("csrftoken")
         csrf_cookie_name = request.scope.get("csrf_cookie_name")
         return Template(
@@ -55,10 +45,11 @@ class LoginController(Controller):
                 "request": request,
                 "captcha": self._captcha,
                 "styles": self._styles,
-                **template_context,
+                "csp_nonce": nonce,
             },
             status_code=status_code,
             media_type=MediaType.HTML,
+            headers={"content-security-policy": csp},
         )
 
     def _get_error_response(self, request, error: str) -> Redirect:

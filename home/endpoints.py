@@ -33,19 +33,16 @@ async def home(request: Request) -> Template:
     sync_to_thread=False,
     middleware=[EnsureAuth],
 )
-async def settings(request: Request) -> Response:
+async def settings(request: Request) -> Template:
     csp, nonce = get_csp()
-    template = ENVIRONMENT.get_template("settings.jinja")
-    content = template.render(
-        csp_nonce=nonce,
-        projects=await ProjectController.get_user_projects(request.user),
-        registered_interfaces=REGISTERED_INTERFACES,
-    )
-
-    return Response(
-        content,
+    return Template(
+        "settings.jinja",
+        context={
+            "csp_nonce": nonce,
+            "projects": await ProjectController.get_user_projects(request.user),
+            "registered_interfaces": REGISTERED_INTERFACES,
+        },
         media_type=MediaType.HTML,
-        status_code=200,
         headers={"content-security-policy": csp},
     )
 
@@ -56,22 +53,20 @@ async def settings(request: Request) -> Response:
     sync_to_thread=False,
     middleware=[EnsureAuth],
 )
-async def project_overview(request: Request, project_id: str) -> Response:
+async def project_overview(request: Request, project_id: str) -> Template:
     csp, nonce = get_csp()
-    template = ENVIRONMENT.get_template("project_overview.jinja")
     project = await Project.objects().where(
         Project.id == project_id and Project.owner == request.user
     )
     if not project:
         pass
 
-    content = template.render(
-        csp_nonce=nonce,
-        projects=await ProjectController.get_user_projects(request.user),
-    )
-
-    return Response(
-        content,
+    return Template(
+        "project_overview.jinja",
+        context={
+            "csp_nonce": nonce,
+            "projects": await ProjectController.get_user_projects(request.user),
+        },
         media_type=MediaType.HTML,
         status_code=200,
         headers={"content-security-policy": csp},

@@ -1,26 +1,13 @@
-import os
 import re
 import typing as t
-import warnings
-from datetime import timedelta, datetime
-from email.utils import parseaddr
 from hmac import compare_digest
 
 from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
 from litestar.response import Template, Redirect
 from piccolo.apps.user.tables import BaseUser
-from piccolo_api.session_auth.tables import SessionsBase
-from piccolo_api.shared.auth.styles import Styles
-from starlette.exceptions import HTTPException
-from starlette.responses import (
-    HTMLResponse,
-    Response,
-    PlainTextResponse,
-    RedirectResponse,
-)
-from starlette.status import HTTP_303_SEE_OTHER
 
+from home.util import get_csp
 from home.util.flash import alert
 from home.util.pwned_password_check import has_password_been_pwned
 
@@ -31,10 +18,15 @@ class SignUpController(Controller):
     path = "/signup"
 
     @get(include_in_schema=False, name="signup")
-    async def get(self, request: Request) -> Template:
+    async def get(self) -> Template:
+        csp, nonce = get_csp()
         return Template(
             "signup.jinja",
+            context={
+                "csp_nonce": nonce,
+            },
             media_type=MediaType.HTML,
+            headers={"content-security-policy": csp},
         )
 
     @post(tags=["Auth"])

@@ -37,9 +37,14 @@ IS_PRODUCTION = not bool(os.environ.get("DEBUG", False))
 # mounting Piccolo Admin
 @asgi("/admin/", is_mount=True)
 async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
-    await create_admin(tables=APP_CONFIG.table_classes, production=IS_PRODUCTION)(
-        scope, receive, send
-    )
+    await create_admin(
+        tables=APP_CONFIG.table_classes,
+        production=IS_PRODUCTION,
+        allowed_hosts=["hermes.skelmis.co.nz"],
+        sidebar_links={"Site root": "/"},
+        site_name="Hermes Admin",
+        auto_include_related=True,
+    )(scope, receive, send)
 
 
 async def open_database_connection_pool():
@@ -67,6 +72,8 @@ cors_config = CORSConfig(
 CSRF_TOKEN = os.environ.get("CSRF_TOKEN", secrets.token_hex(32))
 csrf_config = CSRFConfig(
     secret=CSRF_TOKEN,
+    # Aptly named so it doesnt clash
+    # with piccolo csrftoken' cookies
     cookie_name="csrf_token",
     cookie_secure=True,
     cookie_httponly=True,

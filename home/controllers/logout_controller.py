@@ -50,7 +50,7 @@ class LogoutController(Controller):
     async def get(self, request: Request) -> HTMLResponse:
         return self._render_template(request)
 
-    @post()
+    @post(tags=["Auth"])
     async def post(self, request: Request) -> RedirectResponse:
         cookie = request.cookies.get(self._cookie_name, None)
         if not cookie:

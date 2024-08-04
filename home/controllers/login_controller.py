@@ -16,7 +16,6 @@ from starlette.responses import (
     Response,
     PlainTextResponse,
     RedirectResponse,
-    JSONResponse,
 )
 from starlette.status import HTTP_303_SEE_OTHER
 
@@ -79,7 +78,7 @@ class LoginController(Controller):
     async def get(self, request: Request) -> HTMLResponse:
         return self._render_template(request)
 
-    @post()
+    @post(tags=["Auth"])
     async def post(self, request: Request, next_route: str = "/") -> Response:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.

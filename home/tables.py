@@ -10,6 +10,7 @@ class Project(Table):
     owner = ForeignKey(BaseUser, help_text="Who owns this project")
     title = Text()
     description = Text(default="")
+    directory = Text(default="", help_text="The path to this project on disk")
 
     @property
     def uuid(self) -> str:

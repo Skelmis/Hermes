@@ -4,6 +4,8 @@ Add a field to projects to denote if a scan has been run. This way on the overvi
 
 This also means we can say no issues detected instead of a blank table lol
 
+Add more tables for status stuff as well such as counters per vuln status n stuff
+
 ---
 
 Change the sidebar so that the third nesting is gone, and projects just redirect you to the project overview page

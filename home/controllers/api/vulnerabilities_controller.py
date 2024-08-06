@@ -35,12 +35,3 @@ class APIVulnerabilitiesController(Controller):
             .where(Vulnerability.project == project)
             .order_by(Vulnerability.id, ascending=False)
         )
-
-    @classmethod
-    async def delete(cls, user: BaseUser, project: Project) -> t.List[Vulnerability]:
-        return await (
-            Vulnerability.objects()
-            .where(Vulnerability.project.owner == user)
-            .where(Vulnerability.project == project)
-            .order_by(Vulnerability.id, ascending=False)
-        )

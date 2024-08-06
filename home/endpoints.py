@@ -9,7 +9,7 @@ from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES
 
 
-@get(path="/", include_in_schema=False, sync_to_thread=False, middleware=[EnsureAuth])
+@get(path="/", include_in_schema=False, middleware=[EnsureAuth])
 async def home(request: Request) -> Template:
     csp, nonce = get_csp()
     alert(request, "Oh no! I've been flashed!", level="info")
@@ -30,7 +30,6 @@ async def home(request: Request) -> Template:
 @get(
     path="/settings",
     include_in_schema=False,
-    sync_to_thread=False,
     middleware=[EnsureAuth],
 )
 async def settings(request: Request) -> Template:

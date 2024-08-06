@@ -38,7 +38,7 @@
                             <div class="card-body">
                                 This action will delete all vulnerabilities currently registered to this project.
                                 <h6></h6>
-                                {{ button('Delete', 'delete-vulns', 'Delete Vulnerabilities', 'Are you sure you wish to delete all vulnerabilities tied to this project?', 'Yes, delete them', 'delete_vulns', 'danger') }}
+                                {{ button('Delete Vulnerabilities', 'delete-vulns', 'Delete Vulnerabilities', 'Are you sure you wish to delete all vulnerabilities tied to this project?', 'Yes, delete them', 'delete/vulnerabilities', 'danger') }}
                             </div>
                         </div>
                     </div>
@@ -54,7 +54,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Delete Project</h3>
+                            </div>
+                            <div class="card-body">
+                                This action deletes the entire project and all associated vulnerabilities.
+                                <h6>There is no coming back from this.</h6>
+                                {{ button('Delete Project', 'delete-project', 'Delete Project', 'Are you sure you wish to delete the project?', 'Yes, delete it', 'delete/project', 'danger') }}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 {% endblock %}

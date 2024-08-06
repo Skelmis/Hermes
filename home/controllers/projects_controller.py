@@ -115,7 +115,7 @@ class ProjectsController(Controller):
         )
 
     @post(
-        path="/{project_id:str}/settings/delete_vulns",
+        path="/{project_id:str}/settings/delete/vulnerabilities",
         include_in_schema=False,
     )
     async def delete_vulns(self, request: Request, project_id: str) -> Redirect:
@@ -130,6 +130,25 @@ class ProjectsController(Controller):
             level="success",
         )
         return Redirect(f"/projects/{project_id}/settings")
+
+    @post(
+        path="/{project_id:str}/settings/delete/project",
+        include_in_schema=False,
+    )
+    async def delete_project(self, request: Request, project_id: str) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        await Vulnerability.delete().where(Vulnerability.project == project)
+        project_title = project.title
+        await project.delete()
+        alert(
+            request,
+            f"Deleted project '{project_title}' and associated vulnerabilities",
+            level="success",
+        )
+        return Redirect(f"/")
 
     @post(
         path="/{project_id:str}/settings/run_scanners",

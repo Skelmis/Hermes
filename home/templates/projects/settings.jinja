@@ -1,0 +1,60 @@
+{% extends 'base.jinja' %}
+{% macro button(display_text, btn_id, btn_title, btn_description, btn_confirm, setting_url, btn_theme='info') %}
+    <a href="#" class="btn btn-outline-{{ btn_theme }} w-100" data-bs-toggle="modal" data-bs-target="#{{ btn_id }}">
+           {{ display_text }}
+    </a>
+    <div class="modal modal-blur fade" id="{{ btn_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-title">{{ btn_title }}</div>
+                    <div>{{ btn_description }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel
+                    </button>
+                    <form action="/projects/{{ project.uuid }}/settings/{{ setting_url }}" method="POST">
+                        {{ csrf_input|safe }}
+                        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{{ btn_confirm }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{% block title %}Project Settings{% endblock %}
+{% block content %}
+    <div class="page">
+        {% include 'projects/header.jinja' %}
+        <div class="page-body">
+            <div class="container-xl">
+                {% include 'alerts.jinja' %}
+                <div class="row row-cards">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Delete Vulnerabilities</h3>
+                            </div>
+                            <div class="card-body">
+                                This action will delete all vulnerabilities currently registered to this project.
+                                <h6></h6>
+                                {{ button('Delete', 'delete-vulns', 'Delete Vulnerabilities', 'Are you sure you wish to delete all vulnerabilities tied to this project?', 'Yes, delete them', 'delete_vulns', 'danger') }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Run scanners</h3>
+                            </div>
+                            <div class="card-body">
+                                This action will run the configured scanners again.<br><br>
+                                <h6>Note this action does not delete existing vulnerabilities found.</h6>
+                                {{ button('Run scanners', 'run-scans', 'Run scanners', 'Are you sure you want to run the configured scanners?', 'Yes', 'run_scanners', 'danger') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

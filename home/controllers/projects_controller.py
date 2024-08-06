@@ -1,11 +1,12 @@
-from litestar import Controller, get, Request, MediaType
+from litestar import Controller, get, Request, MediaType, post
 from litestar.response import Template, Redirect
 
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.middleware import EnsureAuth
-from home.tables import Project
+from home.tables import Project, Vulnerability
 from home.util import get_csp
 from home.util.flash import alert
+from piccolo_conf import REGISTERED_INTERFACES
 
 
 # noinspection DuplicatedCode
@@ -101,7 +102,7 @@ class ProjectsController(Controller):
             return redirect
         csp, nonce = get_csp()
         return Template(
-            "projects/overview.jinja",
+            "projects/settings.jinja",
             context={
                 "csp_nonce": nonce,
                 "project": project,
@@ -112,3 +113,43 @@ class ProjectsController(Controller):
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @post(
+        path="/{project_id:str}/settings/delete_vulns",
+        include_in_schema=False,
+    )
+    async def delete_vulns(self, request: Request, project_id: str) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        await Vulnerability.delete().where(Vulnerability.project == project)
+        alert(
+            request,
+            "Deleted all vulnerabilities associated with this project",
+            level="success",
+        )
+        return Redirect(f"/projects/{project_id}/settings")
+
+    @post(
+        path="/{project_id:str}/settings/run_scanners",
+        include_in_schema=False,
+    )
+    async def run_scanners(self, request: Request, project_id: str) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        bt = REGISTERED_INTERFACES[0]
+        bandit = bt((await APIProjectController.get_user_projects(request.user))[0])
+        await bandit.scan()
+        alert(
+            request,
+            "Successfully ran scanners, results should appear soon.",
+            level="success",
+        )
+        alert(
+            request,
+            "Note we cheated the lookup lol. It's hard coded to bandit rn",
+        )
+        return Redirect(f"/projects/{project_id}/settings")

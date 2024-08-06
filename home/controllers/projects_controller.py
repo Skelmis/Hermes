@@ -88,10 +88,22 @@ class ProjectsController(Controller):
         )
 
     @get(
+        path="/{project_id:str}/vulnerabilities",
+        include_in_schema=False,
+    )
+    async def vulnerabilities_without_vuln(
+        self,
+        request: Request,
+        project_id: str,
+    ) -> Redirect:
+        alert(request, "Please provide the vulnerability to review and try again")
+        return Redirect(f"/projects/{project_id}")
+
+    @get(
         path="/{project_id:str}/vulnerabilities/{vuln_id:str}",
         include_in_schema=False,
     )
-    async def vulnerabilities(
+    async def vulnerabilities_view(
         self, request: Request, project_id: str, vuln_id: str
     ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)

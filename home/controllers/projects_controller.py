@@ -38,8 +38,8 @@ class ProjectsController(Controller):
         "/",
         include_in_schema=False,
     )
-    async def projects(self, request: Request) -> Template:
-        return Template(template_str="<p>Nothing to see here lol</P>")
+    async def projects(self, request: Request) -> Redirect:
+        return Redirect("/")
 
     @get(
         path="/{project_id:str}",
@@ -113,6 +113,34 @@ class ProjectsController(Controller):
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @get(
+        path="/create",
+        include_in_schema=False,
+    )
+    async def create_get(self, request: Request) -> Template:
+        csp, nonce = get_csp()
+        return Template(
+            "projects/create.jinja",
+            context={
+                "analysis_interfaces": [
+                    f"{i.name} - {i.language}" for i in REGISTERED_INTERFACES
+                ],
+                "csp_nonce": nonce,
+                "active": "settings",
+                "projects": await APIProjectController.get_user_projects(request.user),
+            },
+            media_type=MediaType.HTML,
+            status_code=200,
+            headers={"content-security-policy": csp},
+        )
+
+    @post(
+        path="/create",
+        include_in_schema=False,
+    )
+    async def create_post(self, request: Request) -> Redirect:
+        return Redirect("/projects")
 
     @post(
         path="/{project_id:str}/settings/delete/vulnerabilities",

@@ -1,0 +1,51 @@
+{% extends 'base.jinja' %}
+{% block title %}Create Project{% endblock %}
+{% block content %}
+    <div class="page page-center">
+        <div class="container container-xl py-4">
+            {% include 'alerts.jinja' %}
+            <form class="card" action="" method="post">
+            {{ csrf_input|safe }}
+                <div class="card-header">
+                    <h3 class="card-title">Create New Project</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label required">Title</label>
+                        <div>
+                            <input type="text" class="form-control" placeholder="Enter project title">
+                            <small class="form-hint">Please enter a descriptive, ideally short title</small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <div>
+                            <input type="text" class="form-control" placeholder="Project description">
+                            <small class="form-hint">
+                                Describe your project as you wish here
+                            </small>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Code Scanners</label>
+                        <small class="form-hint">
+                            Select the scanners you want to use to scan your code.
+                        </small><br>
+                        <div>
+                            {% for interface in analysis_interfaces %}
+                            <label class="form-check">
+                                <input class="form-check-input" type="checkbox">
+                                <span class="form-check-label">{{ interface}}</span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+{% endblock %}

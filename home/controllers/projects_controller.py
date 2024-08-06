@@ -34,6 +34,26 @@ class ProjectsController(Controller):
 
         return project, None
 
+    @classmethod
+    async def get_vulnerability(
+        cls, request: Request, project: Project, vulnerability_id: str
+    ) -> tuple[Vulnerability | None, Redirect | None]:
+        vuln = (
+            await Vulnerability.objects()
+            .where(Vulnerability.id == vulnerability_id)
+            .where(Vulnerability.project.owner == request.user)  # type: ignore
+            .first()
+        )
+        if not vuln:
+            alert(
+                request,
+                f"Failed to find a vulnerability with id '{vulnerability_id}'",
+                level="error",
+            )
+            return None, Redirect(f"/projects/{project.uuid}")
+
+        return vuln, None
+
     @get(
         "/",
         include_in_schema=False,
@@ -68,16 +88,21 @@ class ProjectsController(Controller):
         )
 
     @get(
-        path="/{project_id:str}/vulnerabilities",
+        path="/{project_id:str}/vulnerabilities/{vuln_id:str}",
         include_in_schema=False,
     )
     async def vulnerabilities(
-        self, request: Request, project_id: str
+        self, request: Request, project_id: str, vuln_id: str
     ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
             return redirect
 
+        vuln, redirect = await self.get_vulnerability(request, project, vuln_id)
+        if redirect:
+            return redirect
+
+        alert(request, "TODO")
         csp, nonce = get_csp()
         return Template(
             "projects/overview.jinja",

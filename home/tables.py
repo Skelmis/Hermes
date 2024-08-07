@@ -4,7 +4,7 @@ from typing import Type
 from litestar.response import Redirect
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
-from piccolo.columns import UUID, ForeignKey, Text, Integer, Boolean, Array
+from piccolo.columns import UUID, ForeignKey, Text, Integer, Boolean, Array, Timestamptz
 
 from home.util.flash import alert
 
@@ -12,6 +12,7 @@ from home.util.flash import alert
 class Project(Table):
     id = UUID(primary_key=True, default=uuid.uuid4, index=True)
     owner = ForeignKey(BaseUser, index=True, help_text="Who owns this project")
+    created_at = Timestamptz(help_text="When the project was created")
     title = Text()
     description = Text(default="")
     directory = Text(default="", help_text="The path to this project on disk")
@@ -80,6 +81,7 @@ class Project(Table):
 
 class Scan(Table):
     id = UUID(primary_key=True, default=uuid.uuid4, index=True)
+    created_at = Timestamptz(help_text="When the scan was initially created")
     project = ForeignKey(
         Project,
         index=True,
@@ -104,6 +106,7 @@ class Scan(Table):
 # TODO Add status fields
 class Vulnerability(Table):
     id = UUID(primary_key=True, default=uuid.uuid4, index=True)
+    created_at = Timestamptz(help_text="When the vulnerability was created")
     scan = ForeignKey(
         Scan,
         index=True,

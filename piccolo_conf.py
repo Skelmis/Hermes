@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -33,4 +34,6 @@ APP_REGISTRY = AppRegistry(
     ]
 )
 
-REGISTERED_INTERFACES: list[type[AnalysisInterface]] = [Bandit]
+REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {Bandit.id: Bandit}
+BASE_PROJECT_DIR: Path = Path(".projects")
+BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists

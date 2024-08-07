@@ -4,7 +4,7 @@ from typing import TypedDict, cast
 import orjson
 
 from home.analysis import AnalysisInterface
-from home.tables import Vulnerability, Project
+from home.tables import Vulnerability, Project, Scan
 
 
 class BanditError(TypedDict):
@@ -63,13 +63,18 @@ class Bandit(AnalysisInterface):
     short_description = "Security oriented static analyser for python code."
 
     async def scan(self) -> list[Vulnerability]:
+        scan = Scan(
+            project=self.project,
+            number=await Scan.get_next_number(self.project),
+        )
+        await scan.save()
         command: list[str] = [
             "bandit",
             "-q",  # Only output result json
             "-f",
             "json",
             "-r",
-            self.project.directory,
+            self.project.scanner_path,
         ]
         try:
             result_str: bytes = subprocess.check_output(
@@ -87,6 +92,7 @@ class Bandit(AnalysisInterface):
         for issue in result["results"]:
             issue = cast(BanditResult, issue)
             vuln = Vulnerability(
+                scan=scan,
                 project=self.project,
                 title=f"{issue['test_id']}:{issue['test_name']}",
                 description=issue["issue_text"],

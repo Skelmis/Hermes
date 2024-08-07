@@ -33,24 +33,24 @@
                     <div class="col-md-6 col-lg-3">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Delete Vulnerabilities</h3>
+                                <h3 class="card-title">Run scanners</h3>
                             </div>
                             <div class="card-body">
-                                This action will delete all vulnerabilities currently registered to this project.
-                                <h6></h6>
-                                {{ button('Delete Vulnerabilities', 'delete-vulns', 'Delete Vulnerabilities', 'Are you sure you wish to delete all vulnerabilities tied to this project?', 'Yes, delete them', 'delete/vulnerabilities', 'danger') }}
+                                This action will run the configured scanners again.<br><br>
+                                <h6>Note this action does not delete existing vulnerabilities found.</h6>
+                                {{ button('Run scanners', 'run-scans', 'Run scanners', 'Are you sure you want to run the configured scanners?', 'Yes', 'run_scanners', 'secondary') }}
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-3">
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">Run scanners</h3>
+                                <h3 class="card-title">Delete Vulnerabilities</h3>
                             </div>
                             <div class="card-body">
-                                This action will run the configured scanners again.<br><br>
-                                <h6>Note this action does not delete existing vulnerabilities found.</h6>
-                                {{ button('Run scanners', 'run-scans', 'Run scanners', 'Are you sure you want to run the configured scanners?', 'Yes', 'run_scanners', 'danger') }}
+                                This action will delete all vulnerabilities currently registered to this project.
+                                <h6></h6>
+                                {{ button('Delete Vulnerabilities', 'delete-vulns', 'Delete Vulnerabilities', 'Are you sure you wish to delete all vulnerabilities tied to this project?', 'Yes, delete them', 'delete/vulnerabilities', 'danger') }}
                             </div>
                         </div>
                     </div>

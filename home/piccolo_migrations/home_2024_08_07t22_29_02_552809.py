@@ -1,6 +1,7 @@
 from piccolo.apps.migrations.auto.migration_manager import MigrationManager
 from piccolo.columns.base import OnDelete
 from piccolo.columns.base import OnUpdate
+from piccolo.columns.column_types import Array
 from piccolo.columns.column_types import Boolean
 from piccolo.columns.column_types import ForeignKey
 from piccolo.columns.column_types import Integer
@@ -53,7 +54,7 @@ class Scan(Table, tablename="scan", schema=None):
     )
 
 
-ID = "2024-08-07T21:01:22:676255"
+ID = "2024-08-07T22:29:02:552809"
 VERSION = "1.15.0"
 DESCRIPTION = ""
 
@@ -64,11 +65,11 @@ async def forwards():
     )
 
     manager.add_table(
-        class_name="Project", tablename="project", schema=None, columns=None
+        class_name="Scan", tablename="scan", schema=None, columns=None
     )
 
     manager.add_table(
-        class_name="Scan", tablename="scan", schema=None, columns=None
+        class_name="Project", tablename="project", schema=None, columns=None
     )
 
     manager.add_table(
@@ -76,6 +77,72 @@ async def forwards():
         tablename="vulnerability",
         schema=None,
         columns=None,
+    )
+
+    manager.add_column(
+        table_class_name="Scan",
+        tablename="scan",
+        column_name="id",
+        db_column_name="id",
+        column_class_name="UUID",
+        column_class=UUID,
+        params={
+            "default": UUID4(),
+            "null": False,
+            "primary_key": True,
+            "unique": False,
+            "index": True,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Scan",
+        tablename="scan",
+        column_name="project",
+        db_column_name="project",
+        column_class_name="ForeignKey",
+        column_class=ForeignKey,
+        params={
+            "references": Project,
+            "on_delete": OnDelete.cascade,
+            "on_update": OnUpdate.cascade,
+            "target_column": None,
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": True,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Scan",
+        tablename="scan",
+        column_name="number",
+        db_column_name="number",
+        column_class_name="Integer",
+        column_class=Integer,
+        params={
+            "default": 0,
+            "null": False,
+            "primary_key": False,
+            "unique": False,
+            "index": True,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
     )
 
     manager.add_column(
@@ -208,63 +275,29 @@ async def forwards():
     )
 
     manager.add_column(
-        table_class_name="Scan",
-        tablename="scan",
-        column_name="id",
-        db_column_name="id",
-        column_class_name="UUID",
-        column_class=UUID,
+        table_class_name="Project",
+        tablename="project",
+        column_name="code_scanners",
+        db_column_name="code_scanners",
+        column_class_name="Array",
+        column_class=Array,
         params={
-            "default": UUID4(),
-            "null": False,
-            "primary_key": True,
-            "unique": False,
-            "index": True,
-            "index_method": IndexMethod.btree,
-            "choices": None,
-            "db_column_name": None,
-            "secret": False,
-        },
-        schema=None,
-    )
-
-    manager.add_column(
-        table_class_name="Scan",
-        tablename="scan",
-        column_name="project",
-        db_column_name="project",
-        column_class_name="ForeignKey",
-        column_class=ForeignKey,
-        params={
-            "references": Project,
-            "on_delete": OnDelete.cascade,
-            "on_update": OnUpdate.cascade,
-            "target_column": None,
-            "null": True,
-            "primary_key": False,
-            "unique": False,
-            "index": True,
-            "index_method": IndexMethod.btree,
-            "choices": None,
-            "db_column_name": None,
-            "secret": False,
-        },
-        schema=None,
-    )
-
-    manager.add_column(
-        table_class_name="Scan",
-        tablename="scan",
-        column_name="number",
-        db_column_name="number",
-        column_class_name="Integer",
-        column_class=Integer,
-        params={
-            "default": 0,
+            "base_column": Text(
+                default="",
+                null=False,
+                primary_key=False,
+                unique=False,
+                index=False,
+                index_method=IndexMethod.btree,
+                choices=None,
+                db_column_name=None,
+                secret=False,
+            ),
+            "default": list,
             "null": False,
             "primary_key": False,
             "unique": False,
-            "index": True,
+            "index": False,
             "index_method": IndexMethod.btree,
             "choices": None,
             "db_column_name": None,
@@ -303,6 +336,30 @@ async def forwards():
         column_class=ForeignKey,
         params={
             "references": Scan,
+            "on_delete": OnDelete.cascade,
+            "on_update": OnUpdate.cascade,
+            "target_column": None,
+            "null": True,
+            "primary_key": False,
+            "unique": False,
+            "index": True,
+            "index_method": IndexMethod.btree,
+            "choices": None,
+            "db_column_name": None,
+            "secret": False,
+        },
+        schema=None,
+    )
+
+    manager.add_column(
+        table_class_name="Vulnerability",
+        tablename="vulnerability",
+        column_name="project",
+        db_column_name="project",
+        column_class_name="ForeignKey",
+        column_class=ForeignKey,
+        params={
+            "references": Project,
             "on_delete": OnDelete.cascade,
             "on_update": OnUpdate.cascade,
             "target_column": None,

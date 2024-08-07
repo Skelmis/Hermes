@@ -1,12 +1,28 @@
-from litestar import Controller, get, Request, MediaType, post
-from litestar.response import Template, Redirect
+import io
+import secrets
+import zipfile
+from typing import Annotated, Type
 
+from litestar import Controller, get, Request, MediaType, post
+from litestar.datastructures import UploadFile
+from litestar.enums import RequestEncodingType
+from litestar.params import Body
+from litestar.response import Template, Redirect
+from pydantic import BaseModel, ConfigDict
+
+from home.analysis import AnalysisInterface
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.middleware import EnsureAuth
-from home.tables import Project, Vulnerability
+from home.tables import Project, Vulnerability, Scan
 from home.util import get_csp
 from home.util.flash import alert
-from piccolo_conf import REGISTERED_INTERFACES
+from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
+
+
+class CreateProjectFormData(BaseModel):
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    file: UploadFile | None
 
 
 # noinspection DuplicatedCode
@@ -161,7 +177,8 @@ class ProjectsController(Controller):
             "projects/create.jinja",
             context={
                 "analysis_interfaces": [
-                    f"{i.name} - {i.language}" for i in REGISTERED_INTERFACES
+                    (f"{i.name} - {i.language}", _id)
+                    for _id, i in REGISTERED_INTERFACES.items()
                 ],
                 "csp_nonce": nonce,
                 "active": "settings",
@@ -176,8 +193,79 @@ class ProjectsController(Controller):
         path="/create",
         include_in_schema=False,
     )
-    async def create_post(self, request: Request) -> Redirect:
-        return Redirect("/projects")
+    async def create_post(
+        self,
+        request: Request,
+        data: Annotated[
+            CreateProjectFormData, Body(media_type=RequestEncodingType.MULTI_PART)
+        ],
+    ) -> Redirect:
+        has_errors = False
+        file = data.file
+        form_data = await request.form()
+        title: str | None = form_data.get("title", None)
+        description: str = form_data.get("description") or ""
+        git: str | None = form_data.get("git", None)
+        selected_interfaces = []
+        for pi in REGISTERED_INTERFACES.keys():
+            present = form_data.get(pi, None)
+            if present == "on":
+                selected_interfaces.append(pi)
+
+        # Minimum form validation time
+        if title is None:
+            alert(request, "New projects require a title", level="error")
+            has_errors = True
+
+        if git is None and file is None:
+            alert(
+                request,
+                "A git URL or source code is required for new projects",
+                level="error",
+            )
+            has_errors = True
+
+        if git is not None and file is not None:
+            alert(
+                request,
+                "Please only provide source code or git, not both",
+                level="error",
+            )
+            has_errors = True
+
+        if not selected_interfaces:
+            alert(
+                request,
+                "Please select at-least one interface to do code scanning with",
+                level="error",
+            )
+            has_errors = True
+
+        if has_errors:
+            return Redirect("/projects/create")
+
+        project_dir = secrets.token_hex(8)
+        path_to_stuff = str(BASE_PROJECT_DIR / project_dir)
+
+        if file is not None:
+            # Write to disk time
+            content = await file.read()
+            with zipfile.ZipFile(io.BytesIO(content), "r") as zip_ref:
+                zip_ref.extractall(path_to_stuff)
+
+        if git is not None:
+            raise ValueError("Implement this")
+
+        project = Project(
+            owner=request.user,
+            title=title,
+            description=description,
+            is_git_based=git is not None,
+            code_scanners=selected_interfaces,
+            directory=project_dir,
+        )
+        await project.save()
+        return await project.run_scanners(request)
 
     @post(
         path="/{project_id:str}/settings/delete/vulnerabilities",
@@ -205,9 +293,10 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
+        await Scan.delete().where(Scan.project == project)
         await Vulnerability.delete().where(Vulnerability.project == project)
         project_title = project.title
-        await project.delete()
+        await project.delete(force=True)
         alert(
             request,
             f"Deleted project '{project_title}' and associated vulnerabilities",
@@ -224,16 +313,4 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        bt = REGISTERED_INTERFACES[0]
-        bandit = bt((await APIProjectController.get_user_projects(request.user))[0])
-        await bandit.scan()
-        alert(
-            request,
-            "Successfully ran scanners, results should appear soon.",
-            level="success",
-        )
-        alert(
-            request,
-            "Note we cheated the lookup lol. It's hard coded to bandit rn",
-        )
-        return Redirect(f"/projects/{project_id}/settings")
+        return await project.run_scanners(request)

@@ -34,15 +34,12 @@ async def home(request: Request) -> Template:
 )
 async def settings(request: Request) -> Template:
     csp, nonce = get_csp()
-    bt = REGISTERED_INTERFACES[0]
-    bandit = bt((await APIProjectController.get_user_projects(request.user))[0])
-    await bandit.scan()
     return Template(
         "settings.jinja",
         context={
             "csp_nonce": nonce,
             "projects": await APIProjectController.get_user_projects(request.user),
-            "registered_interfaces": REGISTERED_INTERFACES,
+            "registered_interfaces": REGISTERED_INTERFACES.values(),
         },
         media_type=MediaType.HTML,
         headers={"content-security-policy": csp},

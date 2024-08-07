@@ -31,7 +31,7 @@ class APIVulnerabilitiesController(Controller):
     ) -> t.List[Vulnerability]:
         return await (
             Vulnerability.objects()
-            .where(Vulnerability.project.owner == user)
-            .where(Vulnerability.project == project)
+            .where(Vulnerability.scan.project.owner == user)
+            .where(Vulnerability.scan.project == project)
             .order_by(Vulnerability.id, ascending=False)
         )

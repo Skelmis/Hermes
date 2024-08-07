@@ -96,7 +96,7 @@ class Bandit(AnalysisInterface):
                 project=self.project,
                 title=f"{issue['test_id']}:{issue['test_name']}",
                 description=issue["issue_text"],
-                code_file=issue["filename"],
+                code_file=self.project.normalize_finding_path(issue["filename"]),
                 code_line=issue["line_number"],
                 code_context=issue["code"],
                 severity=issue["issue_severity"],

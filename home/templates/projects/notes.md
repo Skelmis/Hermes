@@ -14,7 +14,6 @@ Add a state for vulnerabilities as well as a notes field. These fields only show
 
 Settings page:
 Delete specific scan
-Fix vuln delete so also deletes scans
 PATCH on primary fields
 
 ---

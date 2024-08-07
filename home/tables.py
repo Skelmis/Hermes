@@ -32,6 +32,10 @@ class Project(Table):
 
         return str(BASE_PROJECT_DIR / self.directory)
 
+    def normalize_finding_path(self, file_path: str) -> str:
+        """Remove the metadata paths from findings"""
+        return file_path.removeprefix(f"{self.scanner_path}/")
+
     @property
     def uuid(self) -> str:
         return str(self.id)

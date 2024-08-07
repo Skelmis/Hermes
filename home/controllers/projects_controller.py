@@ -1,6 +1,9 @@
 import io
+import os
 import secrets
+import shutil
 import zipfile
+from pathlib import Path
 from typing import Annotated, Type
 
 from litestar import Controller, get, Request, MediaType, post
@@ -29,6 +32,15 @@ class CreateProjectFormData(BaseModel):
 class ProjectsController(Controller):
     path = "/projects"
     middleware = [EnsureAuth]
+
+    @classmethod
+    async def delete_project(cls, project: Project) -> None:
+        code_path = Path(project.scanner_path)
+        shutil.rmtree(code_path, ignore_errors=True)
+
+        await Scan.delete().where(Scan.project == project)
+        await Vulnerability.delete().where(Vulnerability.project == project)
+        await project.delete().where(Project.id == project.uuid)
 
     @classmethod
     async def get_project(
@@ -245,13 +257,21 @@ class ProjectsController(Controller):
             return Redirect("/projects/create")
 
         project_dir = secrets.token_hex(8)
-        path_to_stuff = str(BASE_PROJECT_DIR / project_dir)
+        path_to_stuff = BASE_PROJECT_DIR / project_dir
+        path_to_stuff.mkdir()
+        path_to_stuff = str(path_to_stuff)
 
         if file is not None:
             # Write to disk time
             content = await file.read()
-            with zipfile.ZipFile(io.BytesIO(content), "r") as zip_ref:
-                zip_ref.extractall(path_to_stuff)
+            with zipfile.ZipFile(io.BytesIO(content), "r") as zf:
+                for member in zf.infolist():
+                    # TODO Test a path traversal on this
+                    file_path = os.path.realpath(
+                        os.path.join(path_to_stuff, member.filename)
+                    )
+                    if file_path.startswith(os.path.realpath(path_to_stuff)):
+                        zf.extract(member, path_to_stuff)
 
         if git is not None:
             raise ValueError("Implement this")
@@ -288,15 +308,13 @@ class ProjectsController(Controller):
         path="/{project_id:str}/settings/delete/project",
         include_in_schema=False,
     )
-    async def delete_project(self, request: Request, project_id: str) -> Redirect:
+    async def delete_project_route(self, request: Request, project_id: str) -> Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
             return redirect
 
-        await Scan.delete().where(Scan.project == project)
-        await Vulnerability.delete().where(Vulnerability.project == project)
         project_title = project.title
-        await project.delete(force=True)
+        await self.delete_project(project)
         alert(
             request,
             f"Deleted project '{project_title}' and associated vulnerabilities",

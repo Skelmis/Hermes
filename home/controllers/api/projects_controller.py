@@ -1,4 +1,6 @@
+import shutil
 import typing as t
+from pathlib import Path
 
 from litestar import Controller, get, Request, post, patch, delete
 from litestar.exceptions import NotFoundException
@@ -6,7 +8,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.utils.pydantic import create_pydantic_model
 
 from home.middleware import EnsureAuth
-from home.tables import Project
+from home.tables import Project, Scan, Vulnerability
 
 ProjectModelIn: t.Any = create_pydantic_model(
     table=Project,
@@ -64,16 +66,3 @@ class APIProjectController(Controller):
 
         await project.save()
         return project.to_dict()
-
-    @delete("/{project_id:str}", tags=["Projects API"])
-    async def delete_project(self, request: Request, project_id: str) -> None:
-        project: Project | None = (
-            await Project.objects()
-            .where(Project.id == project_id)
-            .where(Project.owner == request.user)  # type: ignore
-            .first()
-        )
-        if not project:
-            raise NotFoundException("Project does not exist")
-
-        await project.remove()

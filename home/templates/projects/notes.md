@@ -8,19 +8,14 @@ Add more tables for status stuff as well such as counters per vuln status n stuf
 
 ---
 
-Change the sidebar so that the third nesting is gone, and projects just redirect you to the project overview page
-
----
-
 Add a state for vulnerabilities as well as a notes field. These fields only show in the viewer, however can also be used as a filter within the overview page
 
 ---
 
 Settings page:
-Delete project
+Delete specific scan
+Fix vuln delete so also deletes scans
 PATCH on primary fields
-Run scan again
-Delete all associated vulns
 
 ---
 
@@ -40,3 +35,12 @@ Move scans to background tasks after the request gets executed
 ---
 
 Have the file as shown to the user be relative to the uploaded folder, not the path its downloaded to disk
+
+---
+
+Add scan number to vulns with a filter by in overview page
+Setting modal to delete a specific scan number
+
+Add the ability to re-pull new content from git backed projects
+
+Add the ability to auto pull & re scan every X 

@@ -30,8 +30,7 @@
                         <tr>
                           <th>Title</th>
                         <th>Description</th>
-                            <th class="w-1">Severity</th>
-                        <th class="w-1">Confidence</th>
+                            <th class="w-1">Scanner</th>
                         <th class="w-10">File</th>
                           <th class="w-1"></th>
                         </tr>
@@ -44,10 +43,7 @@
                               {{ vuln.description }}
                           </td>
                           <td class="text-secondary" >
-                              {{ vuln.severity }}
-                          </td>
-                          <td class="text-secondary" >
-                              {{ vuln.confidence }}
+                              {{ vuln.found_by|capitalize }}
                           </td>
 
                         <td class="text-secondary" >

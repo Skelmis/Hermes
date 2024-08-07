@@ -116,6 +116,10 @@ class Vulnerability(Table):
     )
     title = Text()
     description = Text(default="")
+    impact = Text(default="", help_text="The scanner disclosed impact of this result")
+    likelihood = Text(
+        default="", help_text="The scanner disclosed likelihood of this result"
+    )
     severity = Text(
         default="", help_text="The scanner disclosed severity of this result"
     )

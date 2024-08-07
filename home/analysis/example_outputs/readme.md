@@ -1,0 +1,1 @@
+Example tool outputs based on the suggestions core code

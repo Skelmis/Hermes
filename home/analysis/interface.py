@@ -32,6 +32,11 @@ class AnalysisInterface(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    async def generate_command(self) -> list[str]:
+        """Generate the command to run on the os"""
+        raise NotImplementedError
+
+    @abc.abstractmethod
     async def scan(self) -> list[Vulnerability]:
         """Run a scan using the tooling and generate a list of vulnerabilities"""
         raise NotImplementedError

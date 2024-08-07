@@ -62,13 +62,8 @@ class Bandit(AnalysisInterface):
     language = "Python"
     short_description = "Security oriented static analyser for python code."
 
-    async def scan(self) -> list[Vulnerability]:
-        scan = Scan(
-            project=self.project,
-            number=await Scan.get_next_number(self.project),
-        )
-        await scan.save()
-        command: list[str] = [
+    def generate_command(self) -> list[str]:
+        return [
             "bandit",
             "-q",  # Only output result json
             "-f",
@@ -76,6 +71,14 @@ class Bandit(AnalysisInterface):
             "-r",
             self.project.scanner_path,
         ]
+
+    async def scan(self) -> list[Vulnerability]:
+        scan = Scan(
+            project=self.project,
+            number=await Scan.get_next_number(self.project),
+        )
+        await scan.save()
+        command: list[str] = self.generate_command()
         try:
             result_str: bytes = subprocess.check_output(
                 command,

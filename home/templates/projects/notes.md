@@ -1,14 +1,14 @@
 TODO:
 
-Add a field to projects to denote if a scan has been run. This way on the overview page we can say as such.
-
-This also means we can say no issues detected instead of a blank table lol
+no issues found instead of show blank table
 
 Add more tables for status stuff as well such as counters per vuln status n stuff
 
 ---
 
 Add a state for vulnerabilities as well as a notes field. These fields only show in the viewer, however can also be used as a filter within the overview page
+
+Also add metadata field to dump extra fields in
 
 ---
 

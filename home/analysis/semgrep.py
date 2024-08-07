@@ -1,0 +1,88 @@
+import subprocess
+from typing import TypedDict, cast
+
+import orjson
+
+from home.analysis import AnalysisInterface
+from home.tables import Vulnerability, Scan
+
+
+class SemgrepMetadata(TypedDict):
+    confidence: str
+    impact: str
+    likelihood: str
+    cwe: list[str]
+
+
+class SemgrepResultExtra(TypedDict):
+    lines: str
+    message: str
+    severity: str
+    metadata: SemgrepMetadata
+
+
+class SemgrepResult(TypedDict):
+    check_id: str
+    path: str
+    extra: SemgrepResultExtra
+
+
+class SemgrepOutput(TypedDict):
+    results: list[SemgrepResult]
+
+
+# noinspection DuplicatedCode
+class Semgrep(AnalysisInterface):
+    id = "semgrep"
+    name = "Semgrep"
+    language = "Generic"
+    short_description = "A generic code scanner for all languages."
+
+    def generate_command(self) -> list[str]:
+        return [
+            "semgrep",
+            "scan",
+            "--json",
+            "-q",
+            "--no-git-ignore",
+            "--config",
+            "auto",
+            self.project.scanner_path,
+        ]
+
+    async def scan(self) -> list[Vulnerability]:
+        scan = Scan(
+            project=self.project,
+            number=await Scan.get_next_number(self.project),
+        )
+        await scan.save()
+        command: list[str] = self.generate_command()
+        result_str: bytes = subprocess.check_output(
+            command,
+            stderr=subprocess.STDOUT,
+        )
+
+        result: SemgrepOutput = orjson.loads(result_str)
+        vulns: list[Vulnerability] = []
+        for issue in result["results"]:
+            issue = cast(SemgrepResult, issue)
+            extra = cast(SemgrepResultExtra, issue["extra"])
+            metadata = cast(SemgrepMetadata, extra["metadata"])
+            vuln = Vulnerability(
+                scan=scan,
+                project=self.project,
+                title=issue["check_id"],
+                description=issue["extra"]["message"],
+                code_file=self.project.normalize_finding_path(issue["path"]),
+                code_line="TODO",
+                code_context=extra["lines"],
+                severity=extra["severity"],
+                confidence=metadata["confidence"],
+                impact=metadata["impact"],
+                likelihood=metadata["likelihood"],
+                found_by=self.id,
+            )
+            await vuln.save()
+            vulns.append(vuln)
+
+        return vulns

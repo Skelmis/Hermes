@@ -7,7 +7,7 @@ from piccolo.engine import SQLiteEngine
 from piccolo.engine.postgres import PostgresEngine
 from piccolo.conf.apps import AppRegistry
 
-from home.analysis import AnalysisInterface, Bandit
+from home.analysis import AnalysisInterface, Bandit, Semgrep
 
 load_dotenv()
 
@@ -34,6 +34,9 @@ APP_REGISTRY = AppRegistry(
     ]
 )
 
-REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {Bandit.id: Bandit}
+REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {
+    Bandit.id: Bandit,
+    Semgrep.id: Semgrep,
+}
 BASE_PROJECT_DIR: Path = Path(".projects")
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists

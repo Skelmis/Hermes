@@ -43,3 +43,7 @@ Setting modal to delete a specific scan number
 Add the ability to re-pull new content from git backed projects
 
 Add the ability to auto pull & re scan every X 
+
+---
+
+Fix admin display columns lol, looks wack as fuck in tables

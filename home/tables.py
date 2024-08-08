@@ -148,6 +148,11 @@ class Project(Table):
         from home.analysis import AnalysisInterface
 
         fail_count = 0
+        scan = Scan(
+            project=self,
+            number=await Scan.get_next_number(self),
+        )
+        await scan.save()
         for interface_id in self.code_scanners:
             interface: Type[AnalysisInterface] | None = REGISTERED_INTERFACES.get(
                 interface_id
@@ -162,7 +167,7 @@ class Project(Table):
                 continue
 
             instance = interface(self)
-            await instance.scan()
+            await instance.scan(scan)
 
         if fail_count == len(self.code_scanners):
             await Notification.create_alert(

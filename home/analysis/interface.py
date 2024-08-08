@@ -1,6 +1,6 @@
 import abc
 
-from home.tables import Vulnerability, Project
+from home.tables import Vulnerability, Project, Scan
 
 
 class AnalysisInterface(abc.ABC):
@@ -37,6 +37,6 @@ class AnalysisInterface(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def scan(self) -> list[Vulnerability]:
+    async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         """Run a scan using the tooling and generate a list of vulnerabilities"""
         raise NotImplementedError

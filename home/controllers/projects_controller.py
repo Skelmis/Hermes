@@ -304,7 +304,13 @@ class ProjectsController(Controller):
             directory=project_dir,
         )
         await project.save()
-        return await project.run_scanners(request)
+        alert(request, "Scheduled scanners to run. Results will be available soon")
+        await ASYNC_SCHEDULER.add_schedule(
+            partial(project.run_scanners, request),
+            DateTrigger(datetime.now() + timedelta(seconds=5)),
+        )
+
+        return project.redirect_to()
 
     @post(
         path="/{project_id:str}/settings/delete/vulnerabilities",
@@ -315,6 +321,7 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
+        await Scan.delete().where(Scan.project == project)
         await Vulnerability.delete().where(Vulnerability.project == project)
         alert(
             request,

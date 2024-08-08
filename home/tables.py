@@ -115,7 +115,9 @@ class Project(Table):
             subprocess.check_output(pull, cwd=self.scanner_path)
         except Exception as e:
             await Notification.create_alert(
-                request.user, "Something went wrong, check the logs", level="error"
+                request.user,
+                f"Something went wrong pulling project '{self.title}', check the logs",
+                level="error",
             )
             log.error("Git cloning died with error\n%s", commons.exception_as_string(e))
         else:
@@ -127,6 +129,12 @@ class Project(Table):
             if pa:
                 pa.last_pulled_at = datetime.datetime.now(tz=datetime.timezone.utc)
                 await pa.save()
+
+        await Notification.create_alert(
+            request.user,
+            f"Successfully pulled project '{self.title}'",
+            level="success",
+        )
 
     async def run_scanners(self, request) -> Redirect:
         """Run all the relevant scanners for this project.
@@ -159,13 +167,14 @@ class Project(Table):
         if fail_count == len(self.code_scanners):
             await Notification.create_alert(
                 request.user,
-                "Looks like all interfaces could not be found. Ran nothing",
+                f"Looks like all interfaces could not be found."
+                f" Ran nothing for project '{self.title}'",
                 level="error",
             )
         else:
             await Notification.create_alert(
                 request.user,
-                "Successfully ran found scanners",
+                f"Successfully ran found scanners against project '{self.title}'",
                 level="success",
             )
 

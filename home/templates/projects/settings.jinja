@@ -1,7 +1,7 @@
 {% extends 'base.jinja' %}
 {% macro button(display_text, btn_id, btn_title, btn_description, btn_confirm, setting_url, btn_theme='info') %}
     <a href="#" class="btn btn-outline-{{ btn_theme }} w-100" data-bs-toggle="modal" data-bs-target="#{{ btn_id }}">
-           {{ display_text }}
+        {{ display_text }}
     </a>
     <div class="modal modal-blur fade" id="{{ btn_id }}" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
@@ -66,20 +66,24 @@
                             </div>
                         </div>
                     </div>
-                    {% if project.is_git_based %}
-                    <div class="col-md-6 col-lg-3">
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">Pull latest version</h3>
-                            </div>
-                            <div class="card-body">
-                                Pull the latest version of the source code.<br><br>
-                                {{ button('Pull code', 'pull-new', 'Pull latest code', 'Are you sure you want to update the code?', 'Yes', 'pull_code', 'secondary') }}
+                </div>
+            <br>
+            <br>
+                {% if project.is_git_based %}
+                    <div class="row row-cards">
+                        <div class="col-md-6 col-lg-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">Pull latest version</h3>
+                                </div>
+                                <div class="card-body">
+                                    Pull the latest version of the source code.<br><br>
+                                    {{ button('Pull code', 'pull-new', 'Pull latest code', 'Are you sure you want to update the code?', 'Yes', 'pull_code', 'secondary') }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                    {% endif %}
-                </div>
+                {% endif %}
             </div>
         </div>
     </div>

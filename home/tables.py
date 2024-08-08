@@ -1,17 +1,45 @@
 import logging
 import subprocess
 import uuid
+from enum import Enum
 from typing import Type
 
 import commons
 from litestar.response import Redirect
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
-from piccolo.columns import UUID, ForeignKey, Text, Integer, Boolean, Array, Timestamptz
+from piccolo.columns import (
+    UUID,
+    ForeignKey,
+    Text,
+    Integer,
+    Boolean,
+    Array,
+    Timestamptz,
+    Interval,
+)
 
 from home.util.flash import alert
 
 log = logging.getLogger(__name__)
+
+
+class NotificationLevels(Enum):
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    SUCCESS = "SUCCESS"
+
+
+class Notification(Table):
+    id = UUID(primary_key=True, default=uuid.uuid4, index=True)
+    target = ForeignKey(BaseUser, index=True, help_text="Who should be notified")
+    message = Text(help_text="The text to show on next request")
+    level = Text(help_text="The level to show it at", choices=NotificationLevels)
+
+    @property
+    def uuid(self) -> str:
+        return str(self.id)
 
 
 class Project(Table):
@@ -99,6 +127,18 @@ class Project(Table):
             )
 
         return Redirect(f"/projects/{self.uuid}")
+
+
+class ProjectAutomation(Table):
+    id = UUID(primary_key=True, default=uuid.uuid4, index=True)
+    project = ForeignKey(
+        Project,
+        index=True,
+        help_text="The project this automation is for",
+    )
+    scan_interval = Interval(
+        default=None, null=True, help_text="How often to run a code scan"
+    )
 
 
 class Scan(Table):

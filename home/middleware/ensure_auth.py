@@ -11,7 +11,7 @@ from piccolo_api.session_auth.tables import SessionsBase
 from starlette.authentication import AuthCredentials
 
 from home.exception_handlers import RedirectForAuth
-from home.util.flash import alert
+from home.util.flash import alert, inject_alerts
 
 
 class EnsureAuth(AbstractAuthenticationMiddleware):
@@ -65,5 +65,7 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
 
         if self.active_only and not piccolo_user.active:
             raise NotAuthorizedException("Active users only")
+
+        await inject_alerts(connection, piccolo_user)
 
         return AuthenticationResult(user=piccolo_user, auth=None)

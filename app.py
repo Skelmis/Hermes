@@ -2,6 +2,7 @@ import os
 import secrets
 
 import jinja2
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from dotenv import load_dotenv
 from litestar import Litestar, asgi
 from litestar.config.cors import CORSConfig
@@ -29,6 +30,7 @@ from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
+from home.util.keep_updated import keep_projects_updated
 
 load_dotenv()
 IS_PRODUCTION = not bool(os.environ.get("DEBUG", False))
@@ -61,6 +63,23 @@ async def close_database_connection_pool():
         await engine.close_connection_pool()
     except Exception:
         print("Unable to connect to the database")
+
+
+scheduler = AsyncIOScheduler()
+
+
+async def start_scheduler():
+    if IS_PRODUCTION:
+        scheduler.add_job(keep_projects_updated, "interval", max_instances=1, hours=1)
+    else:
+        scheduler.add_job(
+            keep_projects_updated, "interval", max_instances=1, seconds=30
+        )
+    scheduler.start()
+
+
+async def stop_scheduler():
+    scheduler.shutdown(wait=False)
 
 
 cors_config = CORSConfig(
@@ -115,8 +134,8 @@ app = Litestar(
     static_files_config=[
         StaticFilesConfig(directories=["static"], path="/static/"),
     ],
-    on_startup=[open_database_connection_pool],
-    on_shutdown=[close_database_connection_pool],
+    on_startup=[open_database_connection_pool, start_scheduler],
+    on_shutdown=[close_database_connection_pool, stop_scheduler],
     debug=bool(os.environ.get("DEBUG", False)),
     openapi_config=OpenAPIConfig(
         title="Hermes API",

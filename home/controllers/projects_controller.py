@@ -1,11 +1,14 @@
 import io
+import logging
 import os
 import secrets
 import shutil
+import subprocess
 import zipfile
 from pathlib import Path
 from typing import Annotated, Type
 
+import commons
 from litestar import Controller, get, Request, MediaType, post
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
@@ -20,6 +23,8 @@ from home.tables import Project, Vulnerability, Scan
 from home.util import get_csp
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
+
+log = logging.getLogger(__name__)
 
 
 class CreateProjectFormData(BaseModel):
@@ -274,7 +279,16 @@ class ProjectsController(Controller):
                         zf.extract(member, path_to_stuff)
 
         if git is not None:
-            raise ValueError("Implement this")
+            # Git clone it
+            cmd = ["git", "clone", "--recursive", git, path_to_stuff]
+            try:
+                output = subprocess.check_output(cmd)
+            except Exception as e:
+                alert(request, "Something went wrong, check the logs", level="error")
+                log.error(
+                    "Git cloning died with error\n%s", commons.exception_as_string(e)
+                )
+                return Redirect("/projects/create")
 
         project = Project(
             owner=request.user,
@@ -332,3 +346,16 @@ class ProjectsController(Controller):
             return redirect
 
         return await project.run_scanners(request)
+
+    @post(
+        path="/{project_id:str}/settings/pull_code",
+        include_in_schema=False,
+    )
+    async def pull_latest_code(self, request: Request, project_id: str) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        project.update_from_source(request)
+
+        return project.redirect_to()

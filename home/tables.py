@@ -1,12 +1,17 @@
+import logging
+import subprocess
 import uuid
 from typing import Type
 
+import commons
 from litestar.response import Redirect
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
 from piccolo.columns import UUID, ForeignKey, Text, Integer, Boolean, Array, Timestamptz
 
 from home.util.flash import alert
+
+log = logging.getLogger(__name__)
 
 
 class Project(Table):
@@ -40,6 +45,23 @@ class Project(Table):
     @property
     def uuid(self) -> str:
         return str(self.id)
+
+    def redirect_to(self) -> Redirect:
+        return Redirect(f"/projects/{self.uuid}")
+
+    def update_from_source(self, request) -> None:
+        """Updates the underlying source code"""
+        if not self.is_git_based:
+            raise ValueError("Cannot update a non git based project")
+
+        fetch = ["git", "fetch"]
+        pull = ["git", "pull"]
+        try:
+            subprocess.check_output(fetch, cwd=self.scanner_path)
+            subprocess.check_output(pull, cwd=self.scanner_path)
+        except Exception as e:
+            alert(request, "Something went wrong, check the logs", level="error")
+            log.error("Git cloning died with error\n%s", commons.exception_as_string(e))
 
     async def run_scanners(self, request) -> Redirect:
         """Run all the relevant scanners for this project"""

@@ -1,3 +1,4 @@
+import datetime
 import logging
 import subprocess
 import uuid
@@ -77,7 +78,7 @@ class Project(Table):
     def redirect_to(self) -> Redirect:
         return Redirect(f"/projects/{self.uuid}")
 
-    def update_from_source(self, request) -> None:
+    async def update_from_source(self, request) -> None:
         """Updates the underlying source code"""
         if not self.is_git_based:
             raise ValueError("Cannot update a non git based project")
@@ -90,6 +91,15 @@ class Project(Table):
         except Exception as e:
             alert(request, "Something went wrong, check the logs", level="error")
             log.error("Git cloning died with error\n%s", commons.exception_as_string(e))
+        else:
+            pa: ProjectAutomation | None = (
+                await ProjectAutomation.objects()
+                .where(ProjectAutomation.project == self)
+                .first()
+            )
+            if pa:
+                pa.last_pulled_at = datetime.datetime.now(tz=datetime.timezone.utc)
+                await pa.save()
 
     async def run_scanners(self, request) -> Redirect:
         """Run all the relevant scanners for this project"""
@@ -126,6 +136,15 @@ class Project(Table):
                 level="success",
             )
 
+        pa: ProjectAutomation | None = (
+            await ProjectAutomation.objects()
+            .where(ProjectAutomation.project == self)
+            .first()
+        )
+        if pa:
+            pa.last_scanned_at = datetime.datetime.now(tz=datetime.timezone.utc)
+            await pa.save()
+
         return Redirect(f"/projects/{self.uuid}")
 
 
@@ -139,6 +158,11 @@ class ProjectAutomation(Table):
     scan_interval = Interval(
         default=None, null=True, help_text="How often to run a code scan"
     )
+    last_scanned_at = Timestamptz(help_text="When was the last scan ran?")
+    pull_interval = Interval(
+        default=None, null=True, help_text="How often to pull source code"
+    )
+    last_pulled_at = Timestamptz(help_text="When was the code last pulled?")
 
 
 class Scan(Table):

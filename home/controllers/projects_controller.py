@@ -356,6 +356,5 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        project.update_from_source(request)
-
+        await project.update_from_source(request)
         return project.redirect_to()

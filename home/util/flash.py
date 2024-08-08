@@ -16,7 +16,7 @@ def alert(
 
 
 async def inject_alerts(request: Request | ASGIConnection, user: BaseUser):
-    """Ensure lazy notifications mate it through"""
+    """Ensure lazy notifications make it through to the user"""
     from home.tables import Notification
 
     alerts_to_show: list[Notification] = await Notification.objects().where(

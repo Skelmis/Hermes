@@ -47,3 +47,7 @@ Add the ability to auto pull & re scan every X
 ---
 
 Fix admin display columns lol, looks wack as fuck in tables
+
+---
+
+Provide the ability to add configuration options to scanners per config. I.e. bandit ignore path

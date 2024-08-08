@@ -350,13 +350,13 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
+        alert(request, "Scheduled scanners to run. Results will be available soon")
         await ASYNC_SCHEDULER.add_schedule(
             partial(project.run_scanners, request),
-            DateTrigger(datetime.now() + timedelta(minutes=1)),
+            DateTrigger(datetime.now() + timedelta(seconds=5)),
         )
 
         return project.redirect_to()
-        return await project.run_scanners(request)
 
     @post(
         path="/{project_id:str}/settings/pull_code",
@@ -367,5 +367,9 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        await project.update_from_source(request)
+        alert(request, "Scheduled the pull, it'll be ready momentarily")
+        await ASYNC_SCHEDULER.add_schedule(
+            partial(project.update_from_source, request),
+            DateTrigger(datetime.now() + timedelta(seconds=5)),
+        )
         return project.redirect_to()

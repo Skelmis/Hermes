@@ -32,7 +32,7 @@ from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
-from home.util.keep_updated import keep_projects_updated
+from home.tasks import keep_projects_updated
 from piccolo_conf import ASYNC_SCHEDULER
 
 load_dotenv()

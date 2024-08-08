@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 
+from apscheduler import AsyncScheduler
 from dotenv import load_dotenv
 
 from piccolo.engine import SQLiteEngine
@@ -40,3 +41,5 @@ REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {
 }
 BASE_PROJECT_DIR: Path = Path(".projects")
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
+
+ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()

@@ -1,8 +1,10 @@
 import os
 import secrets
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 import jinja2
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 from dotenv import load_dotenv
 from litestar import Litestar, asgi
 from litestar.config.cors import CORSConfig
@@ -31,6 +33,7 @@ from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
 from home.piccolo_app import APP_CONFIG
 from home.util.keep_updated import keep_projects_updated
+from piccolo_conf import ASYNC_SCHEDULER
 
 load_dotenv()
 IS_PRODUCTION = not bool(os.environ.get("DEBUG", False))
@@ -65,21 +68,24 @@ async def close_database_connection_pool():
         print("Unable to connect to the database")
 
 
-scheduler = AsyncIOScheduler()
+@asynccontextmanager
+async def handle_scheduler_lifecycle(_: Litestar) -> AsyncGenerator[None, None]:
+    async with ASYNC_SCHEDULER:
+        if IS_PRODUCTION:
+            await ASYNC_SCHEDULER.add_schedule(
+                keep_projects_updated, IntervalTrigger(hours=1)
+            )
+        else:
+            await ASYNC_SCHEDULER.add_schedule(
+                keep_projects_updated, IntervalTrigger(seconds=15)
+            )
+        await ASYNC_SCHEDULER.start_in_background()
 
-
-async def start_scheduler():
-    if IS_PRODUCTION:
-        scheduler.add_job(keep_projects_updated, "interval", max_instances=1, hours=1)
-    else:
-        scheduler.add_job(
-            keep_projects_updated, "interval", max_instances=1, seconds=30
-        )
-    scheduler.start()
-
-
-async def stop_scheduler():
-    scheduler.shutdown(wait=False)
+        try:
+            yield
+        finally:
+            # Do this to ensure we exit
+            pass
 
 
 cors_config = CORSConfig(
@@ -134,8 +140,9 @@ app = Litestar(
     static_files_config=[
         StaticFilesConfig(directories=["static"], path="/static/"),
     ],
-    on_startup=[open_database_connection_pool, start_scheduler],
-    on_shutdown=[close_database_connection_pool, stop_scheduler],
+    lifespan=[handle_scheduler_lifecycle],
+    on_startup=[open_database_connection_pool],
+    on_shutdown=[close_database_connection_pool],
     debug=bool(os.environ.get("DEBUG", False)),
     openapi_config=OpenAPIConfig(
         title="Hermes API",

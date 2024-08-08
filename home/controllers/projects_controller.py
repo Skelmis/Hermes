@@ -5,11 +5,16 @@ import secrets
 import shutil
 import subprocess
 import zipfile
+from datetime import timedelta, datetime
+from functools import partial
 from pathlib import Path
 from typing import Annotated, Type
 
 import commons
+from apscheduler.triggers.date import DateTrigger
+from commons import async_util
 from litestar import Controller, get, Request, MediaType, post
+from litestar.background_tasks import BackgroundTask
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
@@ -22,7 +27,7 @@ from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan
 from home.util import get_csp
 from home.util.flash import alert
-from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
+from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, ASYNC_SCHEDULER
 
 log = logging.getLogger(__name__)
 
@@ -345,6 +350,12 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
+        await ASYNC_SCHEDULER.add_schedule(
+            partial(project.run_scanners, request),
+            DateTrigger(datetime.now() + timedelta(minutes=1)),
+        )
+
+        return project.redirect_to()
         return await project.run_scanners(request)
 
     @post(

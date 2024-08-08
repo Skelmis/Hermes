@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+import asyncio
 import datetime
 import logging
 import subprocess
@@ -29,7 +32,11 @@ class NotificationLevels(Enum):
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
-    SUCCESS = "SUCCESS"
+    SUCCESS = "success"
+
+    @classmethod
+    def from_str(cls, level) -> NotificationLevels:
+        return cls[level.upper()]
 
 
 class Notification(Table):
@@ -41,6 +48,18 @@ class Notification(Table):
     @property
     def uuid(self) -> str:
         return str(self.id)
+
+    @classmethod
+    async def create_alert(
+        cls, user: BaseUser, message: str, level: str
+    ) -> Notification:
+        notif = Notification(
+            target=user,
+            message=message,
+            level=level,
+        )
+        await notif.save()
+        return notif
 
 
 class Project(Table):
@@ -79,7 +98,13 @@ class Project(Table):
         return Redirect(f"/projects/{self.uuid}")
 
     async def update_from_source(self, request) -> None:
-        """Updates the underlying source code"""
+        """Updates the underlying source code
+
+        Notes
+        -----
+        Designed to be run in the background
+        due to how long it may take
+        """
         if not self.is_git_based:
             raise ValueError("Cannot update a non git based project")
 
@@ -89,7 +114,9 @@ class Project(Table):
             subprocess.check_output(fetch, cwd=self.scanner_path)
             subprocess.check_output(pull, cwd=self.scanner_path)
         except Exception as e:
-            alert(request, "Something went wrong, check the logs", level="error")
+            await Notification.create_alert(
+                request.user, "Something went wrong, check the logs", level="error"
+            )
             log.error("Git cloning died with error\n%s", commons.exception_as_string(e))
         else:
             pa: ProjectAutomation | None = (
@@ -102,7 +129,13 @@ class Project(Table):
                 await pa.save()
 
     async def run_scanners(self, request) -> Redirect:
-        """Run all the relevant scanners for this project"""
+        """Run all the relevant scanners for this project.
+
+        Notes
+        -----
+        Designed to be run in the background
+        due to how long it may take
+        """
         from piccolo_conf import REGISTERED_INTERFACES
         from home.analysis import AnalysisInterface
 
@@ -112,8 +145,8 @@ class Project(Table):
                 interface_id
             )
             if interface is None:
-                alert(
-                    request,
+                await Notification.create_alert(
+                    request.user,
                     f"Failed to find an interface with id {interface_id}",
                     level="error",
                 )
@@ -124,14 +157,14 @@ class Project(Table):
             await instance.scan()
 
         if fail_count == len(self.code_scanners):
-            alert(
-                request,
+            await Notification.create_alert(
+                request.user,
                 "Looks like all interfaces could not be found. Ran nothing",
                 level="error",
             )
         else:
-            alert(
-                request,
+            await Notification.create_alert(
+                request.user,
                 "Successfully ran found scanners",
                 level="success",
             )

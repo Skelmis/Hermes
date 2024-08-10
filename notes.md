@@ -24,18 +24,6 @@ Overview for total projects, total vulns, vuln counts by type, etc
 
 ---
 
-Vulns:
-Have a field for scanner used and show within the viewer page
-
----
-
-Move scans to background tasks after the request gets executed
-
----
-
-Have the file as shown to the user be relative to the uploaded folder, not the path its downloaded to disk
-
----
 
 Add scan number to vulns with a filter by in overview page
 Setting modal to delete a specific scan number

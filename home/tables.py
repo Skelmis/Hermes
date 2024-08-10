@@ -5,10 +5,12 @@ import datetime
 import logging
 import subprocess
 import uuid
+import zoneinfo
 from enum import Enum
 from typing import Type
 
 import commons
+import pytz
 from litestar.response import Redirect
 from piccolo.apps.user.tables import BaseUser
 from piccolo.table import Table
@@ -26,6 +28,26 @@ from piccolo.columns import (
 from home.util.flash import alert
 
 log = logging.getLogger(__name__)
+
+
+class Profile(Table):
+    id = UUID(primary_key=True, default=uuid.uuid4, index=True)
+    target = ForeignKey(
+        BaseUser, unique=True, index=True, help_text="Who this profile is for"
+    )
+    timezone = Text(default="Pacific/Auckland")
+
+    def localize_dt(self, value: datetime.datetime):
+        """Given a UTC dt, normalize to the users profile"""
+
+        def tz_aware(dt):
+            return dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None
+
+        if not tz_aware(value):
+            raise ValueError("Application was given a timezone naive DT")
+
+        timezone = pytz.timezone(self.timezone)
+        return value.astimezone(timezone)
 
 
 class NotificationLevels(Enum):
@@ -282,3 +304,20 @@ class Vulnerability(Table):
     @property
     def uuid(self) -> str:
         return str(self.id)
+
+    def __eq__(self, other):
+        if not isinstance(other, Vulnerability):
+            return False
+
+        if (
+            self.title == other.title
+            and self.description == other.description
+            and self.code_file == other.code_file
+            and self.code_line == other.code_line
+            and self.found_by == other.found_by
+            and self.code_context == other.code_context
+        ):
+            # Happy enough by this point
+            return True
+
+        return False

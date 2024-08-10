@@ -1,68 +1,90 @@
 {% extends 'base.jinja' %}
 {% block content %}
     <div class="page">
-    {% include 'projects/header.jinja' %}
-      <div class="page-wrapper">
-        <div class="page-header d-print-none">
-          <div class="container-xl">
-            <div class="row g-2 align-items-center">
-              <div class="col">
-                <h2 class="page-title">
-                    {{ project.title }} Overview
-                </h2><br>
-                  <p>{{ project.description }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Page body -->
-        <div class="page-body">
-          <div class="container-xl">
-          {% include 'alerts.jinja' %}
-            <div class="row row-cards">
-              <div class="col-12">
-                <div class="card">
-                  <div class="table-responsive">
-                    <table
-		class="table table-vcenter card-table table-striped">
-                      <thead>
-                        <tr>
-                          <th>Title</th>
-                        <th>Description</th>
-                            <th class="w-1">Scanner</th>
-                        <th class="w-10">File</th>
-                          <th class="w-1"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      {% for vuln in vulnerabilities %}
-                        <tr>
-                          <td >{{ vuln.title }}</td>
-                            <td class="text-secondary" >
-                              {{ vuln.description }}
-                          </td>
-                          <td class="text-secondary" >
-                              {{ vuln.found_by|capitalize }}
-                          </td>
-
-                        <td class="text-secondary" >
-                            {{ vuln.code_file }}
-                          </td>
-                          <td>
-                            <a href="/projects/{{ project.uuid }}/vulnerabilities/{{ vuln.uuid }}">View</a>
-                          </td>
-                        </tr>
-                      {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
+        {% include 'projects/header.jinja' %}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                {{ project.title }} Overview
+                            </h2><br>
+                            <p>{{ project.description }}</p>
+                        </div>
+                    </div>
                 </div>
-              </div>
             </div>
-          </div>
-        </div>
 
-      </div>
+            <!-- Page body -->
+            <div class="page-body">
+                <div class="container-xl">
+                    {% include 'alerts.jinja' %}
+                    <div class="row row-cards row-deck">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">{{ project.title}}</h3>
+                                </div>
+                                {% if project.description %}
+                                	<div class="card-body">
+                                    {{ project.description }}
+                                </div>
+                                {% endif %}
+                                <div class="card-footer">
+                                    Created {{ profile.localize_dt(project.created_at)|fmt }} - {% if scan %}
+                                    	Shown scan run at {{ profile.localize_dt(scan.created_at)|fmt }}
+                                    {% else %}
+                                        No scan run
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <br>
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <table
+                                            class="table table-vcenter card-table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th class="w-1">Scanner</th>
+                                            <th class="w-10">File</th>
+                                            <th class="w-1"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for vuln in vulnerabilities %}
+                                            <tr>
+                                                <td>{{ vuln.title }}</td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.description }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.found_by|capitalize }}
+                                                </td>
+
+                                                <td class="text-secondary">
+                                                    {{ vuln.code_file }}
+                                                </td>
+                                                <td>
+                                                    <a href="/projects/{{ project.uuid }}/vulnerabilities/{{ vuln.uuid }}">View</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 {% endblock %}

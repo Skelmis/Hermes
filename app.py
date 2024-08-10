@@ -31,6 +31,7 @@ from home.controllers import (
 from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
 from home.exception_handlers import redirect_for_auth, RedirectForAuth
+from home.filters.datetime import format_datetime
 from home.piccolo_app import APP_CONFIG
 from home.tasks import keep_projects_updated
 from piccolo_conf import ASYNC_SCHEDULER
@@ -120,6 +121,7 @@ ENVIRONMENT = jinja2.Environment(
     ),
     autoescape=True,
 )
+ENVIRONMENT.filters["fmt"] = format_datetime
 template_config = TemplateConfig(
     directory="home/templates", engine=JinjaTemplateEngine.from_environment(ENVIRONMENT)
 )

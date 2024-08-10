@@ -24,7 +24,7 @@ from pydantic import BaseModel, ConfigDict
 from home.analysis import AnalysisInterface
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.middleware import EnsureAuth
-from home.tables import Project, Vulnerability, Scan
+from home.tables import Project, Vulnerability, Scan, Profile
 from home.util import get_csp
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, ASYNC_SCHEDULER
@@ -103,18 +103,36 @@ class ProjectsController(Controller):
         path="/{project_id:str}",
         include_in_schema=False,
     )
-    async def overview(self, request: Request, project_id: str) -> Template | Redirect:
+    async def overview(
+        self,
+        request: Request,
+        project_id: str,
+        scan_number: int = None,
+    ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
             return redirect
+
+        scan: Scan | None = None
+        scan_query = Scan.objects()
+        if scan_number:
+            scan = await scan_query.where(Scan.id == scan_number).first()
+
+        if scan_number is None or scan is None:
+            # Ensure we always have the latest
+            scan = await scan_query.order_by(Scan.number).first()
 
         csp, nonce = get_csp()
         return Template(
             "projects/overview.jinja",
             context={
+                "scan": scan,
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "overview",
+                "profile": await Profile.objects().get_or_create(
+                    Profile.target == request.user
+                ),
                 "projects": await APIProjectController.get_user_projects(request.user),
                 "vulnerabilities": await APIVulnerabilitiesController.get_project_vulnerabilities(
                     request.user, project

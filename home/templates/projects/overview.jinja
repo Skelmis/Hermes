@@ -32,8 +32,8 @@
                                 </div>
                                 {% endif %}
                                 <div class="card-footer">
-                                    Created {{ profile.localize_dt(project.created_at)|fmt }} - {% if scan %}
-                                    	Shown scan run at {{ profile.localize_dt(scan.created_at)|fmt }}
+                                    Created {{ profile.localize_dt(project.created_at)|fmt('full') }} - {% if scan %}
+                                    	Shown scan run at {{ profile.localize_dt(scan.created_at)|fmt('full') }}
                                     {% else %}
                                         No scan run
                                     {% endif %}

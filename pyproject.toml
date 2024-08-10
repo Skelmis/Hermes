@@ -8,12 +8,12 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-piccolo = {extras = ["all"], version = "^1.15.0"}
+piccolo = {extras = ["all"], version = "^1.16.0"}
 litestar = {extras = ["cryptography"], version = "^2.10.0"}
 uvicorn = "^0.30.3"
 piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
-orjson = "^3.10.6"
+orjson = "^3.10.7"
 skelmis-commons = "^1.2.1"
 apscheduler = {git = "https://github.com/agronholm/apscheduler.git"}
 pytz = "^2024.1"

@@ -42,6 +42,14 @@ class Project(Table):
     )
 
     @property
+    def short_description(self) -> str:
+        return (
+            f"{self.description[:47]}..."
+            if self.description and len(self.description) > 47
+            else self.description
+        )
+
+    @property
     def scanner_path(self) -> str:
         """The path input to a given scanner"""
         from piccolo_conf import BASE_PROJECT_DIR
@@ -59,7 +67,7 @@ class Project(Table):
     def redirect_to(self) -> Redirect:
         return Redirect(f"/projects/{self.uuid}")
 
-    async def get_associated_pa(self) -> ProjectAutomation | None:
+    async def get_associated_automation(self) -> ProjectAutomation | None:
         return (
             await ProjectAutomation.objects()
             .where(ProjectAutomation.project == self)
@@ -98,7 +106,7 @@ class Project(Table):
             )
             log.error("Git cloning died with error\n%s", commons.exception_as_string(e))
         else:
-            pa: ProjectAutomation | None = await self.get_associated_pa()
+            pa: ProjectAutomation | None = await self.get_associated_automation()
             if pa:
                 pa.last_pulled_at = datetime.datetime.now(tz=datetime.timezone.utc)
                 await pa.save()
@@ -156,7 +164,7 @@ class Project(Table):
                 level="success",
             )
 
-        pa: ProjectAutomation | None = await self.get_associated_pa()
+        pa: ProjectAutomation | None = await self.get_associated_automation()
         if pa:
             pa.last_scanned_at = datetime.datetime.now(tz=datetime.timezone.utc)
             await pa.save()

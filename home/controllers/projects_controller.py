@@ -130,9 +130,7 @@ class ProjectsController(Controller):
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "overview",
-                "profile": await Profile.objects().get_or_create(
-                    Profile.target == request.user
-                ),
+                "profile": await Profile.get_or_create(request.user),
                 "projects": await APIProjectController.get_user_projects(request.user),
                 "vulnerabilities": await APIVulnerabilitiesController.get_project_vulnerabilities(
                     request.user, project

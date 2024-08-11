@@ -2,8 +2,9 @@ from litestar import MediaType, Request, Response, get
 from litestar.response import Template
 
 from home.controllers.api import APIProjectController
+from home.filters.datetime import format_datetime
 from home.middleware import EnsureAuth
-from home.tables import Project
+from home.tables import Project, Profile, Vulnerability
 from home.util import get_csp
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES
@@ -13,14 +14,33 @@ from piccolo_conf import REGISTERED_INTERFACES
 async def home(request: Request) -> Template:
     csp, nonce = get_csp()
     alert(request, "Oh no! I've been flashed!", level="info")
-    alert(request, "Oh no! I've been flashed!", level="success")
-    alert(request, "Oh no! I've been flashed!", level="warning")
-    alert(request, "Oh no! I've been flashed!", level="error")
+    profile = await Profile.get_or_create(request.user)
+    projects = await APIProjectController.get_user_projects(request.user)
+    raw_data = []
+    for project in projects:
+        scan = await project.get_last_scan()
+        if scan:
+            latest_scan = format_datetime(profile.localize_dt(scan.scanned_at))
+            total_vulns = await Vulnerability.count().where(Vulnerability.scan == scan)
+            total_resolved_vulns = await Vulnerability.count().where(
+                Vulnerability.scan == scan
+            )
+
+        else:
+            latest_scan = "No scan run"
+            total_vulns = "N/A"
+            total_resolved_vulns = "N/A"
+
+        raw_data.append((project, latest_scan, total_vulns, total_resolved_vulns))
+
+    data = list(sorted(raw_data, key=lambda e: e[1], reverse=True))
+
     return Template(
         template_name="home.jinja",
         context={
             "csp_nonce": nonce,
-            "projects": await APIProjectController.get_user_projects(request.user),
+            "data_table": data,
+            "projects": projects,
         },
         headers={"content-security-policy": csp},
         media_type=MediaType.HTML,

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import uuid
 
@@ -13,6 +15,10 @@ class Profile(Table):
         BaseUser, unique=True, index=True, help_text="Who this profile is for"
     )
     timezone = Text(default="Pacific/Auckland")
+
+    @classmethod
+    async def get_or_create(cls, user: BaseUser) -> Profile:
+        return await Profile.objects().get_or_create(Profile.target == user)
 
     def localize_dt(self, value: datetime.datetime):
         """Given a UTC dt, normalize to the users profile"""

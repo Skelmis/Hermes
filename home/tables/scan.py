@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import typing
 import uuid
 
@@ -28,6 +29,10 @@ class Scan(Table):
         index=True,
         help_text="What number scan this is, in relation to a specific project",
     )
+
+    @property
+    def scanned_at(self) -> datetime.datetime:
+        return self.created_at
 
     @property
     def uuid(self) -> str:

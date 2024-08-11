@@ -8,6 +8,7 @@ from piccolo.columns import (
     UUID,
     ForeignKey,
     Text,
+    Timestamptz,
 )
 from piccolo.table import Table
 
@@ -28,6 +29,7 @@ class Notification(Table):
     target = ForeignKey(BaseUser, index=True, help_text="Who should be notified")
     message = Text(help_text="The text to show on next request")
     level = Text(help_text="The level to show it at", choices=NotificationLevels)
+    created_at = Timestamptz(help_text="When the scan was initially created")
 
     @property
     def uuid(self) -> str:

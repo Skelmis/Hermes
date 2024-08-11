@@ -17,6 +17,7 @@ orjson = "^3.10.7"
 skelmis-commons = "^1.2.1"
 apscheduler = {git = "https://github.com/agronholm/apscheduler.git"}
 pytz = "^2024.1"
+piccolo-api = "^1.4.1"
 
 
 [tool.poetry.group.dev.dependencies]

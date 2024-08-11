@@ -17,6 +17,7 @@ class ProjectAutomation(Table):
     project = ForeignKey(
         LazyTableReference("Project", app_name="home"),
         index=True,
+        unique=True,
         help_text="The project this automation is for",
     )
     scan_interval = Interval(

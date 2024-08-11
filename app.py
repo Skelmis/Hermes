@@ -20,8 +20,9 @@ from litestar.plugins.flash import FlashPlugin, FlashConfig
 from litestar.static_files import StaticFilesConfig
 from litestar.template import TemplateConfig
 from litestar.types import Receive, Scope, Send
+from piccolo.apps.user.tables import BaseUser
 from piccolo.engine import engine_finder
-from piccolo_admin.endpoints import create_admin
+from piccolo_admin.endpoints import create_admin, TableConfig, OrderBy
 
 from home.controllers import (
     LoginController,
@@ -39,6 +40,14 @@ from home.exception_handlers import (
 )
 from home.filters.datetime import format_datetime
 from home.piccolo_app import APP_CONFIG
+from home.tables import (
+    Profile,
+    Notification,
+    Project,
+    ProjectAutomation,
+    Scan,
+    Vulnerability,
+)
 from home.tasks import keep_projects_updated
 from piccolo_conf import ASYNC_SCHEDULER
 
@@ -49,8 +58,67 @@ IS_PRODUCTION = not bool(os.environ.get("DEBUG", False))
 # mounting Piccolo Admin
 @asgi("/admin/", is_mount=True)
 async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
+    user_tc = TableConfig(BaseUser, menu_group="User Management")
+    profile_tc = TableConfig(Profile, menu_group="User Management")
+    notification_tc = TableConfig(
+        Notification,
+        menu_group="User Management",
+        order_by=[
+            OrderBy(Notification.target),
+            OrderBy(Notification.created_at, ascending=False),
+        ],
+    )
+
+    project_tc = TableConfig(
+        Project,
+        menu_group="Project Management",
+        order_by=[OrderBy(Project.owner), OrderBy(Project.created_at, ascending=False)],
+        visible_columns=[
+            Project.id,
+            Project.owner,
+            Project.title,
+            Project.created_at,
+            Project.is_git_based,
+            Project.code_scanners,
+        ],
+    )
+    automation_tc = TableConfig(
+        ProjectAutomation,
+        menu_group="Project Management",
+        order_by=[
+            OrderBy(ProjectAutomation.project),
+        ],
+    )
+    scan_tc = TableConfig(
+        Scan,
+        menu_group="Project Management",
+        order_by=[
+            OrderBy(Scan.created_at, ascending=False),
+            OrderBy(Scan.number, ascending=False),
+        ],
+        visible_columns=[Scan.id, Scan.project, Scan.number, Scan.created_at],
+    )
+    vulnerability_tc = TableConfig(
+        Vulnerability,
+        menu_group="Project Management",
+        order_by=[OrderBy(Vulnerability.created_at, ascending=False)],
+        visible_columns=[
+            Vulnerability.id,
+            Vulnerability.title,
+            Vulnerability.created_at,
+        ],
+    )
+
     await create_admin(
-        tables=APP_CONFIG.table_classes,
+        tables=[
+            user_tc,
+            profile_tc,
+            notification_tc,
+            project_tc,
+            automation_tc,
+            scan_tc,
+            vulnerability_tc,
+        ],
         production=IS_PRODUCTION,
         allowed_hosts=["hermes.skelmis.co.nz"],
         sidebar_links={"Site root": "/"},

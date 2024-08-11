@@ -1,6 +1,6 @@
-from litestar import Response
-from litestar.response import Redirect
-from litestar.status_codes import HTTP_307_TEMPORARY_REDIRECT
+from litestar import Response, MediaType
+from litestar.exceptions import NotFoundException
+from litestar.response import Redirect, Template
 
 
 class RedirectForAuth(Exception):
@@ -13,3 +13,10 @@ class RedirectForAuth(Exception):
 def redirect_for_auth(_, exc: RedirectForAuth) -> Response[Redirect]:
     """Where auth is required, redirect for it"""
     return Redirect(f"/login?next_route={exc.next_route}")
+
+
+def handle_404(_, __: NotFoundException) -> Template:
+    return Template(
+        "errors/404.jinja",
+        media_type=MediaType.HTML,
+    )

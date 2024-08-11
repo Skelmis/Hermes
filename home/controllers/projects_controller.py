@@ -120,7 +120,7 @@ class ProjectsController(Controller):
 
         if scan_number is None or scan is None:
             # Ensure we always have the latest
-            scan = await scan_query.order_by(Scan.number).first()
+            scan = await scan_query.order_by(Scan.number, ascending=False).first()
 
         csp, nonce = get_csp()
         return Template(

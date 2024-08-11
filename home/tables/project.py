@@ -70,7 +70,7 @@ class Project(Table):
         return (
             await Scan.objects()
             .where(Scan.project == self)
-            .order_by(Scan.number)
+            .order_by(Scan.number, ascending=False)
             .first()
         )
 

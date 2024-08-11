@@ -11,7 +11,7 @@ from litestar.config.cors import CORSConfig
 from litestar.config.csrf import CSRFConfig
 from litestar.contrib.jinja import JinjaTemplateEngine
 from litestar.datastructures import ResponseHeader
-from litestar.exceptions import NotFoundException
+from litestar.exceptions import NotFoundException, ImproperlyConfiguredException
 from litestar.middleware.rate_limit import RateLimitConfig
 from litestar.middleware.session.client_side import CookieBackendConfig
 from litestar.openapi import OpenAPIConfig
@@ -31,7 +31,12 @@ from home.controllers import (
 )
 from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
-from home.exception_handlers import redirect_for_auth, RedirectForAuth, handle_404
+from home.exception_handlers import (
+    redirect_for_auth,
+    RedirectForAuth,
+    handle_404,
+    handle_500,
+)
 from home.filters.datetime import format_datetime
 from home.piccolo_app import APP_CONFIG
 from home.tasks import keep_projects_updated
@@ -195,5 +200,6 @@ app = Litestar(
     exception_handlers={
         RedirectForAuth: redirect_for_auth,
         NotFoundException: handle_404,
+        ImproperlyConfiguredException: handle_500,
     },
 )

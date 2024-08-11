@@ -20,3 +20,10 @@ def handle_404(_, __: NotFoundException) -> Template:
         "errors/404.jinja",
         media_type=MediaType.HTML,
     )
+
+
+def handle_500(_, __: NotFoundException) -> Template:
+    return Template(
+        "errors/500.jinja",
+        media_type=MediaType.HTML,
+    )

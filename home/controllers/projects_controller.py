@@ -114,7 +114,7 @@ class ProjectsController(Controller):
             return redirect
 
         scan: Scan | None = None
-        scan_query = Scan.objects()
+        scan_query = Scan.objects().where(Scan.project == project)
         if scan_number:
             scan = await scan_query.where(Scan.id == scan_number).first()
 

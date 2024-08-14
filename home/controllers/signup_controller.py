@@ -83,7 +83,9 @@ class SignUpController(Controller):
             )
 
         try:
-            await BaseUser.create_user(username, password, email=email, active=True)
+            user: BaseUser = await BaseUser.create_user(
+                username, password, email=email, active=True
+            )
         except ValueError as err:
             alert(request, str(err), level="error")
             return Template(
@@ -91,9 +93,21 @@ class SignUpController(Controller):
                 media_type=MediaType.HTML,
             )
 
-        alert(
-            request,
-            "Thanks for creating an account, you may now log in.",
-            level="success",
-        )
+        if await BaseUser.count() == 1:
+            alert(
+                request,
+                "Thanks for creating an account, you may now log in. "
+                "As you are the first user on the system, I have also made you an admin user.",
+                level="success",
+            )
+            user.admin = True
+            await user.save()
+
+        else:
+            alert(
+                request,
+                "Thanks for creating an account, you may now log in.",
+                level="success",
+            )
+
         return Redirect(request.url_for("login"))

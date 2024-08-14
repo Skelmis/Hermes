@@ -8,20 +8,17 @@ import zipfile
 from datetime import timedelta, datetime
 from functools import partial
 from pathlib import Path
-from typing import Annotated, Type
+from typing import Annotated
 
 import commons
 from apscheduler.triggers.date import DateTrigger
-from commons import async_util
 from litestar import Controller, get, Request, MediaType, post
-from litestar.background_tasks import BackgroundTask
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.response import Template, Redirect
 from pydantic import BaseModel, ConfigDict
 
-from home.analysis import AnalysisInterface
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile

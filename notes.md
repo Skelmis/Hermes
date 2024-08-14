@@ -11,9 +11,6 @@ Provide the ability to add configuration options to scanners per config. I.e. ba
 no issues found instead of show blank table
 
 Add more tables for status stuff as well such as counters per vuln status n stuff
-Add a state for vulnerabilities as well as a notes field. These fields only show in the viewer, however can also be used as a filter within the overview page
-
-Also add metadata field to dump extra fields in
 
 ### Project vuln viewer
 

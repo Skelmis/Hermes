@@ -105,6 +105,8 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
         visible_columns=[
             Vulnerability.id,
             Vulnerability.title,
+            Vulnerability.state,
+            Vulnerability.exploitability,
             Vulnerability.created_at,
         ],
     )

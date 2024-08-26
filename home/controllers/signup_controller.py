@@ -2,6 +2,7 @@ import re
 import typing as t
 from hmac import compare_digest
 
+from commons.hibp import has_password_been_pwned
 from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
 from litestar.response import Template, Redirect
@@ -9,7 +10,7 @@ from piccolo.apps.user.tables import BaseUser
 
 from home.util import get_csp
 from home.util.flash import alert
-from home.util.pwned_password_check import has_password_been_pwned
+
 
 SIMPLE_EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 

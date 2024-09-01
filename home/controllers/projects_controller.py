@@ -89,6 +89,30 @@ class ProjectsController(Controller):
 
         return vuln, None
 
+    @classmethod
+    async def get_next_vulnerability(
+        cls, request: Request, project: Project, current_vulnerability: Vulnerability
+    ) -> str:
+        """Fetch the 'next' vulnerability id to review"""
+        # Given the use of UUID's this is so cooked hahaha
+        vulns = (
+            await Vulnerability.objects()
+            .order_by(Vulnerability.id)
+            .where(Vulnerability.scan == current_vulnerability.scan)  # type: ignore
+            .where(Vulnerability.project.owner == request.user)  # type: ignore
+        )
+        if not vulns:
+            # Fuck knows what went wrong
+            return current_vulnerability.id
+
+        for i, vuln in enumerate(vulns):
+            if vuln.id == current_vulnerability.id:
+                if len(vulns) - 1 == i:
+                    # Its last vuln so loop around
+                    return vulns[0].id
+                else:
+                    return vulns[i + 1].id
+
     @get(
         "/",
         include_in_schema=False,
@@ -165,10 +189,13 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
+        next_vuln_id = await self.get_next_vulnerability(request, project, vuln)
+
         csp, nonce = get_csp()
         return Template(
             "projects/vulnerability.jinja",
             context={
+                "next_vuln_id": next_vuln_id,
                 "vuln": vuln,
                 "csp_nonce": nonce,
                 "project": project,

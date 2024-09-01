@@ -137,11 +137,16 @@ class ProjectsController(Controller):
         scan: Scan | None = None
         scan_query = Scan.objects().where(Scan.project == project)
         if scan_number:
-            scan = await scan_query.where(Scan.id == scan_number).first()
+            scan = await scan_query.where(Scan.number == scan_number).first()
 
         if scan_number is None or scan is None:
             # Ensure we always have the latest
             scan = await scan_query.order_by(Scan.number, ascending=False).first()
+
+        vulnerabilities = await APIVulnerabilitiesController.get_scan_vulnerabilities(
+            request.user, scan
+        )
+        total_scans = (await APIProjectController.get_total_scans(project)) + 1
 
         csp, nonce = get_csp()
         return Template(
@@ -151,11 +156,10 @@ class ProjectsController(Controller):
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "overview",
+                "total_scans": total_scans,
                 "profile": await Profile.get_or_create(request.user),
                 "projects": await APIProjectController.get_user_projects(request.user),
-                "vulnerabilities": await APIVulnerabilitiesController.get_project_vulnerabilities(
-                    request.user, project
-                ),
+                "vulnerabilities": vulnerabilities,
             },
             media_type=MediaType.HTML,
             status_code=200,

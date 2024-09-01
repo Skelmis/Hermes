@@ -11,3 +11,8 @@ Provide the ability to add configuration options to scanners per config. I.e. ba
 no issues found instead of show blank table
 
 Add more tables for status stuff as well such as counters per vuln status n stuff
+
+### Vulnerability overview
+Edit state
+edit Exploitability
+Edit notes

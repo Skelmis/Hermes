@@ -35,6 +35,10 @@ class APIProjectController(Controller):
             .order_by(Project.id, ascending=False)
         )
 
+    @classmethod
+    async def get_total_scans(cls, project: Project):
+        return await Scan.count().where(Scan.project == project)
+
     @get(tags=["Projects API"])
     async def projects(self, request: Request) -> t.List[ProjectModelOut]:
         return await self.get_user_projects(request.user)

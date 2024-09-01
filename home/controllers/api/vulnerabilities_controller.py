@@ -6,7 +6,7 @@ from piccolo.apps.user.tables import BaseUser
 from piccolo.utils.pydantic import create_pydantic_model
 
 from home.middleware import EnsureAuth
-from home.tables import Vulnerability, Project
+from home.tables import Vulnerability, Project, Scan
 
 VulnModelIn: t.Any = create_pydantic_model(
     table=Vulnerability,
@@ -33,5 +33,16 @@ class APIVulnerabilitiesController(Controller):
             Vulnerability.objects()
             .where(Vulnerability.scan.project.owner == user)
             .where(Vulnerability.scan.project == project)
+            .order_by(Vulnerability.id, ascending=False)
+        )
+
+    @classmethod
+    async def get_scan_vulnerabilities(
+        cls, user: BaseUser, scan: Scan
+    ) -> t.List[Vulnerability]:
+        return await (
+            Vulnerability.objects()
+            .where(Vulnerability.scan.project.owner == user)
+            .where(Vulnerability.scan == scan)
             .order_by(Vulnerability.id, ascending=False)
         )

@@ -68,9 +68,7 @@ async def forwards():
         migration_id=ID, app_name="home", description=DESCRIPTION
     )
 
-    manager.add_table(
-        class_name="Scan", tablename="scan", schema=None, columns=None
-    )
+    manager.add_table(class_name="Scan", tablename="scan", schema=None, columns=None)
 
     manager.add_table(
         class_name="Vulnerability",

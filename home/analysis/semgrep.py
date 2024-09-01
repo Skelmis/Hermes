@@ -84,6 +84,7 @@ class Semgrep(AnalysisInterface):
                 impact=metadata["impact"],
                 likelihood=metadata["likelihood"],
                 found_by=self.id,
+                extra_metadata=issue,
             )
             await vuln.save()
             vulns.append(vuln)

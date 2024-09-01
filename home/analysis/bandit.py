@@ -107,6 +107,7 @@ class Bandit(AnalysisInterface):
                 severity=issue["issue_severity"],
                 confidence=issue["issue_confidence"],
                 found_by=self.id,
+                extra_metadata=issue,
             )
             await vuln.save()
             vulns.append(vuln)

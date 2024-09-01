@@ -91,7 +91,7 @@ class ProjectsController(Controller):
 
     @classmethod
     async def get_next_vulnerability(
-        cls, request: Request, project: Project, current_vulnerability: Vulnerability
+        cls, request: Request, current_vulnerability: Vulnerability
     ) -> str:
         """Fetch the 'next' vulnerability id to review"""
         # Given the use of UUID's this is so cooked hahaha
@@ -189,7 +189,7 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        next_vuln_id = await self.get_next_vulnerability(request, project, vuln)
+        next_vuln_id = await self.get_next_vulnerability(request, vuln)
 
         csp, nonce = get_csp()
         return Template(

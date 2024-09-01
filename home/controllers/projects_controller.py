@@ -165,14 +165,15 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        alert(request, "TODO")
         csp, nonce = get_csp()
         return Template(
-            "projects/overview.jinja",
+            "projects/vulnerability.jinja",
             context={
+                "vuln": vuln,
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "vulnerabilities",
+                "profile": await Profile.get_or_create(request.user),
                 "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,

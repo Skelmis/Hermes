@@ -38,6 +38,7 @@ from home.exception_handlers import (
     handle_404,
     handle_500,
 )
+from home.filters import pretty_json
 from home.filters.datetime import format_datetime
 from home.piccolo_app import APP_CONFIG
 from home.tables import (
@@ -198,6 +199,7 @@ ENVIRONMENT = jinja2.Environment(
     autoescape=True,
 )
 ENVIRONMENT.filters["fmt"] = format_datetime
+ENVIRONMENT.filters["pretty_json"] = pretty_json
 template_config = TemplateConfig(
     directory="home/templates", engine=JinjaTemplateEngine.from_environment(ENVIRONMENT)
 )

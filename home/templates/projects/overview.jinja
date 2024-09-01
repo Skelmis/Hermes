@@ -68,6 +68,8 @@
                                             <th>Title</th>
                                             <th>Description</th>
                                             <th class="w-1">Scanner</th>
+                                            <th class="w-1">State</th>
+                                            <th class="w-1">Exploitability</th>
                                             <th class="w-10">File</th>
                                             <th class="w-1"></th>
                                         </tr>
@@ -82,7 +84,12 @@
                                                 <td class="text-secondary">
                                                     {{ vuln.found_by|capitalize }}
                                                 </td>
-
+                                                <td class="text-secondary">
+                                                    {{ vuln.state|capitalize }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.exploitability|capitalize }}
+                                                </td>
                                                 <td class="text-secondary">
                                                     {{ vuln.code_file }}
                                                 </td>

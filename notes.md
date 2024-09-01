@@ -12,6 +12,8 @@ no issues found instead of show blank table
 
 Add more tables for status stuff as well such as counters per vuln status n stuff
 
+Add multi select for filtering by vuln states / exploitability
+
 ### Vulnerability overview
 Edit state
 edit Exploitability

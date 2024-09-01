@@ -108,6 +108,7 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
             Vulnerability.title,
             Vulnerability.state,
             Vulnerability.exploitability,
+            Vulnerability.found_by,
             Vulnerability.created_at,
         ],
     )

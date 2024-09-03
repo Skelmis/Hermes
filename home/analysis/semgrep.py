@@ -7,6 +7,12 @@ from home.analysis import AnalysisInterface
 from home.tables import Vulnerability, Scan
 
 
+class SemgrepStart(TypedDict):
+    col: int
+    line: int
+    offset: int
+
+
 class SemgrepMetadata(TypedDict):
     confidence: str
     impact: str
@@ -25,6 +31,7 @@ class SemgrepResult(TypedDict):
     check_id: str
     path: str
     extra: SemgrepResultExtra
+    start: SemgrepStart
 
 
 class SemgrepOutput(TypedDict):
@@ -77,7 +84,7 @@ class Semgrep(AnalysisInterface):
                 title=issue["check_id"],
                 description=issue["extra"]["message"],
                 code_file=self.project.normalize_finding_path(issue["path"]),
-                code_line="TODO",
+                code_line=issue["start"]["line"],
                 code_context=extra["lines"],
                 severity=extra["severity"],
                 confidence=metadata["confidence"],

@@ -74,17 +74,7 @@ class Bandit(AnalysisInterface):
 
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         scan = await self.get_scan(scan)
-        command: list[str] = self.generate_command()
-        try:
-            result_str: bytes = subprocess.check_output(
-                command,
-                stderr=subprocess.STDOUT,
-            )
-        except subprocess.CalledProcessError as e:
-            if e.returncode != 1:
-                raise e
-            # Lol this is likely fine
-            result_str = e.stdout
+        result_str = await self.run_scanner()
         result: BanditOutput = orjson.loads(result_str)
 
         vulns: list[Vulnerability] = []

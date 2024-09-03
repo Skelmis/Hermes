@@ -59,12 +59,7 @@ class Semgrep(AnalysisInterface):
 
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         scan = await self.get_scan(scan)
-        command: list[str] = self.generate_command()
-        result_str: bytes = subprocess.check_output(
-            command,
-            stderr=subprocess.STDOUT,
-        )
-
+        result_str = await self.run_scanner()
         result: SemgrepOutput = orjson.loads(result_str)
         vulns: list[Vulnerability] = []
         for issue in result["results"]:

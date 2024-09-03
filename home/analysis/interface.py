@@ -1,4 +1,8 @@
 import abc
+import subprocess
+from functools import partial
+
+import anyio.to_process
 
 from home.tables import Vulnerability, Project, Scan
 
@@ -16,6 +20,16 @@ class AnalysisInterface(abc.ABC):
             await scan.save()
 
         return scan
+
+    async def run_scanner(self) -> bytes:
+        try:
+            result_str = await anyio.run_process(self.generate_command())
+        except subprocess.CalledProcessError as e:
+            if e.returncode != 1:
+                raise e
+            # Lol this is likely fine
+            result_str = e.stdout
+        return result_str
 
     @classmethod
     @property
@@ -42,7 +56,7 @@ class AnalysisInterface(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    async def generate_command(self) -> list[str]:
+    def generate_command(self) -> list[str]:
         """Generate the command to run on the os"""
         raise NotImplementedError
 

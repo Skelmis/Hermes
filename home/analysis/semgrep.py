@@ -58,14 +58,7 @@ class Semgrep(AnalysisInterface):
         ]
 
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
-        if scan is None:
-            scan = Scan(
-                project=self.project,
-                number=await Scan.get_next_number(self.project),
-            )
-            await scan.save()
-
-        await scan.save()
+        scan = await self.get_scan(scan)
         command: list[str] = self.generate_command()
         result_str: bytes = subprocess.check_output(
             command,

@@ -7,6 +7,16 @@ class AnalysisInterface(abc.ABC):
     def __init__(self, project: Project):
         self.project: Project = project
 
+    async def get_scan(self, scan: Scan | None) -> Scan:
+        if scan is None:
+            scan = Scan(
+                project=self.project,
+                number=await Scan.get_next_number(self.project),
+            )
+            await scan.save()
+
+        return scan
+
     @classmethod
     @property
     @abc.abstractmethod

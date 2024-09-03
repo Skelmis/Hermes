@@ -1,0 +1,732 @@
+{
+	"Golang errors": {},
+	"Issues": [
+		{
+			"severity": "HIGH",
+			"confidence": "MEDIUM",
+			"cwe": {
+				"id": "338",
+				"url": "https://cwe.mitre.org/data/definitions/338.html"
+			},
+			"rule_id": "G404",
+			"details": "Use of weak random number generator (math/rand or math/rand/v2 instead of crypto/rand)",
+			"file": "/home/skelmis/tmp/listmonk/internal/messenger/email/email.go",
+			"code": "105: \tif ln \u003e 1 {\n106: \t\tsrv = e.servers[rand.Intn(ln)]\n107: \t} else {\n",
+			"line": "106",
+			"column": "19",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "HIGH",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "295",
+				"url": "https://cwe.mitre.org/data/definitions/295.html"
+			},
+			"rule_id": "G402",
+			"details": "TLS MinVersion too low.",
+			"file": "/home/skelmis/tmp/listmonk/internal/messenger/email/email.go",
+			"code": "66: \t\tif s.TLSType != \"none\" {\n67: \t\t\ts.TLSConfig = \u0026tls.Config{}\n68: \t\t\tif s.TLSSkipVerify {\n",
+			"line": "67",
+			"column": "19",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "326",
+				"url": "https://cwe.mitre.org/data/definitions/326.html"
+			},
+			"rule_id": "G401",
+			"details": "Use of weak cryptographic primitive",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "422: \n423: \tb := md5.Sum([]byte(time.Now().String()))\n424: \tc.AssetVersion = fmt.Sprintf(\"%x\", b)[0:10]\n",
+			"line": "423",
+			"column": "7",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "79",
+				"url": "https://cwe.mitre.org/data/definitions/79.html"
+			},
+			"rule_id": "G203",
+			"details": "The used method does not auto-escape HTML. This can potentially lead to 'Cross-site Scripting' vulnerabilities, in case the attacker controls the input.",
+			"file": "/home/skelmis/tmp/listmonk/internal/manager/manager.go",
+			"code": "621: \t\t\"Safe\": func(safeHTML string) template.HTML {\n622: \t\t\treturn template.HTML(safeHTML)\n623: \t\t},\n",
+			"line": "622",
+			"column": "11",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "79",
+				"url": "https://cwe.mitre.org/data/definitions/79.html"
+			},
+			"rule_id": "G203",
+			"details": "The used method does not auto-escape HTML. This can potentially lead to 'Cross-site Scripting' vulnerabilities, in case the attacker controls the input.",
+			"file": "/home/skelmis/tmp/listmonk/internal/manager/manager.go",
+			"code": "336: \n337: \t\t\treturn template.HTML(fmt.Sprintf(`\u003cimg src=\"%s\" alt=\"\" /\u003e`,\n338: \t\t\t\tfmt.Sprintf(m.cfg.ViewTrackURL, msg.Campaign.UUID, subUUID)))\n339: \t\t},\n",
+			"line": "337-338",
+			"column": "11",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "79",
+				"url": "https://cwe.mitre.org/data/definitions/79.html"
+			},
+			"rule_id": "G203",
+			"details": "The used method does not auto-escape HTML. This can potentially lead to 'Cross-site Scripting' vulnerabilities, in case the attacker controls the input.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "892: \t\t\"Safe\": func(safeHTML string) template.HTML {\n893: \t\t\treturn template.HTML(safeHTML)\n894: \t\t},\n",
+			"line": "893",
+			"column": "11",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "79",
+				"url": "https://cwe.mitre.org/data/definitions/79.html"
+			},
+			"rule_id": "G203",
+			"details": "The used method does not auto-escape HTML. This can potentially lead to 'Cross-site Scripting' vulnerabilities, in case the attacker controls the input.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/campaigns.go",
+			"code": "633: \t// optinURLFunc := template.URL(\"{{ OptinURL }}?\" + listIDs.Encode())\n634: \toptinURLAttr := template.HTMLAttr(fmt.Sprintf(`href=\"{{ OptinURL }}%s\"`, listIDs.Encode()))\n635: \n",
+			"line": "634",
+			"column": "18",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "LOW",
+			"cwe": {
+				"id": "79",
+				"url": "https://cwe.mitre.org/data/definitions/79.html"
+			},
+			"rule_id": "G203",
+			"details": "The used method does not auto-escape HTML. This can potentially lead to 'Cross-site Scripting' vulnerabilities, in case the attacker controls the input.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/archive.go",
+			"code": "116: \t\tPagination  template.HTML\n117: \t}{title, title, out, pg.TotalPages, template.HTML(pg.HTML(\"?page=%d\"))})\n118: }\n",
+			"line": "117",
+			"column": "38",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "78",
+				"url": "https://cwe.mitre.org/data/definitions/78.html"
+			},
+			"rule_id": "G204",
+			"details": "Subprocess launched with a potential tainted input or cmd arguments",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "836: \trespawn := func() {\n837: \t\tif err := syscall.Exec(os.Args[0], os.Args, os.Environ()); err != nil {\n838: \t\t\tlo.Fatalf(\"error spawning process: %v\", err)\n",
+			"line": "837",
+			"column": "13",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "452: \n453: \tf, err := os.Open(srcPath)\n454: \tif err != nil {\n",
+			"line": "453",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "408: \n409: \t\tout, err := os.OpenFile(dir+\"/\"+fName, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())\n410: \t\tif err != nil {\n",
+			"line": "409",
+			"column": "15",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "22",
+				"url": "https://cwe.mitre.org/data/definitions/22.html"
+			},
+			"rule_id": "G304",
+			"details": "Potential file inclusion via variable",
+			"file": "/home/skelmis/tmp/listmonk/internal/media/providers/filesystem/filesystem.go",
+			"code": "36: \tdir := getDir(c.opts.UploadPath)\n37: \to, err := os.OpenFile(filepath.Join(dir, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0664)\n38: \tif err != nil {\n",
+			"line": "37",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "MEDIUM",
+			"cwe": {
+				"id": "88",
+				"url": "https://cwe.mitre.org/data/definitions/88.html"
+			},
+			"rule_id": "G107",
+			"details": "Potential HTTP request made with variable url",
+			"file": "/home/skelmis/tmp/listmonk/internal/bounce/webhooks/ses.go",
+			"code": "231: \t// Fetch the certificate.\n232: \tresp, err := http.Get(certURL)\n233: \tif err != nil {\n",
+			"line": "232",
+			"column": "15",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "MEDIUM",
+			"cwe": {
+				"id": "88",
+				"url": "https://cwe.mitre.org/data/definitions/88.html"
+			},
+			"rule_id": "G107",
+			"details": "Potential HTTP request made with variable url",
+			"file": "/home/skelmis/tmp/listmonk/internal/bounce/webhooks/ses.go",
+			"code": "94: \n95: \tresp, err := http.Get(u)\n96: \tif err != nil {\n",
+			"line": "95",
+			"column": "15",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "MEDIUM",
+			"cwe": {
+				"id": "409",
+				"url": "https://cwe.mitre.org/data/definitions/409.html"
+			},
+			"rule_id": "G110",
+			"details": "Potential DoS vulnerability via decompression bomb",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "415: \n416: \t\tif _, err := io.Copy(out, src); err != nil {\n417: \t\t\ts.log.Printf(\"error extracting to '%s/%s': '%v'\", dir, fName, err)\n",
+			"line": "416",
+			"column": "16",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G302",
+			"details": "Expect file permissions to be 0600 or less",
+			"file": "/home/skelmis/tmp/listmonk/internal/media/providers/filesystem/filesystem.go",
+			"code": "36: \tdir := getDir(c.opts.UploadPath)\n37: \to, err := os.OpenFile(filepath.Join(dir, filename), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0664)\n38: \tif err != nil {\n",
+			"line": "37",
+			"column": "12",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "276",
+				"url": "https://cwe.mitre.org/data/definitions/276.html"
+			},
+			"rule_id": "G306",
+			"details": "Expect WriteFile permissions to be 0600 or less",
+			"file": "/home/skelmis/tmp/listmonk/cmd/install.go",
+			"code": "226: \n227: \treturn os.WriteFile(path, b, 0644)\n228: }\n",
+			"line": "227",
+			"column": "9",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "MEDIUM",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "327",
+				"url": "https://cwe.mitre.org/data/definitions/327.html"
+			},
+			"rule_id": "G501",
+			"details": "Blocklisted import crypto/md5: weak cryptographic primitive",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "4: \t\"bytes\"\n5: \t\"crypto/md5\"\n6: \t\"encoding/json\"\n",
+			"line": "5",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "348: \t}\n349: \ts.im.sendNotif(StatusFinished)\n350: }\n",
+			"line": "349",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "338: \t\ts.log.Printf(\"error committing to DB: %v\", err)\n339: \t\ts.im.sendNotif(StatusFailed)\n340: \t\treturn\n",
+			"line": "339",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "335: \tif err := tx.Commit(); err != nil {\n336: \t\ttx.Rollback()\n337: \t\ts.im.setStatus(StatusFailed)\n",
+			"line": "336",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "329: \t\t}\n330: \t\ts.im.sendNotif(StatusFinished)\n331: \t\treturn\n",
+			"line": "330",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "311: \t\t\tif err := tx.Commit(); err != nil {\n312: \t\t\t\ttx.Rollback()\n313: \t\t\t\ts.log.Printf(\"error committing to DB: %v\", err)\n",
+			"line": "312",
+			"column": "5",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "302: \t\t\ts.log.Printf(\"error executing insert: %v\", err)\n303: \t\t\ttx.Rollback()\n304: \t\t\tbreak\n",
+			"line": "303",
+			"column": "4",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/subimporter/importer.go",
+			"code": "291: \t\t\ts.log.Printf(\"error generating UUID: %v\", err)\n292: \t\t\ttx.Rollback()\n293: \t\t\tbreak\n",
+			"line": "292",
+			"column": "4",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/messenger/postback/postback.go",
+			"code": "201: \t\tio.Copy(io.Discard, r.Body)\n202: \t\tr.Body.Close()\n203: \t}()\n",
+			"line": "202",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/messenger/postback/postback.go",
+			"code": "200: \t\t// Drain and close the body to let the Transport reuse the connection\n201: \t\tio.Copy(io.Discard, r.Body)\n202: \t\tr.Body.Close()\n",
+			"line": "201",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/manager/pipe.go",
+			"code": "29: \tif _, ok := m.messengers[c.Messenger]; !ok {\n30: \t\tm.store.UpdateCampaignStatus(c.ID, models.CampaignStatusCancelled)\n31: \t\treturn nil, fmt.Errorf(\"unknown messenger %s on campaign %s\", c.Messenger, c.Name)\n",
+			"line": "30",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/events/events.go",
+			"code": "89: \n90: \tw.ev.Publish(Event{\n91: \t\tType:    TypeError,\n92: \t\tMessage: string(b),\n93: \t})\n94: \n",
+			"line": "90-93",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/internal/captcha/captcha.go",
+			"code": "66: \tvar r captchaResp\n67: \tif json.Unmarshal(body, \u0026r); err != nil {\n68: \t\treturn err, true\n",
+			"line": "67",
+			"column": "5",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/updates.go",
+			"code": "55: \t\t}\n56: \t\tresp.Body.Close()\n57: \n",
+			"line": "56",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/subscribers.go",
+			"code": "157: \th.Set(\"Cache-Control\", \"no-cache\")\n158: \twr.Write([]string{\"uuid\", \"email\", \"name\", \"attributes\", \"status\", \"created_at\", \"updated_at\"})\n159: \n",
+			"line": "158",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/media.go",
+			"code": "188: \tapp.media.Delete(fname)\n189: \tapp.media.Delete(thumbPrefix + fname)\n190: \n",
+			"line": "189",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/media.go",
+			"code": "187: \n188: \tapp.media.Delete(fname)\n189: \tapp.media.Delete(thumbPrefix + fname)\n",
+			"line": "188",
+			"column": "2",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/media.go",
+			"code": "90: \t\t\tif thumbfName != \"\" {\n91: \t\t\t\tapp.media.Delete(thumbfName)\n92: \t\t\t}\n",
+			"line": "91",
+			"column": "5",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/media.go",
+			"code": "87: \t\tif cleanUp {\n88: \t\t\tapp.media.Delete(fName)\n89: \n",
+			"line": "88",
+			"column": "4",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/main.go",
+			"code": "274: \t\tfor _, m := range app.messengers {\n275: \t\t\tm.Close()\n276: \t\t}\n",
+			"line": "275",
+			"column": "4",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/main.go",
+			"code": "270: \t\t// Close the DB pool.\n271: \t\tapp.db.DB.Close()\n272: \n",
+			"line": "271",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/main.go",
+			"code": "264: \t\tdefer cancel()\n265: \t\tsrv.Shutdown(ctx)\n266: \n",
+			"line": "265",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/main.go",
+			"code": "230: \tfor _, m := range app.messengers {\n231: \t\tapp.manager.AddMessenger(m)\n232: \t}\n",
+			"line": "231",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "612: \n613: \t\tko.Unmarshal(\"upload.filesystem\", \u0026o)\n614: \t\to.RootURL = ko.String(\"app.root_url\")\n",
+			"line": "613",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "600: \t\tvar o s3.Opt\n601: \t\tko.Unmarshal(\"upload.s3\", \u0026o)\n602: \n",
+			"line": "601",
+			"column": "3",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "512: \n513: \t\t\t\tapp.sendNotification(app.constants.NotifyEmails, subject, notifTplImport, data)\n514: \t\t\t\treturn nil\n",
+			"line": "513",
+			"column": "5",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/init.go",
+			"code": "510: \t\t\t\t// Refresh cached subscriber counts and stats.\n511: \t\t\t\tcore.RefreshMatViews(true)\n512: \n",
+			"line": "511",
+			"column": "5",
+			"nosec": false,
+			"suppressions": null
+		},
+		{
+			"severity": "LOW",
+			"confidence": "HIGH",
+			"cwe": {
+				"id": "703",
+				"url": "https://cwe.mitre.org/data/definitions/703.html"
+			},
+			"rule_id": "G104",
+			"details": "Errors unhandled.",
+			"file": "/home/skelmis/tmp/listmonk/cmd/events.go",
+			"code": "40: \n41: \t\t\tc.Response().Write([]byte(fmt.Sprintf(\"retry: 3000\\ndata: %s\\n\\n\", b)))\n42: \t\t\tc.Response().Flush()\n",
+			"line": "41",
+			"column": "4",
+			"nosec": false,
+			"suppressions": null
+		}
+	],
+	"Stats": {
+		"files": 69,
+		"lines": 14308,
+		"nosec": 0,
+		"found": 45
+	},
+	"GosecVersion": "v2.20.0"
+}

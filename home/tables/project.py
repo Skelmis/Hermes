@@ -58,7 +58,13 @@ class Project(Table):
 
     def normalize_finding_path(self, file_path: str) -> str:
         """Remove the metadata paths from findings"""
-        return file_path.removeprefix(f"{self.scanner_path}/")
+        output = file_path.removeprefix(f"{self.scanner_path}/")
+        if self.scanner_path in output:
+            # Maybe its absolute path'd it
+            _, output = file_path.split(self.scanner_path)
+            output = output.removeprefix("/")
+
+        return output
 
     @property
     def uuid(self) -> str:

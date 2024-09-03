@@ -102,6 +102,7 @@ class Project(Table):
         fetch = ["git", "fetch"]
         pull = ["git", "pull"]
         try:
+            # TODO Move these to anyio
             subprocess.check_output(fetch, cwd=self.scanner_path)
             subprocess.check_output(pull, cwd=self.scanner_path)
         except Exception as e:
@@ -154,7 +155,15 @@ class Project(Table):
                 continue
 
             instance = interface(self)
-            await instance.scan(scan)
+            try:
+                await instance.scan(scan)
+            except:
+                await Notification.create_alert(
+                    request.user,
+                    f"Interface {interface_id} failed to run",
+                    level="error",
+                )
+                fail_count += 1
 
         if fail_count == len(self.code_scanners):
             await Notification.create_alert(

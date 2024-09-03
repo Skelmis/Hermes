@@ -72,7 +72,7 @@ class Semgrep(AnalysisInterface):
                 title=issue["check_id"],
                 description=issue["extra"]["message"],
                 code_file=self.project.normalize_finding_path(issue["path"]),
-                code_line=issue["start"]["line"],
+                code_line=str(issue["start"]["line"]),
                 code_context=extra["lines"],
                 severity=extra["severity"],
                 confidence=metadata["confidence"],

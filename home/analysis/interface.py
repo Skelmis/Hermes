@@ -24,6 +24,7 @@ class AnalysisInterface(abc.ABC):
     async def run_scanner(self) -> bytes:
         try:
             result_str = await anyio.run_process(self.generate_command())
+            result_str = result_str.stdout
         except subprocess.CalledProcessError as e:
             if e.returncode != 1:
                 raise e

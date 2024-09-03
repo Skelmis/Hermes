@@ -10,6 +10,7 @@ from functools import partial
 from pathlib import Path
 from typing import Annotated
 
+import anyio
 import commons
 from apscheduler.triggers.date import DateTrigger
 from litestar import Controller, get, Request, MediaType, post
@@ -332,7 +333,7 @@ class ProjectsController(Controller):
             # Git clone it
             cmd = ["git", "clone", "--recursive", git, path_to_stuff]
             try:
-                output = subprocess.check_output(cmd)
+                await anyio.run_process(cmd)
             except Exception as e:
                 alert(request, "Something went wrong, check the logs", level="error")
                 log.error(

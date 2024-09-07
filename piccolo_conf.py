@@ -43,3 +43,6 @@ BASE_PROJECT_DIR: Path = Path(".projects")
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()
+
+ALLOW_REGISTRATION: bool = True
+"""Whether users should be allowed to create new accounts."""

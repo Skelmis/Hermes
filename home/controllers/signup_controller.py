@@ -10,7 +10,7 @@ from piccolo.apps.user.tables import BaseUser
 
 from home.util import get_csp
 from home.util.flash import alert
-
+from piccolo_conf import ALLOW_REGISTRATION
 
 SIMPLE_EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 
@@ -19,7 +19,14 @@ class SignUpController(Controller):
     path = "/signup"
 
     @get(include_in_schema=False, name="signup")
-    async def get(self) -> Template:
+    async def get(self, request: Request) -> Template:
+        if not ALLOW_REGISTRATION:
+            alert(
+                request,
+                "Sign ups are disabled. This will do nothing.",
+                level="warning",
+            )
+
         csp, nonce = get_csp()
         return Template(
             "auth/signup.jinja",
@@ -34,6 +41,9 @@ class SignUpController(Controller):
     async def post(
         self, request: Request, next_route: str = "/"
     ) -> Template | Redirect:
+        if not ALLOW_REGISTRATION:
+            return Redirect("/signup")
+
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
         body: t.Any = request.scope.get("form")

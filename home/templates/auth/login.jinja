@@ -34,9 +34,11 @@
             </form>
           </div>
         </div>
-        <div class="text-center text-secondary mt-3">
+      {% if has_registration %}
+      	<div class="text-center text-secondary mt-3">
           Don't have account yet? <a href="{{ url_for('signup') }}" tabindex="-1">Sign up</a>
         </div>
+      {% endif %}
       </div>
     </div>
 {% endblock %}

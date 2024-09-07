@@ -13,6 +13,7 @@ from starlette.exceptions import HTTPException
 
 from home.util import get_csp
 from home.util.flash import alert
+from piccolo_conf import ALLOW_REGISTRATION
 
 
 # Taken from the underlying Piccolo class and modified to work with Litestar
@@ -47,6 +48,7 @@ class LoginController(Controller):
                 "captcha": self._captcha,
                 "styles": self._styles,
                 "csp_nonce": nonce,
+                "has_registration": ALLOW_REGISTRATION,
             },
             status_code=status_code,
             media_type=MediaType.HTML,

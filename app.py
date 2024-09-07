@@ -50,10 +50,11 @@ from home.tables import (
     Vulnerability,
 )
 from home.tasks import keep_projects_updated
+from home.util import str_to_bool
 from piccolo_conf import ASYNC_SCHEDULER
 
 load_dotenv()
-IS_PRODUCTION = not bool(os.environ.get("DEBUG", False))
+IS_PRODUCTION = not str_to_bool(os.environ.get("DEBUG"))
 
 
 # mounting Piccolo Admin
@@ -225,7 +226,7 @@ app = Litestar(
     lifespan=[handle_scheduler_lifecycle],
     on_startup=[open_database_connection_pool],
     on_shutdown=[close_database_connection_pool],
-    debug=bool(os.environ.get("DEBUG", False)),
+    debug=not IS_PRODUCTION,
     openapi_config=OpenAPIConfig(
         title="Hermes API",
         version="0.0.0",

@@ -13,7 +13,7 @@ from home.util import str_to_bool
 
 load_dotenv()
 
-if str_to_bool(os.environ.get("PROD")):
+if not str_to_bool(os.environ.get("DEBUG")):
     DB = PostgresEngine(
         config={
             "database": os.environ["POSTGRES_DB"],

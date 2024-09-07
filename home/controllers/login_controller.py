@@ -11,7 +11,7 @@ from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
 
-from home.util import get_csp
+from home.util import get_csp, str_to_bool
 from home.util.flash import alert
 from piccolo_conf import ALLOW_REGISTRATION
 
@@ -25,7 +25,7 @@ class LoginController(Controller):
     _session_expiry = timedelta(hours=1)
     _max_session_expiry = timedelta(days=1)
     _redirect_to = "/"
-    _production = not bool(os.environ.get("DEBUG", False))
+    _production = not str_to_bool(os.environ.get("DEBUG"))
     _cookie_name = "id"
     _hooks = None
     _captcha = None

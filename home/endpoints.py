@@ -13,7 +13,6 @@ from piccolo_conf import REGISTERED_INTERFACES
 @get(path="/", include_in_schema=False, middleware=[EnsureAuth])
 async def home(request: Request) -> Template:
     csp, nonce = get_csp()
-    alert(request, "Oh no! I've been flashed!", level="info")
     profile = await Profile.get_or_create(request.user)
     projects = await APIProjectController.get_user_projects(request.user)
     raw_data = []

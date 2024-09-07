@@ -157,10 +157,10 @@ class Project(Table):
             instance = interface(self)
             try:
                 await instance.scan(scan)
-            except:
+            except Exception as e:
                 await Notification.create_alert(
                     request.user,
-                    f"Interface {interface_id} failed to run",
+                    f"Interface {interface_id} failed to run with error {commons.exception_as_string(e)}",
                     level="error",
                 )
                 fail_count += 1

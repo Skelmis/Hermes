@@ -3,7 +3,6 @@ import logging
 import os
 import secrets
 import shutil
-import subprocess
 import zipfile
 from datetime import timedelta, datetime
 from functools import partial
@@ -392,7 +391,7 @@ class ProjectsController(Controller):
             f"Deleted project '{project_title}' and associated vulnerabilities",
             level="success",
         )
-        return Redirect(f"/")
+        return Redirect("/")
 
     @post(
         path="/{project_id:str}/settings/run_scanners",

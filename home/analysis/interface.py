@@ -1,6 +1,5 @@
 import abc
 import subprocess
-from functools import partial
 
 import anyio.to_process
 

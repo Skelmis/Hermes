@@ -56,7 +56,7 @@ class PasswordController(Controller):
         )
 
     @post(tags=["Auth"], path="/change", middleware=[EnsureAuth])
-    async def forgot_password_post(self, request: Request) -> Template | Redirect:
+    async def change_password_post(self, request: Request) -> Template | Redirect:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
         body: Any = request.scope.get("form")

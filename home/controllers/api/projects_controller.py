@@ -1,14 +1,12 @@
-import shutil
 import typing as t
-from pathlib import Path
 
-from litestar import Controller, get, Request, post, patch, delete
+from litestar import Controller, get, Request, post, patch
 from litestar.exceptions import NotFoundException
 from piccolo.apps.user.tables import BaseUser
 from piccolo.utils.pydantic import create_pydantic_model
 
 from home.middleware import EnsureAuth
-from home.tables import Project, Scan, Vulnerability
+from home.tables import Project, Scan
 
 ProjectModelIn: t.Any = create_pydantic_model(
     table=Project,

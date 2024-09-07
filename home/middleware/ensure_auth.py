@@ -8,7 +8,6 @@ from litestar.middleware import (
 )
 from piccolo.apps.user.tables import BaseUser
 from piccolo_api.session_auth.tables import SessionsBase
-from starlette.authentication import AuthCredentials
 
 from home.exception_handlers import RedirectForAuth
 from home.util.flash import alert, inject_alerts

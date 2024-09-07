@@ -1,5 +1,4 @@
-from piccolo_conf import *  # noqa
-
+from piccolo.engine import PostgresEngine
 
 DB = PostgresEngine(
     config={

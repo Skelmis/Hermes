@@ -1,12 +1,11 @@
-from litestar import MediaType, Request, Response, get
+from litestar import MediaType, Request, get
 from litestar.response import Template
 
 from home.controllers.api import APIProjectController
 from home.filters.datetime import format_datetime
 from home.middleware import EnsureAuth
-from home.tables import Project, Profile, Vulnerability
+from home.tables import Profile, Vulnerability
 from home.util import get_csp
-from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES
 
 

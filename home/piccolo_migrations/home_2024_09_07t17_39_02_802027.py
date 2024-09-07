@@ -84,9 +84,7 @@ async def forwards():
         class_name="Project", tablename="project", schema=None, columns=None
     )
 
-    manager.add_table(
-        class_name="Scan", tablename="scan", schema=None, columns=None
-    )
+    manager.add_table(class_name="Scan", tablename="scan", schema=None, columns=None)
 
     manager.add_table(
         class_name="Notification",

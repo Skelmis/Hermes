@@ -1,4 +1,3 @@
-import subprocess
 from typing import TypedDict
 
 import orjson

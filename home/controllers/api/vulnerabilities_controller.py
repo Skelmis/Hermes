@@ -1,7 +1,6 @@
 import typing as t
 
-from litestar import Controller, get, Request, post, patch, delete
-from litestar.exceptions import NotFoundException
+from litestar import Controller
 from piccolo.apps.user.tables import BaseUser
 from piccolo.utils.pydantic import create_pydantic_model
 

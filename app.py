@@ -41,7 +41,6 @@ from home.exception_handlers import (
 )
 from home.filters import pretty_json
 from home.filters.datetime import format_datetime
-from home.piccolo_app import APP_CONFIG
 from home.tables import (
     Profile,
     Notification,

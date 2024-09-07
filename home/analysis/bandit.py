@@ -1,10 +1,9 @@
-import subprocess
 from typing import TypedDict, cast
 
 import orjson
 
 from home.analysis import AnalysisInterface
-from home.tables import Vulnerability, Project, Scan
+from home.tables import Vulnerability, Scan
 
 
 class BanditError(TypedDict):

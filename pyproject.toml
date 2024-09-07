@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 piccolo = {extras = ["all"], version = "^1.16.0"}
-litestar = {extras = ["cryptography"], version = "^2.10.0"}
+litestar = {extras = ["cryptography"], version = "^2.11.0"}
 uvicorn = "^0.30.3"
 piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
@@ -22,6 +22,7 @@ piccolo-api = "^1.4.1"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.4.2"
+ruff = "^0.6.4"
 
 [build-system]
 requires = ["poetry-core"]

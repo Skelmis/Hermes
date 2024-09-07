@@ -36,20 +36,24 @@ class LogoutController(Controller):
             headers={"content-security-policy": csp},
         )
 
+    @classmethod
+    async def logout_current_user(cls, request: Request) -> Redirect:
+        cookie = request.cookies.get(cls._cookie_name, None)
+        if not cookie:
+            # Meh this is fine, just redirect it to home
+            return Redirect("/")
+
+        await cls._session_table.remove_session(token=cookie)
+
+        response: Redirect = Redirect(cls._redirect_to, status_code=HTTP_303_SEE_OTHER)
+
+        response.set_cookie(cls._cookie_name, "", max_age=0)
+        return response
+
     @get(include_in_schema=False, name="signout")
     async def get(self, request: Request) -> Template:
         return self._render_template(request)
 
     @post(tags=["Auth"])
     async def post(self, request: Request) -> Redirect:
-        cookie = request.cookies.get(self._cookie_name, None)
-        if not cookie:
-            # Meh this is fine, just redirect it to home
-            return Redirect("/")
-
-        await self._session_table.remove_session(token=cookie)
-
-        response: Redirect = Redirect(self._redirect_to, status_code=HTTP_303_SEE_OTHER)
-
-        response.set_cookie(self._cookie_name, "", max_age=0)
-        return response
+        return await self.logout_current_user(request)

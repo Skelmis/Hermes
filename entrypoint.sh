@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
+EXPOSED_PORT="${PORT:-8800}"
 ./migrate.sh
-uvicorn app:app --proxy-headers --host 0.0.0.0 --port 8800 --log-config=log_conf.yaml
+poetry run uvicorn app:app --proxy-headers --host 0.0.0.0 --port "$EXPOSED_PORT" --log-config=log_conf.yaml

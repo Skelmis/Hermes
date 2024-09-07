@@ -1,9 +1,7 @@
-version: "2.2"
-
 services:
   data_db:
     image: postgres:14.7
-    container_name: "db.hermes"
+    container_name: "db_hermes"
     restart: always
     command: -p 8801
     ports:
@@ -23,12 +21,12 @@ services:
       - "8800:8800"
     depends_on:
       - data_db
-    cpus: 1
-    mem_limit: 1g
+    cpus: 4
+    mem_limit: 2g
     mem_reservation: 256m
     environment:
       SERVING_DOMAIN: "hermes.skelmis.co.nz"
-      POSTGRES_HOST: db.hermes
+      POSTGRES_HOST: db_hermes
       POSTGRES_DB: hermes_db
       POSTGRES_USER: hermes_db_user
       POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown

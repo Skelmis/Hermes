@@ -45,5 +45,5 @@ BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()
 
-ALLOW_REGISTRATION: bool = str_to_bool(os.environ.get("ALLOW_REGISTRATION"))
+ALLOW_REGISTRATION: bool = str_to_bool(os.environ.get("ALLOW_REGISTRATION", True))
 """Whether users should be allowed to create new accounts."""

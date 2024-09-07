@@ -1,3 +1,5 @@
 venv
 .idea
 .db
+.projects
+piccolo.sqlite

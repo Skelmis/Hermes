@@ -1,3 +1,3 @@
-piccolo migrations forwards user
-piccolo migrations forwards session_auth
-piccolo migrations forwards all
+poetry run piccolo migrations forwards user --trace
+poetry run piccolo migrations forwards session_auth --trace
+poetry run piccolo migrations forwards all --trace

@@ -13,7 +13,6 @@ piccolo.sqlite-journal
 .env
 .db
 piccolo.sqlite
-poetry.lock
 
 # C extensions
 *.so

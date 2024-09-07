@@ -9,10 +9,11 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.conf.apps import AppRegistry
 
 from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec
+from home.util import str_to_bool
 
 load_dotenv()
 
-if os.environ.get("PROD", None) is not None:
+if str_to_bool(os.environ.get("PROD")):
     DB = PostgresEngine(
         config={
             "database": os.environ["POSTGRES_DB"],
@@ -44,5 +45,5 @@ BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()
 
-ALLOW_REGISTRATION: bool = True
+ALLOW_REGISTRATION: bool = str_to_bool(os.environ.get("ALLOW_REGISTRATION"))
 """Whether users should be allowed to create new accounts."""

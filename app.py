@@ -29,6 +29,7 @@ from home.controllers import (
     LogoutController,
     SignUpController,
     ProjectsController,
+    PasswordController,
 )
 from home.controllers.api import APIProjectController
 from home.endpoints import home, settings
@@ -216,6 +217,7 @@ app = Litestar(
         LogoutController,
         SignUpController,
         ProjectsController,
+        PasswordController,
     ],
     template_config=template_config,
     static_files_config=[

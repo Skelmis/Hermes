@@ -16,6 +16,7 @@ from home.util.flash import alert
 
 
 # Taken from the underlying Piccolo class and modified to work with Litestar
+# noinspection PyMethodMayBeStatic
 class LoginController(Controller):
     path = "/login"
     _auth_table = BaseUser

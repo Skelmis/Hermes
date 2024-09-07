@@ -160,10 +160,11 @@ class Project(Table):
             except Exception as e:
                 await Notification.create_alert(
                     request.user,
-                    f"Interface {interface_id} failed to run with error {commons.exception_as_string(e)}",
+                    f"Interface {interface_id} failed to run",
                     level="error",
                 )
                 fail_count += 1
+                print(commons.exception_as_string(e))
 
         if fail_count == len(self.code_scanners):
             await Notification.create_alert(

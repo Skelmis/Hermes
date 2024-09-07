@@ -177,7 +177,7 @@ CSRF_TOKEN = os.environ.get("CSRF_TOKEN", secrets.token_hex(32))
 csrf_config = CSRFConfig(
     secret=CSRF_TOKEN,
     # Aptly named so it doesnt clash
-    # with piccolo csrftoken' cookies
+    # with piccolo 'csrftoken' cookies
     cookie_name="csrf_token",
     cookie_secure=True,
     cookie_httponly=True,

@@ -2,7 +2,7 @@ FROM python:3.10-alpine
 
 # Ensure container is ready
 RUN apk update
-RUN apk add git go curl
+RUN apk add git go curl bash
 
 WORKDIR /code
 RUN pip install poetry

@@ -25811,3 +25811,12 @@ Antialiasing
   -webkit-font-smoothing: auto;
   -moz-osx-font-smoothing: auto;
 }
+
+.sidebar_bottom {
+  position: fixed;
+  bottom: 5px;
+
+  /* And if you want the div to be full-width: */
+  left: 25px;
+  right: 25px;
+}

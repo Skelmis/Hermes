@@ -22,8 +22,8 @@ class LoginController(Controller):
     path = "/login"
     _auth_table = BaseUser
     _session_table = SessionsBase
-    _session_expiry = timedelta(hours=1)
-    _max_session_expiry = timedelta(days=1)
+    _session_expiry = timedelta(hours=6)
+    _max_session_expiry = timedelta(days=3)
     _redirect_to = "/"
     _production = not str_to_bool(os.environ.get("DEBUG"))
     _cookie_name = "id"

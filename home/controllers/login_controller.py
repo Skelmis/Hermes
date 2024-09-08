@@ -3,6 +3,7 @@ import typing as t
 import warnings
 from datetime import timedelta, datetime
 
+from commons import value_to_bool
 from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
 from litestar.response import Template, Redirect
@@ -11,7 +12,7 @@ from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
 
-from home.util import get_csp, str_to_bool
+from home.util import get_csp
 from home.util.flash import alert
 from piccolo_conf import ALLOW_REGISTRATION
 
@@ -25,7 +26,7 @@ class LoginController(Controller):
     _session_expiry = timedelta(hours=6)
     _max_session_expiry = timedelta(days=3)
     _redirect_to = "/"
-    _production = not str_to_bool(os.environ.get("DEBUG"))
+    _production = not value_to_bool(os.environ.get("DEBUG"))
     _cookie_name = "id"
     _hooks = None
     _captcha = None

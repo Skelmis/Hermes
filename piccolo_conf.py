@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 
 from apscheduler import AsyncScheduler
+from commons import value_to_bool
 from dotenv import load_dotenv
 
 from piccolo.engine import SQLiteEngine
@@ -9,11 +10,10 @@ from piccolo.engine.postgres import PostgresEngine
 from piccolo.conf.apps import AppRegistry
 
 from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec
-from home.util import str_to_bool
 
 load_dotenv()
 
-if not str_to_bool(os.environ.get("DEBUG")):
+if not value_to_bool(os.environ.get("DEBUG")):
     DB = PostgresEngine(
         config={
             "database": os.environ["POSTGRES_DB"],
@@ -45,5 +45,5 @@ BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()
 
-ALLOW_REGISTRATION: bool = str_to_bool(os.environ.get("ALLOW_REGISTRATION", True))
+ALLOW_REGISTRATION: bool = value_to_bool(os.environ.get("ALLOW_REGISTRATION", True))
 """Whether users should be allowed to create new accounts."""

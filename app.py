@@ -5,6 +5,7 @@ from typing import AsyncGenerator
 
 import jinja2
 from apscheduler.triggers.interval import IntervalTrigger
+from commons import value_to_bool
 from dotenv import load_dotenv
 from litestar import Litestar, asgi
 from litestar.config.cors import CORSConfig
@@ -50,11 +51,10 @@ from home.tables import (
     Vulnerability,
 )
 from home.tasks import keep_projects_updated
-from home.util import str_to_bool
 from piccolo_conf import ASYNC_SCHEDULER
 
 load_dotenv()
-IS_PRODUCTION = not str_to_bool(os.environ.get("DEBUG"))
+IS_PRODUCTION = not value_to_bool(os.environ.get("DEBUG"))
 
 
 # mounting Piccolo Admin

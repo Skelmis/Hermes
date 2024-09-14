@@ -1,11 +1,11 @@
 from piccolo.apps.migrations.auto.migration_manager import MigrationManager
 from piccolo.columns.column_types import Array
 from piccolo.columns.column_types import Boolean
-from piccolo.columns.column_types import Serial
+from piccolo.columns.column_types import Integer
 from piccolo.columns.indexes import IndexMethod
 
 
-ID = "2024-09-14T20:13:48:245769"
+ID = "2024-09-14T21:30:23:194449"
 VERSION = "1.17.0"
 DESCRIPTION = ""
 
@@ -44,7 +44,8 @@ async def forwards():
         column_class_name="Array",
         column_class=Array,
         params={
-            "base_column": Serial(
+            "base_column": Integer(
+                default=0,
                 null=False,
                 primary_key=False,
                 unique=False,

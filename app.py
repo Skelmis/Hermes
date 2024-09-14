@@ -33,6 +33,7 @@ from home.controllers import (
     PasswordController,
 )
 from home.controllers.api import APIProjectController
+from home.custom_request import HermesRequest
 from home.endpoints import home, settings
 from home.exception_handlers import (
     redirect_for_auth,
@@ -277,4 +278,5 @@ app = Litestar(
         NotFoundException: handle_404,
         ImproperlyConfiguredException: handle_500,
     },
+    request_class=HermesRequest,
 )

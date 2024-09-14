@@ -2,6 +2,7 @@ from litestar import MediaType, Request, get
 from litestar.response import Template
 
 from home.controllers.api import APIProjectController
+from home.custom_request import HermesRequest
 from home.filters.datetime import format_datetime
 from home.middleware import EnsureAuth
 from home.tables import Profile, Vulnerability
@@ -10,7 +11,7 @@ from piccolo_conf import REGISTERED_INTERFACES
 
 
 @get(path="/", include_in_schema=False, middleware=[EnsureAuth])
-async def home(request: Request) -> Template:
+async def home(request: HermesRequest) -> Template:
     csp, nonce = get_csp()
     profile = await Profile.get_or_create(request.user)
     projects = await APIProjectController.get_user_projects(request.user)

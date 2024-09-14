@@ -20,6 +20,7 @@ from litestar.response import Template, Redirect
 from pydantic import BaseModel, ConfigDict
 
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
+from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile
 from home.util import get_csp
@@ -126,7 +127,7 @@ class ProjectsController(Controller):
     )
     async def overview(
         self,
-        request: Request,
+        request: HermesRequest,
         project_id: str,
         scan_number: int = None,
     ) -> Template | Redirect:
@@ -153,6 +154,7 @@ class ProjectsController(Controller):
             "projects/overview.jinja",
             context={
                 "scan": scan,
+                "is_small": request.is_small,
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "overview",

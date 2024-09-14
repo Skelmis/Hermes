@@ -55,7 +55,7 @@ class ProjectsController(Controller):
         cls, request: Request, project_id: str
     ) -> tuple[Project | None, Redirect | None]:
         project = await Project.add_ownership_where(
-            Project.objects().where(Project.id == project_id).first(),
+            Project.objects(Project.owner).where(Project.id == project_id).first(),
             request.user,
         )
         if not project:
@@ -437,5 +437,33 @@ class ProjectsController(Controller):
         await ASYNC_SCHEDULER.add_schedule(
             partial(project.update_from_source, request),
             DateTrigger(datetime.now() + timedelta(seconds=5)),
+        )
+        return project.redirect_to()
+
+    @post(
+        path="/{project_id:str}/settings/toggle_public_view",
+        include_in_schema=False,
+    )
+    async def toggle_public_view(self, request: Request, project_id: str) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        # Need to compare attributes while this is unresolved:
+        # https://github.com/piccolo-orm/piccolo/issues/1075
+        if project.owner.id != request.user.id:
+            alert(
+                request,
+                "You must be the project owner to change project visibility.",
+                level="error",
+            )
+            return project.redirect_to()
+
+        project.is_public = not project.is_public
+        await project.save()
+
+        alert(
+            request,
+            f'Project is now {"public" if project.is_public else "no longer public"}',
         )
         return project.redirect_to()

@@ -69,6 +69,27 @@
                 </div>
             <br>
             <br>
+            <div class="row row-cards">
+                <div class="col-md-6 col-lg-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Make project {% if project.is_public %}no longer {% endif %}public</h3>
+                        </div>
+                        <div class="card-body">
+                        If you choose to do this, anyone on this instance will
+                            {% if project.is_public %}
+                                no longer be able to see the project unless they have been added.
+                            {% else %}
+                                be able to see and interact with the project.
+                            {% endif %}
+                            <br>
+                            {{ button('Toggle it', 'toggle-public-view', 'Toggle public view', 'Are you sure you want to do this?', 'Yes', 'toggle_public_view', 'secondary') }}
+                        </div>
+                    </div>
+                </div>
+                </div>
+            <br>
+            <br>
                 {% if project.is_git_based %}
                     <div class="row row-cards">
                         <div class="col-md-6 col-lg-3">

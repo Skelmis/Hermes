@@ -23,7 +23,7 @@ from home.controllers.api import APIProjectController, APIVulnerabilitiesControl
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile
-from home.util import get_csp
+from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, ASYNC_SCHEDULER
 
@@ -149,6 +149,13 @@ class ProjectsController(Controller):
         )
         total_scans = (await APIProjectController.get_total_scans(project)) + 1
 
+        if request.is_small and len(project.title) > 20:
+            # We need to split this into bits
+            # which dont overflow the screen
+            project_title = inject_spaces_into_string(project.title, 20)
+        else:
+            project_title = project.title
+
         csp, nonce = get_csp()
         return Template(
             "projects/overview.jinja",
@@ -158,6 +165,7 @@ class ProjectsController(Controller):
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "overview",
+                "project_title": project_title,
                 "total_scans": total_scans,
                 "profile": await Profile.get_or_create(request.user),
                 "projects": await APIProjectController.get_user_projects(request.user),
@@ -185,7 +193,7 @@ class ProjectsController(Controller):
         include_in_schema=False,
     )
     async def vulnerabilities_view(
-        self, request: Request, project_id: str, vuln_id: str
+        self, request: HermesRequest, project_id: str, vuln_id: str
     ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
@@ -197,12 +205,20 @@ class ProjectsController(Controller):
 
         next_vuln_id = await self.get_next_vulnerability(request, vuln)
 
+        if request.is_small and len(vuln.title) > 20:
+            # We need to split this into bits
+            # which dont overflow the screen
+            vuln_title = inject_spaces_into_string(vuln.title, 20)
+        else:
+            vuln_title = vuln.title
+
         csp, nonce = get_csp()
         return Template(
             "projects/vulnerability.jinja",
             context={
                 "next_vuln_id": next_vuln_id,
                 "vuln": vuln,
+                "vuln_title": vuln_title,
                 "csp_nonce": nonce,
                 "project": project,
                 "active": "vulnerabilities",

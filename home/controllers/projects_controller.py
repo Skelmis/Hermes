@@ -54,11 +54,9 @@ class ProjectsController(Controller):
     async def get_project(
         cls, request: Request, project_id: str
     ) -> tuple[Project | None, Redirect | None]:
-        project = (
-            await Project.objects()
-            .where(Project.id == project_id)
-            .where(Project.owner == request.user)  # type: ignore
-            .first()
+        project = await Project.add_ownership_where(
+            Project.objects().where(Project.id == project_id).first(),
+            request.user,
         )
         if not project:
             alert(
@@ -74,11 +72,9 @@ class ProjectsController(Controller):
     async def get_vulnerability(
         cls, request: Request, project: Project, vulnerability_id: str
     ) -> tuple[Vulnerability | None, Redirect | None]:
-        vuln = (
-            await Vulnerability.objects()
-            .where(Vulnerability.id == vulnerability_id)
-            .where(Vulnerability.project.owner == request.user)  # type: ignore
-            .first()
+        vuln = await Vulnerability.add_ownership_where(
+            Vulnerability.objects().where(Vulnerability.id == vulnerability_id).first(),
+            request.user,
         )
         if not vuln:
             alert(
@@ -96,11 +92,11 @@ class ProjectsController(Controller):
     ) -> str:
         """Fetch the 'next' vulnerability id to review"""
         # Given the use of UUID's this is so cooked hahaha
-        vulns = (
-            await Vulnerability.objects()
+        vulns = await Vulnerability.add_ownership_where(
+            Vulnerability.objects()
             .order_by(Vulnerability.id)
-            .where(Vulnerability.scan == current_vulnerability.scan)  # type: ignore
-            .where(Vulnerability.project.owner == request.user)  # type: ignore
+            .where(Vulnerability.scan == current_vulnerability.scan),  # type: ignore
+            request.user,
         )
         if not vulns:
             # Fuck knows what went wrong

@@ -16,7 +16,11 @@ from piccolo.columns import (
     Boolean,
     Array,
     Timestamptz,
+    Serial,
+    Where,
+    Or,
 )
+from piccolo.query import Query
 from piccolo.table import Table
 
 from home.tables import ProjectAutomation, Notification, Scan
@@ -40,6 +44,25 @@ class Project(Table):
         base_column=Text(),
         help_text="A list of Analysis Interface id's to use",
     )
+    is_public: bool = Boolean(
+        default=False,
+        help_text="Should anyone be able to see and interact with this project?",
+    )
+    other_users: list[BaseUser] = Array(
+        base_column=Serial(),
+        help_text="Other users who should have access to this. "
+        "Defaults to user id since array foreign keys aren't allowed and i dont wanna do M2M",
+    )
+
+    @classmethod
+    def add_ownership_where(cls, query, user: BaseUser):
+        """Add a where clause to ensure the user can see this project"""
+        return query.where(
+            Or(
+                Project.owner == user,
+                Or(Project.is_public == True, Project.other_users.any(user.id)),  # type: ignore
+            )
+        )
 
     @property
     def short_description(self) -> str:

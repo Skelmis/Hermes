@@ -3,6 +3,7 @@ import typing as t
 from litestar import Controller, get, Request, post, patch
 from litestar.exceptions import NotFoundException
 from piccolo.apps.user.tables import BaseUser
+from piccolo.columns import Or
 from piccolo.utils.pydantic import create_pydantic_model
 
 from home.middleware import EnsureAuth
@@ -27,10 +28,8 @@ class APIProjectController(Controller):
 
     @classmethod
     async def get_user_projects(cls, user: BaseUser) -> t.List[Project]:
-        return await (
-            Project.objects()
-            .where(Project.owner == user)
-            .order_by(Project.id, ascending=False)
+        return await Project.add_ownership_where(
+            Project.objects().order_by(Project.id, ascending=False), user
         )
 
     @classmethod
@@ -54,11 +53,9 @@ class APIProjectController(Controller):
     async def update_project(
         self, request: Request, project_id: str, data: ProjectModelIn
     ) -> ProjectModelOut:
-        project = (
-            await Project.objects()
-            .where(Project.id == project_id)
-            .where(Project.owner == request.user)  # type: ignore
-            .first()
+        project = Project.add_ownership_where(
+            await Project.objects().where(Project.id == project_id).first(),
+            request.user,
         )
         if not project:
             raise NotFoundException("Project does not exist")

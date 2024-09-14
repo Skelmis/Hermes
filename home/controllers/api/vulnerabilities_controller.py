@@ -28,20 +28,20 @@ class APIVulnerabilitiesController(Controller):
     async def get_project_vulnerabilities(
         cls, user: BaseUser, project: Project
     ) -> t.List[Vulnerability]:
-        return await (
+        return await Vulnerability.add_ownership_where(
             Vulnerability.objects()
-            .where(Vulnerability.scan.project.owner == user)
             .where(Vulnerability.scan.project == project)
-            .order_by(Vulnerability.id, ascending=False)
+            .order_by(Vulnerability.id, ascending=False),
+            user,
         )
 
     @classmethod
     async def get_scan_vulnerabilities(
         cls, user: BaseUser, scan: Scan
     ) -> t.List[Vulnerability]:
-        return await (
+        return await Vulnerability.add_ownership_where(
             Vulnerability.objects()
-            .where(Vulnerability.scan.project.owner == user)
             .where(Vulnerability.scan == scan)
-            .order_by(Vulnerability.id, ascending=False)
+            .order_by(Vulnerability.id, ascending=False),
+            user,
         )

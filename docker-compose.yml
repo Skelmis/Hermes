@@ -21,6 +21,8 @@ services:
       - "8800:8800"
     depends_on:
       - data_db
+    volumes:
+      - projects:/code/.projects
     cpus: 4
     mem_limit: 2g
     mem_reservation: 256m
@@ -31,6 +33,9 @@ services:
       POSTGRES_USER: hermes_db_user
       POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
       POSTGRES_PORT: 8801
+
+volumes:
+  projects:
 
 #networks:
 #  default:

@@ -1,6 +1,3 @@
-### Website home page
-Create project, provide zip upload or git link
-
 ### Project Settings page
 Delete specific scan
 PATCH on primary fields

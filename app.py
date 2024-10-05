@@ -21,6 +21,7 @@ from litestar.types import Receive, Scope, Send
 from piccolo.apps.user.tables import BaseUser
 from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin, TableConfig, OrderBy
+from saq.web.starlette import saq_web
 
 from home.controllers import (
     LoginController,
@@ -48,6 +49,7 @@ from home.tables import (
     Scan,
     Vulnerability,
 )
+from piccolo_conf import SAQ_QUEUE
 
 load_dotenv()
 IS_PRODUCTION = not value_to_bool(os.environ.get("DEBUG"))

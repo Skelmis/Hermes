@@ -1,5 +1,5 @@
 services:
-  data_db:
+  hermes_db:
     image: postgres:14.7
     container_name: "db_hermes"
     restart: always
@@ -13,14 +13,14 @@ services:
       POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
     volumes:
       - .db:/var/lib/postgresql/data
-  data_web:
+  hermes_web:
     image: ghcr.io/skelmis/hermes:master
     container_name: "web_hermes"
     restart: always
     ports:
       - "8800:8800"
     depends_on:
-      - data_db
+      - hermes_db
     volumes:
       - projects:/code/.projects
     cpus: 4
@@ -33,9 +33,23 @@ services:
       POSTGRES_USER: hermes_db_user
       POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
       POSTGRES_PORT: 8801
+  hermes_redis:
+    image: redis:7.4-alpine
+    container_name: "redis_hermes"
+    restart: always
+    cpus: 1
+    mem_limit: 256m
+    mem_reservation: 128m
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass haziness-sloppy-cycle-deduct-superman-undertook
+    volumes:
+      - cache:/data
 
 volumes:
   projects:
+  cache:
+    driver: local
 
 #networks:
 #  default:

@@ -112,7 +112,7 @@ class Project(Table):
             .first()
         )
 
-    async def update_from_source(self, request) -> None:
+    async def update_from_source(self, user: BaseUser) -> None:
         """Updates the underlying source code
 
         Notes
@@ -131,7 +131,7 @@ class Project(Table):
             subprocess.check_output(pull, cwd=self.scanner_path)
         except Exception as e:
             await Notification.create_alert(
-                request.user,
+                user,
                 f"Something went wrong pulling project '{self.title}', check the logs",
                 level="error",
             )
@@ -143,12 +143,12 @@ class Project(Table):
                 await pa.save()
 
         await Notification.create_alert(
-            request.user,
+            user,
             f"Successfully pulled project '{self.title}'",
             level="success",
         )
 
-    async def run_scanners(self, request) -> Redirect:
+    async def run_scanners(self, user: BaseUser) -> Redirect:
         """Run all the relevant scanners for this project.
 
         Notes
@@ -171,7 +171,7 @@ class Project(Table):
             )
             if interface is None:
                 await Notification.create_alert(
-                    request.user,
+                    user,
                     f"Failed to find an interface with id {interface_id}",
                     level="error",
                 )
@@ -183,7 +183,7 @@ class Project(Table):
                 await instance.scan(scan)
             except Exception as e:
                 await Notification.create_alert(
-                    request.user,
+                    user,
                     f"Interface {interface_id} failed to run",
                     level="error",
                 )
@@ -192,14 +192,14 @@ class Project(Table):
 
         if fail_count == len(self.code_scanners):
             await Notification.create_alert(
-                request.user,
+                user,
                 f"Looks like all interfaces could not be found."
                 f" Ran nothing for project '{self.title}'",
                 level="error",
             )
         else:
             await Notification.create_alert(
-                request.user,
+                user,
                 f"Successfully ran found scanners against project '{self.title}'",
                 level="success",
             )

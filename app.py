@@ -1,10 +1,7 @@
 import os
 import secrets
-from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 import jinja2
-from apscheduler.triggers.interval import IntervalTrigger
 from commons import value_to_bool
 from dotenv import load_dotenv
 from litestar import Litestar, asgi
@@ -51,8 +48,6 @@ from home.tables import (
     Scan,
     Vulnerability,
 )
-from home.tasks import keep_projects_updated
-from piccolo_conf import ASYNC_SCHEDULER
 
 load_dotenv()
 IS_PRODUCTION = not value_to_bool(os.environ.get("DEBUG"))
@@ -149,26 +144,6 @@ async def close_database_connection_pool():
         print("Unable to connect to the database")
 
 
-@asynccontextmanager
-async def handle_scheduler_lifecycle(_: Litestar) -> AsyncGenerator[None, None]:
-    async with ASYNC_SCHEDULER:
-        if IS_PRODUCTION:
-            await ASYNC_SCHEDULER.add_schedule(
-                keep_projects_updated, IntervalTrigger(hours=1)
-            )
-        else:
-            await ASYNC_SCHEDULER.add_schedule(
-                keep_projects_updated, IntervalTrigger(seconds=15)
-            )
-        await ASYNC_SCHEDULER.start_in_background()
-
-        try:
-            yield
-        finally:
-            # Do this to ensure we exit
-            pass
-
-
 cors_config = CORSConfig(
     allow_origins=[],
     allow_headers=[],
@@ -224,7 +199,6 @@ app = Litestar(
     static_files_config=[
         StaticFilesConfig(directories=["static"], path="/static/"),
     ],
-    lifespan=[handle_scheduler_lifecycle],
     on_startup=[open_database_connection_pool],
     on_shutdown=[close_database_connection_pool],
     debug=not IS_PRODUCTION,

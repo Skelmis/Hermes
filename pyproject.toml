@@ -15,11 +15,11 @@ piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
 orjson = "^3.10.7"
 skelmis-commons = "^1.4.0"
-apscheduler = {git = "https://github.com/agronholm/apscheduler.git"}
 pytz = "^2024.1"
 piccolo-api = "^1.4.1"
 bandit = "^1.7.9"
 semgrep = "^1.86.0"
+saq = {extras = ["hiredis", "web"], version = "^0.17.1"}
 
 
 [tool.poetry.group.dev.dependencies]

@@ -25,7 +25,7 @@ from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
-from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, ASYNC_SCHEDULER
+from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, SAQ_QUEUE
 
 log = logging.getLogger(__name__)
 
@@ -330,6 +330,17 @@ class ProjectsController(Controller):
         path_to_stuff.mkdir()
         path_to_stuff = str(path_to_stuff)
 
+        project = Project(
+            owner=request.user,
+            title=title,
+            description=description,
+            is_git_based=git is not None,
+            code_scanners=selected_interfaces,
+            directory=project_dir,
+        )
+        await project.save()
+        await project.refresh()
+
         if file is not None:
             # Write to disk time
             content = await file.read()
@@ -342,32 +353,26 @@ class ProjectsController(Controller):
                     if file_path.startswith(os.path.realpath(path_to_stuff)):
                         zf.extract(member, path_to_stuff)
 
+            alert(request, "Scheduled scanners to run. Results will be available soon")
+            await SAQ_QUEUE.enqueue(
+                "run_scanners",
+                project_id=project.uuid,
+                user_id=request.user.id,
+            )
+
         if git is not None:
             # Git clone it
-            cmd = ["git", "clone", "--recursive", git, path_to_stuff]
-            try:
-                await anyio.run_process(cmd)
-            except Exception as e:
-                alert(request, "Something went wrong, check the logs", level="error")
-                log.error(
-                    "Git cloning died with error\n%s", commons.exception_as_string(e)
-                )
-                return Redirect("/projects/create")
-
-        project = Project(
-            owner=request.user,
-            title=title,
-            description=description,
-            is_git_based=git is not None,
-            code_scanners=selected_interfaces,
-            directory=project_dir,
-        )
-        await project.save()
-        alert(request, "Scheduled scanners to run. Results will be available soon")
-        await ASYNC_SCHEDULER.add_schedule(
-            partial(project.run_scanners, request),
-            DateTrigger(datetime.now() + timedelta(seconds=5)),
-        )
+            alert(
+                request,
+                "Started git clone, scanners will automatically run once complete",
+            )
+            await SAQ_QUEUE.enqueue(
+                "git_clone",
+                git=git,
+                path_to_stuff=path_to_stuff,
+                project_id=project.uuid,
+                user_id=request.user.id,
+            )
 
         return project.redirect_to()
 
@@ -417,9 +422,10 @@ class ProjectsController(Controller):
             return redirect
 
         alert(request, "Scheduled scanners to run. Results will be available soon")
-        await ASYNC_SCHEDULER.add_schedule(
-            partial(project.run_scanners, request),
-            DateTrigger(datetime.now() + timedelta(seconds=5)),
+        await SAQ_QUEUE.enqueue(
+            "run_scanners",
+            project_id=project.uuid,
+            user_id=request.user.id,
         )
 
         return project.redirect_to()
@@ -434,9 +440,10 @@ class ProjectsController(Controller):
             return redirect
 
         alert(request, "Scheduled the pull, it'll be ready momentarily")
-        await ASYNC_SCHEDULER.add_schedule(
-            partial(project.update_from_source, request),
-            DateTrigger(datetime.now() + timedelta(seconds=5)),
+        await SAQ_QUEUE.enqueue(
+            "update_from_source",
+            project_id=project.uuid,
+            user_id=request.user.id,
         )
         return project.redirect_to()
 

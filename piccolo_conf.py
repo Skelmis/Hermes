@@ -1,13 +1,12 @@
 import os
 from pathlib import Path
 
-from apscheduler import AsyncScheduler
 from commons import value_to_bool
 from dotenv import load_dotenv
-
+from piccolo.conf.apps import AppRegistry
 from piccolo.engine import SQLiteEngine
 from piccolo.engine.postgres import PostgresEngine
-from piccolo.conf.apps import AppRegistry
+from saq import Queue
 
 from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec
 
@@ -43,7 +42,9 @@ REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {
 BASE_PROJECT_DIR: Path = Path(".projects")
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
-ASYNC_SCHEDULER: AsyncScheduler = AsyncScheduler()
 
 ALLOW_REGISTRATION: bool = value_to_bool(os.environ.get("ALLOW_REGISTRATION", True))
 """Whether users should be allowed to create new accounts."""
+
+
+SAQ_QUEUE = Queue.from_url("redis://localhost")

@@ -49,6 +49,8 @@ class LoginController(Controller):
                 "captcha": self._captcha,
                 "styles": self._styles,
                 "csp_nonce": nonce,
+                "active": "vulnerabilities",
+                "is_small": request.is_small,
                 "has_registration": ALLOW_REGISTRATION,
             },
             status_code=status_code,

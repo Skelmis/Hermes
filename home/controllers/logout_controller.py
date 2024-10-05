@@ -30,6 +30,8 @@ class LogoutController(Controller):
                 "csrf_cookie_name": csrf_cookie_name,
                 "request": request,
                 "styles": self._styles,
+                "active": "vulnerabilities",
+                "is_small": request.is_small,
                 "csp_nonce": nonce,
             },
             media_type=MediaType.HTML,

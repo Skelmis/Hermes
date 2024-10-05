@@ -67,6 +67,8 @@ class Bandit(AnalysisInterface):
             "-q",  # Only output result json
             "-f",
             "json",
+            "--skip",
+            "B101",  # B101 is assert_used, and we frankly don't care
             "-r",
             self.project.scanner_path,
         ]
@@ -79,6 +81,7 @@ class Bandit(AnalysisInterface):
         vulns: list[Vulnerability] = []
         for issue in result["results"]:
             issue = cast(BanditResult, issue)
+
             vuln = Vulnerability(
                 scan=scan,
                 project=self.project,

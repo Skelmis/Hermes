@@ -27,6 +27,8 @@ services:
       dockerfile: ./docker/web/Dockerfile
     container_name: "web_hermes"
     restart: always
+    volumes:
+      - projects:/code/.projects
     ports:
       - "8800:8800"
     depends_on:

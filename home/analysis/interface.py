@@ -26,6 +26,7 @@ class AnalysisInterface(abc.ABC):
             result_str = result_str.stdout
         except subprocess.CalledProcessError as e:
             if e.returncode != 1:
+                print(e.output)
                 raise e
             # Lol this is likely fine
             result_str = e.stdout

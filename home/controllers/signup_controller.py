@@ -63,21 +63,21 @@ class SignUpController(Controller):
             error_message = "Please ensure all fields on the form are filled out."
             alert(request, error_message, level="error")
             return Template(
-                "signup.jinja",
+                "auth/signup.jinja",
                 media_type=MediaType.HTML,
             )
 
         if not SIMPLE_EMAIL_REGEX.match(email):
             alert(request, "Please enter a valid email.", level="error")
             return Template(
-                "signup.jinja",
+                "auth/signup.jinja",
                 media_type=MediaType.HTML,
             )
 
         if not compare_digest(password, confirm_password):
             alert(request, "Passwords do not match", level="error")
             return Template(
-                "signup.jinja",
+                "auth/signup.jinja",
                 media_type=MediaType.HTML,
             )
 
@@ -89,7 +89,18 @@ class SignUpController(Controller):
                 level="error",
             )
             return Template(
-                "signup.jinja",
+                "auth/signup.jinja",
+                media_type=MediaType.HTML,
+            )
+
+        if await BaseUser.exists().where(BaseUser.username == username):
+            alert(
+                request,
+                "This user already exists, consider signing in instead.",
+                level="error",
+            )
+            return Template(
+                "auth/signup.jinja",
                 media_type=MediaType.HTML,
             )
 
@@ -100,7 +111,7 @@ class SignUpController(Controller):
         except ValueError as err:
             alert(request, str(err), level="error")
             return Template(
-                "signup.jinja",
+                "auth/signup.jinja",
                 media_type=MediaType.HTML,
             )
 

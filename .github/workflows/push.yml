@@ -1,7 +1,7 @@
 name: Build & publish Hermes images
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 env:
   REGISTRY: ghcr.io

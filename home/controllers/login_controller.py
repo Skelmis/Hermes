@@ -4,6 +4,7 @@ import warnings
 from datetime import timedelta, datetime
 
 from commons import value_to_bool
+from commons.hibp import has_password_been_pwned
 from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
 from litestar.response import Template, Redirect
@@ -153,6 +154,13 @@ class LoginController(Controller):
                 "is set to True, and serve under HTTPS."
             )
             warnings.warn(message)
+
+        if await has_password_been_pwned(password):
+            alert(
+                request,
+                "Your password appears in breach databases, consider changing it.",
+                level="error",
+            )
 
         cookie_value = t.cast(str, session.token)
 

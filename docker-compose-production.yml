@@ -1,6 +1,14 @@
+x-shared-variables: &common-variables
+  POSTGRES_HOST: db_hermes
+  POSTGRES_DB: hermes_db
+  POSTGRES_USER: hermes_db_user
+  POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
+  POSTGRES_PORT: 8801
+  REDIS_URL: "redis://default:haziness-sloppy-cycle-deduct-superman-undertook@redis_hermes:8802/0"
+
 services:
   hermes_db:
-    image: postgres:14.7
+    image: postgres:16.4
     container_name: "db_hermes"
     restart: always
     command: -p 8801
@@ -21,28 +29,28 @@ services:
       - "8800:8800"
     depends_on:
       - hermes_db
+      - hermes_redis
+    environment:
+      <<: *common-variables
+      SERVING_DOMAIN: "hermes.skelmis.co.nz"
+      CSRF_TOKEN: 02bea54b1b317930f14317938f48d785d0adf5909bf19480fcee2fac1253e522
+  hermes_saq:
+    image: ghcr.io/skelmis/hermes_saq:master
+    container_name: "saq_hermes"
+    restart: always
     volumes:
       - projects:/code/.projects
-    cpus: 4
-    mem_limit: 2g
-    mem_reservation: 256m
+    depends_on:
+      - hermes_redis
     environment:
-      SERVING_DOMAIN: "hermes.skelmis.co.nz"
-      POSTGRES_HOST: db_hermes
-      POSTGRES_DB: hermes_db
-      POSTGRES_USER: hermes_db_user
-      POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
-      POSTGRES_PORT: 8801
+      <<: *common-variables
   hermes_redis:
     image: redis:7.4-alpine
     container_name: "redis_hermes"
     restart: always
-    cpus: 1
-    mem_limit: 256m
-    mem_reservation: 128m
     ports:
-      - '6379:6379'
-    command: redis-server --save 20 1 --loglevel warning --requirepass haziness-sloppy-cycle-deduct-superman-undertook
+      - '8802:8802'
+    command: redis-server --port 8802 --save 20 1 --loglevel warning --requirepass haziness-sloppy-cycle-deduct-superman-undertook
     volumes:
       - cache:/data
 

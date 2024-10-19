@@ -32,7 +32,7 @@ async def home(request: HermesRequest) -> Template:
 
         raw_data.append((project, latest_scan, total_vulns, total_resolved_vulns))
 
-    data = list(sorted(raw_data, key=lambda e: e[1], reverse=True))
+    data = list(sorted(raw_data, key=lambda e: e[1]))
 
     return Template(
         template_name="home.jinja",

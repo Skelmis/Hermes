@@ -49,7 +49,6 @@ from home.tables import (
     Scan,
     Vulnerability,
 )
-from piccolo_conf import SAQ_QUEUE
 
 load_dotenv()
 IS_PRODUCTION = not value_to_bool(os.environ.get("DEBUG"))

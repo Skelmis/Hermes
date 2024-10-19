@@ -20,5 +20,5 @@ RUN poetry install
 
 COPY . /code
 
-RUN chmod +x /code/entrypoint.sh
-ENTRYPOINT ["/code/entrypoint.sh"]
+RUN chmod +x /code/docker/saq/entrypoint.sh
+ENTRYPOINT ["/code/docker/saq/entrypoint.sh"]

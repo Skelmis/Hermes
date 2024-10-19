@@ -1,14 +1,15 @@
-import asyncio
 import datetime
 import logging
+import os
 
 import anyio
 import commons
+import saq
 from piccolo.apps.user.tables import BaseUser
-from saq import CronJob
+from saq import CronJob, Queue
+from saq.types import SettingsDict
 
 from home.tables import Project, Notification
-from piccolo_conf import SAQ_QUEUE
 
 log = logging.getLogger(__name__)
 
@@ -50,9 +51,17 @@ async def tick(_):
     print(f"tick {datetime.datetime.now(datetime.timezone.utc)}")
 
 
-SAQ_SETTINGS = {
-    "queue": SAQ_QUEUE,
-    "functions": [run_scanners, update_from_source, git_clone],
-    "concurrency": 10,
-    "cron_jobs": [CronJob(tick, cron="* * * * * */5")],  # run every 5 seconds
-}
+async def before_process(ctx):
+    job: saq.Job = ctx["job"]
+    job.timeout = 60 * 60  # An hour per job
+
+
+SAQ_QUEUE = Queue.from_url(os.environ.get("REDIS_URL"))
+
+SAQ_SETTINGS = SettingsDict(
+    queue=SAQ_QUEUE,
+    functions=[run_scanners, update_from_source, git_clone],
+    concurrency=10,
+    before_process=before_process,
+    cron_jobs=[CronJob(tick, cron="* * * * * */5")],  # run every 5 seconds
+)

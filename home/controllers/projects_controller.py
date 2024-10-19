@@ -20,7 +20,8 @@ from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
-from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR, SAQ_QUEUE
+from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
+from home.saq import SAQ_QUEUE
 
 log = logging.getLogger(__name__)
 

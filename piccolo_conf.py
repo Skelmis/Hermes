@@ -6,13 +6,12 @@ from dotenv import load_dotenv
 from piccolo.conf.apps import AppRegistry
 from piccolo.engine import SQLiteEngine
 from piccolo.engine.postgres import PostgresEngine
-from saq import Queue
 
 from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec
 
 load_dotenv()
 
-if not value_to_bool(os.environ.get("DEBUG")):
+if os.environ.get("POSTGRES_HOST", False):
     DB = PostgresEngine(
         config={
             "database": os.environ["POSTGRES_DB"],
@@ -45,6 +44,3 @@ BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 ALLOW_REGISTRATION: bool = value_to_bool(os.environ.get("ALLOW_REGISTRATION", True))
 """Whether users should be allowed to create new accounts."""
-
-
-SAQ_QUEUE = Queue.from_url("redis://localhost")

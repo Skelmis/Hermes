@@ -52,8 +52,13 @@ async def tick(_):
 
 
 async def before_process(ctx):
+    print(f"Starting job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
     job: saq.Job = ctx["job"]
     job.timeout = 60 * 60  # An hour per job
+
+
+async def after_process(ctx):
+    print(f"Finished job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
 
 
 SAQ_QUEUE = Queue.from_url(os.environ.get("REDIS_URL"))
@@ -63,5 +68,6 @@ SAQ_SETTINGS = SettingsDict(
     functions=[run_scanners, update_from_source, git_clone],
     concurrency=10,
     before_process=before_process,
-    cron_jobs=[CronJob(tick, cron="* * * * * */5")],  # run every 5 seconds
+    after_process=after_process,
+    # cron_jobs=[CronJob(tick, cron="* * * * * */5")],  # run every 5 seconds
 )

@@ -1,0 +1,254 @@
+{
+  "scan_info": {
+    "app_path": "/home/skelmis/tmp/maybe",
+    "rails_version": "7.2.2",
+    "security_warnings": 1,
+    "start_time": "2024-11-06 22:29:14 +1300",
+    "end_time": "2024-11-06 22:29:18 +1300",
+    "duration": 4.52864918,
+    "checks_performed": [
+      "BasicAuth",
+      "BasicAuthTimingAttack",
+      "CSRFTokenForgeryCVE",
+      "ContentTag",
+      "CookieSerialization",
+      "CreateWith",
+      "CrossSiteScripting",
+      "DefaultRoutes",
+      "Deserialize",
+      "DetailedExceptions",
+      "DigestDoS",
+      "DivideByZero",
+      "DynamicFinders",
+      "EOLRails",
+      "EOLRuby",
+      "EscapeFunction",
+      "Evaluation",
+      "Execute",
+      "FileAccess",
+      "FileDisclosure",
+      "FilterSkipping",
+      "ForceSSL",
+      "ForgerySetting",
+      "HeaderDoS",
+      "I18nXSS",
+      "JRubyXML",
+      "JSONEncoding",
+      "JSONEntityEscape",
+      "JSONParsing",
+      "LinkTo",
+      "LinkToHref",
+      "MailTo",
+      "MassAssignment",
+      "MimeTypeDoS",
+      "ModelAttrAccessible",
+      "ModelAttributes",
+      "ModelSerialize",
+      "NestedAttributes",
+      "NestedAttributesBypass",
+      "NumberToCurrency",
+      "PageCachingCVE",
+      "Pathname",
+      "PermitAttributes",
+      "QuoteTableName",
+      "Ransack",
+      "Redirect",
+      "RegexDoS",
+      "Render",
+      "RenderDoS",
+      "RenderInline",
+      "ResponseSplitting",
+      "ReverseTabnabbing",
+      "RouteDoS",
+      "SQL",
+      "SQLCVEs",
+      "SSLVerify",
+      "SafeBufferManipulation",
+      "SanitizeConfigCve",
+      "SanitizeMethods",
+      "Secrets",
+      "SelectTag",
+      "SelectVulnerability",
+      "Send",
+      "SendFile",
+      "SessionManipulation",
+      "SessionSettings",
+      "SimpleFormat",
+      "SingleQuotes",
+      "SkipBeforeFilter",
+      "SprocketsPathTraversal",
+      "StripTags",
+      "SymbolDoS",
+      "SymbolDoSCVE",
+      "TemplateInjection",
+      "TranslateBug",
+      "UnsafeReflection",
+      "UnsafeReflectionMethods",
+      "UnscopedFind",
+      "ValidationRegex",
+      "VerbConfusion",
+      "WeakHash",
+      "WeakRSAKey",
+      "WithoutProtection",
+      "XMLDoS",
+      "YAMLParsing"
+    ],
+    "number_of_controllers": 56,
+    "number_of_models": 79,
+    "number_of_templates": 250,
+    "ruby_version": "3.3.3",
+    "brakeman_version": "6.2.2"
+  },
+  "warnings": [
+    {
+      "warning_type": "Reverse Tabnabbing",
+      "warning_code": 111,
+      "fingerprint": "7204bf1e3892a3998589061bf38ee265c11d234dd024596ef7110d14765f1f8d",
+      "check_name": "ReverseTabnabbing",
+      "message": "When opening a link in a new tab without setting `rel: \"noopener noreferrer\"`, the new tab can control the parent tab's location. For example, an attacker could redirect to a phishing page.",
+      "file": "app/views/shared/_upgrade_notification.html.erb",
+      "line": 4,
+      "link": "https://brakemanscanner.org/docs/warning_types/reverse_tabnabbing/",
+      "code": "link_to(get_upgrade_for_notification(Current.user, Setting.upgrades_mode).to_s, get_upgrade_for_notification(Current.user, Setting.upgrades_mode).url, :class => \"text-sm text-blue-500 underline hover:text-blue-700\", :target => \"_blank\")",
+      "render_path": [
+        {
+          "type": "template",
+          "name": "layouts/with_sidebar",
+          "line": 21,
+          "file": "app/views/layouts/with_sidebar.html.erb",
+          "rendered": {
+            "name": "shared/_upgrade_notification",
+            "file": "app/views/shared/_upgrade_notification.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "shared/_upgrade_notification"
+      },
+      "user_input": null,
+      "confidence": "Medium",
+      "cwe_id": [
+        1022
+      ]
+    }
+  ],
+  "ignored_warnings": [
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "03a2010b605b8bdb7d4e1566720904d69ef2fbf8e7bc35735b84e161b475215e",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/controllers/issues_controller.rb",
+      "line": 5,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(template => \"#{Current.family.issues.find(params[:id]).class.name.underscore.pluralize}/show\", { :layout => \"issues\" })",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "IssuesController",
+        "method": "show"
+      },
+      "user_input": "params[:id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ]
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "aaccd8db0be34afdc88e5af08d91ae2e8b7765dfea2f3fc6e1c37db0adc7b991",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/invitations_controller.rb",
+      "line": 40,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.require(:invitation).permit(:email, :role)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "InvitationsController",
+        "method": "invitation_params"
+      },
+      "user_input": ":role",
+      "confidence": "Medium",
+      "cwe_id": [
+        915
+      ]
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "b1f821a5c03b8aa348fb21b9297081a3bf9e954244290e7e511c67213d35f3dc",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped model attribute",
+      "file": "app/views/pages/changelog.html.erb",
+      "line": 22,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "Provider::Github.new.fetch_latest_release_notes[:body]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "PagesController",
+          "method": "changelog",
+          "line": 35,
+          "file": "app/controllers/pages_controller.rb",
+          "rendered": {
+            "name": "pages/changelog",
+            "file": "app/views/pages/changelog.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "pages/changelog"
+      },
+      "user_input": null,
+      "confidence": "High",
+      "cwe_id": [
+        79
+      ]
+    },
+    {
+      "warning_type": "Dynamic Render Path",
+      "warning_code": 15,
+      "fingerprint": "fb6f7abeabc405d6882ffd41dbe8016403ef39307a5c6b4cd7b18adfaf0c24bf",
+      "check_name": "Render",
+      "message": "Render path contains parameter value",
+      "file": "app/views/import/configurations/show.html.erb",
+      "line": 15,
+      "link": "https://brakemanscanner.org/docs/warning_types/dynamic_render_path/",
+      "code": "render(partial => permitted_import_configuration_path(Current.family.imports.find(params[:import_id])), { :locals => ({ :import => Current.family.imports.find(params[:import_id]) }) })",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "Import::ConfigurationsController",
+          "method": "show",
+          "line": 7,
+          "file": "app/controllers/import/configurations_controller.rb",
+          "rendered": {
+            "name": "import/configurations/show",
+            "file": "app/views/import/configurations/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "import/configurations/show"
+      },
+      "user_input": "params[:import_id]",
+      "confidence": "Weak",
+      "cwe_id": [
+        22
+      ]
+    }
+  ],
+  "errors": [
+
+  ],
+  "obsolete": [
+
+  ]
+}

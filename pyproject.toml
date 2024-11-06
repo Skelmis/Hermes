@@ -13,13 +13,13 @@ litestar = {extras = ["cryptography"], version = "^2.12.1"}
 uvicorn = "^0.32.0"
 piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
-orjson = "^3.10.7"
+orjson = "^3.10.11"
 skelmis-commons = "^1.4.0"
 pytz = "^2024.1"
 piccolo-api = "^1.4.1"
 bandit = "^1.7.9"
-semgrep = "^1.92.0"
-saq = {extras = ["hiredis", "web"], version = "^0.18.1"}
+semgrep = "^1.95.0"
+saq = {extras = ["hiredis", "web"], version = "^0.18.2"}
 
 
 [tool.poetry.group.dev.dependencies]

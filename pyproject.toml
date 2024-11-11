@@ -18,8 +18,9 @@ skelmis-commons = "^1.4.0"
 pytz = "^2024.1"
 piccolo-api = "^1.4.1"
 bandit = "^1.7.9"
-semgrep = "^1.95.0"
+semgrep = "^1.96.0"
 saq = {extras = ["hiredis", "web"], version = "^0.18.2"}
+anyio = "^4.6.2.post1"
 
 
 [tool.poetry.group.dev.dependencies]

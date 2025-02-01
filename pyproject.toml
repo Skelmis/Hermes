@@ -9,17 +9,17 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 piccolo = {extras = ["all"], version = "^1.16.0"}
-litestar = {extras = ["cryptography"], version = "^2.12.1"}
-uvicorn = "^0.32.0"
+litestar = {extras = ["cryptography"], version = "^2.14.0"}
+uvicorn = "^0.34.0"
 piccolo-admin = "^1.6.0"
 python-dotenv = "^1.0.1"
 orjson = "^3.10.11"
 skelmis-commons = "^1.4.0"
-pytz = "^2024.1"
+pytz = "^2025.1"
 piccolo-api = "^1.4.1"
 bandit = "^1.7.9"
 semgrep = "^1.96.0"
-saq = {extras = ["hiredis", "web"], version = "^0.18.2"}
+saq = {extras = ["hiredis", "web"], version = "^0.20.1"}
 anyio = "^4.6.2.post1"
 
 

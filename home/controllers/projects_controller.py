@@ -357,6 +357,8 @@ class ProjectsController(Controller):
                 "run_scanners",
                 project_id=project.uuid,
                 user_id=request.user.id,
+                timeout=0,
+                heartbeat=0,
             )
 
         if git is not None:
@@ -371,6 +373,8 @@ class ProjectsController(Controller):
                 path_to_stuff=path_to_stuff,
                 project_id=project.uuid,
                 user_id=request.user.id,
+                timeout=0,
+                heartbeat=0,
             )
 
         return project.redirect_to()
@@ -425,6 +429,8 @@ class ProjectsController(Controller):
             "run_scanners",
             project_id=project.uuid,
             user_id=request.user.id,
+            timeout=0,
+            heartbeat=0,
         )
 
         return project.redirect_to()
@@ -443,6 +449,8 @@ class ProjectsController(Controller):
             "update_from_source",
             project_id=project.uuid,
             user_id=request.user.id,
+            timeout=0,
+            heartbeat=0,
         )
         return project.redirect_to()
 

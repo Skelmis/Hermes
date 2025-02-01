@@ -32,6 +32,8 @@ async def git_clone(_, *, git, path_to_stuff, project_id: str, user_id: str):
             "run_scanners",
             project_id=project.uuid,
             user_id=user.id,
+            timeout=0,
+            heartbeat=0,
         )
 
 
@@ -53,8 +55,6 @@ async def tick(_):
 
 async def before_process(ctx):
     print(f"Starting job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
-    job: saq.Job = ctx["job"]
-    job.timeout = 60 * 60  # An hour per job
 
 
 async def after_process(ctx):

@@ -44,6 +44,8 @@ services:
       dockerfile: ./docker/saq/Dockerfile
     container_name: "saq_hermes"
     restart: always
+    ports:
+      - "8803:8080"
     volumes:
       - projects:/code/.projects
     depends_on:

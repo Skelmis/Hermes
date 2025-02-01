@@ -183,7 +183,7 @@ template_config = TemplateConfig(
     directory="home/templates", engine=JinjaTemplateEngine.from_environment(ENVIRONMENT)
 )
 flash_plugin = FlashPlugin(config=FlashConfig(template_config=template_config))
-session_config = CookieBackendConfig(secret=os.urandom(16))
+session_config = CookieBackendConfig(secret=secrets.token_bytes(16))
 app = Litestar(
     route_handlers=[
         admin,

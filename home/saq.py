@@ -60,7 +60,6 @@ async def before_process(ctx):
 
 async def after_process(ctx):
     print(f"Finished job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
-    job: saq.Job = ctx["job"]
 
 
 SAQ_QUEUE = Queue.from_url(os.environ.get("REDIS_URL"))

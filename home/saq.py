@@ -55,10 +55,14 @@ async def tick(_):
 
 async def before_process(ctx):
     print(f"Starting job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
+    job: saq.Job = ctx["job"]
+    print(f"\t{job.timeout=}, {job.heartbeat=}")
 
 
 async def after_process(ctx):
     print(f"Finished job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
+    job: saq.Job = ctx["job"]
+    print(f"\t{job.timeout=}, {job.heartbeat=}")
 
 
 SAQ_QUEUE = Queue.from_url(os.environ.get("REDIS_URL"))

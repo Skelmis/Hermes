@@ -21,7 +21,7 @@ from home.tables import Project, Vulnerability, Scan, Profile
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
-from home.saq import SAQ_QUEUE
+from home.saq import SAQ_QUEUE, SAQ_TIMEOUT
 
 log = logging.getLogger(__name__)
 
@@ -357,8 +357,7 @@ class ProjectsController(Controller):
                 "run_scanners",
                 project_id=project.uuid,
                 user_id=request.user.id,
-                timeout=0,
-                heartbeat=0,
+                timeout=SAQ_TIMEOUT,
             )
 
         if git is not None:
@@ -373,8 +372,7 @@ class ProjectsController(Controller):
                 path_to_stuff=path_to_stuff,
                 project_id=project.uuid,
                 user_id=request.user.id,
-                timeout=0,
-                heartbeat=0,
+                timeout=SAQ_TIMEOUT,
             )
 
         return project.redirect_to()
@@ -429,8 +427,7 @@ class ProjectsController(Controller):
             "run_scanners",
             project_id=project.uuid,
             user_id=request.user.id,
-            timeout=0,
-            heartbeat=0,
+            timeout=SAQ_TIMEOUT,
         )
 
         return project.redirect_to()
@@ -449,8 +446,7 @@ class ProjectsController(Controller):
             "update_from_source",
             project_id=project.uuid,
             user_id=request.user.id,
-            timeout=0,
-            heartbeat=0,
+            timeout=SAQ_TIMEOUT,
         )
         return project.redirect_to()
 

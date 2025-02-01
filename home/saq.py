@@ -32,8 +32,7 @@ async def git_clone(_, *, git, path_to_stuff, project_id: str, user_id: str):
             "run_scanners",
             project_id=project.uuid,
             user_id=user.id,
-            timeout=0,
-            heartbeat=0,
+            timeout=SAQ_TIMEOUT,
         )
 
 
@@ -62,11 +61,10 @@ async def before_process(ctx):
 async def after_process(ctx):
     print(f"Finished job: {ctx['job'].function}\n\tWith kwargs: {ctx['job'].kwargs}")
     job: saq.Job = ctx["job"]
-    print(f"\t{job.timeout=}, {job.heartbeat=}")
 
 
 SAQ_QUEUE = Queue.from_url(os.environ.get("REDIS_URL"))
-
+SAQ_TIMEOUT = datetime.timedelta(hours=2).total_seconds()
 SAQ_SETTINGS = SettingsDict(
     queue=SAQ_QUEUE,
     functions=[run_scanners, update_from_source, git_clone],

@@ -10,7 +10,6 @@ services:
   hermes_db:
     image: postgres:14.7
     container_name: "db_hermes"
-    restart: always
     command: -p 8801
     ports:
       - "8801:8801"
@@ -26,7 +25,6 @@ services:
       context: .
       dockerfile: ./docker/web/Dockerfile
     container_name: "web_hermes"
-    restart: always
     volumes:
       - projects:/code/.projects
     ports:
@@ -43,7 +41,6 @@ services:
       context: .
       dockerfile: ./docker/saq/Dockerfile
     container_name: "saq_hermes"
-    restart: always
     ports:
       - "8803:8080"
     volumes:
@@ -55,7 +52,6 @@ services:
   hermes_redis:
     image: redis:7.4-alpine
     container_name: "redis_hermes"
-    restart: always
     ports:
       - '8802:8802'
     command: redis-server --port 8802 --save 20 1 --loglevel warning --requirepass haziness-sloppy-cycle-deduct-superman-undertook

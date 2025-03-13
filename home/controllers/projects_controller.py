@@ -272,8 +272,10 @@ class ProjectsController(Controller):
     @post(
         path="/create",
         include_in_schema=False,
+        # 100 Megabytes max file size
+        request_max_body_size=100 * 1_048_576,
     )
-    async def create_post(
+    async def create_project(
         self,
         request: Request,
         data: Annotated[

@@ -113,8 +113,7 @@ class ProjectsController(Controller):
                     # Its last vuln so loop around
                     alert(
                         request,
-                        "FYI, you've looped back to the"
-                        " start of vulnerabilities for this scan.",
+                        "FYI, this is the last vulnerability for this scan.",
                     )
                     return vulns[0].id
                 else:

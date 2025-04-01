@@ -18,6 +18,7 @@ from home.controllers.api import APIProjectController, APIVulnerabilitiesControl
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
 from home.tables import Project, Vulnerability, Scan, Profile
+from home.tables.vulnerability import VulnerabilityExploitability, VulnerabilityState
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
 from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
@@ -30,6 +31,11 @@ class CreateProjectFormData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     file: UploadFile | None
+
+
+class VulnerabilityMetaData(BaseModel):
+    exploitability: VulnerabilityExploitability
+    state: VulnerabilityState
 
 
 # noinspection DuplicatedCode
@@ -69,7 +75,10 @@ class ProjectsController(Controller):
         cls, request: Request, project: Project, vulnerability_id: str
     ) -> tuple[Vulnerability | None, Redirect | None]:
         vuln = await Vulnerability.add_ownership_where(
-            Vulnerability.objects().where(Vulnerability.id == vulnerability_id).first(),
+            Vulnerability.objects()
+            .prefetch(Vulnerability.project)
+            .where(Vulnerability.id == vulnerability_id)
+            .first(),
             request.user,
         )
         if not vuln:
@@ -222,6 +231,32 @@ class ProjectsController(Controller):
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @post(
+        path="/{project_id:str}/vulnerabilities/{vuln_id:str}",
+        include_in_schema=False,
+    )
+    async def update_vuln(
+        self,
+        request: HermesRequest,
+        project_id: str,
+        vuln_id: str,
+        data: Annotated[
+            VulnerabilityMetaData, Body(media_type=RequestEncodingType.MULTI_PART)
+        ],
+    ) -> Template | Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        vuln, redirect = await self.get_vulnerability(request, project, vuln_id)
+        if redirect:
+            return redirect
+
+        vuln.state = data.state
+        vuln.exploitability = data.exploitability
+        await vuln.save()
+        return vuln.redirect_to()
 
     @get(
         path="/{project_id:str}/settings",

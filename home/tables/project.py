@@ -16,12 +16,9 @@ from piccolo.columns import (
     Boolean,
     Array,
     Timestamptz,
-    Serial,
-    Where,
     Or,
     Integer,
 )
-from piccolo.query import Query
 from piccolo.table import Table
 
 from home.tables import ProjectAutomation, Notification, Scan

@@ -38,6 +38,10 @@ class VulnerabilityMetaData(BaseModel):
     state: VulnerabilityState
 
 
+class VulnerabilityNotesData(BaseModel):
+    notes: str
+
+
 # noinspection DuplicatedCode
 class ProjectsController(Controller):
     path = "/projects"
@@ -237,10 +241,10 @@ class ProjectsController(Controller):
         )
 
     @post(
-        path="/{project_id:str}/vulnerabilities/{vuln_id:str}",
+        path="/{project_id:str}/vulnerabilities/{vuln_id:str}/attributes",
         include_in_schema=False,
     )
-    async def update_vuln(
+    async def update_vuln_attributes(
         self,
         request: HermesRequest,
         project_id: str,
@@ -259,6 +263,31 @@ class ProjectsController(Controller):
 
         vuln.state = data.state
         vuln.exploitability = data.exploitability
+        await vuln.save()
+        return vuln.redirect_to()
+
+    @post(
+        path="/{project_id:str}/vulnerabilities/{vuln_id:str}/notes",
+        include_in_schema=False,
+    )
+    async def update_vuln_notes(
+        self,
+        request: HermesRequest,
+        project_id: str,
+        vuln_id: str,
+        data: Annotated[
+            VulnerabilityNotesData, Body(media_type=RequestEncodingType.MULTI_PART)
+        ],
+    ) -> Template | Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        vuln, redirect = await self.get_vulnerability(request, project, vuln_id)
+        if redirect:
+            return redirect
+
+        vuln.notes = data.notes
         await vuln.save()
         return vuln.redirect_to()
 

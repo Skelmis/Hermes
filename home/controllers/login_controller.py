@@ -132,6 +132,18 @@ class LoginController(Controller):
             else:
                 raise HTTPException(status_code=401, detail="Login failed")
 
+        user_is_active = await BaseUser.exists().where(
+            (BaseUser.username == username) & (BaseUser.active.eq(True))
+        )
+        if not user_is_active:
+            if return_html:
+                alert(request, "User is currently disabled.", level="error")
+                return self._render_template(request)
+            else:
+                raise HTTPException(
+                    status_code=401, detail="User is currently disabled."
+                )
+
         now = datetime.now()
         expiry_date = now + self._session_expiry
         max_expiry_date = now + self._max_session_expiry

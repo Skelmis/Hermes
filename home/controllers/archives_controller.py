@@ -1,12 +1,12 @@
 import orjson
-from litestar import Controller, get, Response
-from litestar.response import Redirect
+from litestar import Controller, get, Response, MediaType
+from litestar.response import Redirect, Template
 
 from home.controllers import ProjectsController
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
 from home.tables import Scan
-from home.util import orjson_util
+from home.util import orjson_util, get_csp
 from home.util.flash import alert
 
 
@@ -14,6 +14,7 @@ from home.util.flash import alert
 class ArchivesController(Controller):
     path = "/archives"
     middleware = [EnsureAuth]
+    include_in_schema = False
 
     @get("/projects/{project_id:str}/scans/{scan_number:int}/export")
     async def export_scan_archive(
@@ -38,7 +39,19 @@ class ArchivesController(Controller):
         data = await scan.export_as_json(request.user)
         return Response(
             orjson.dumps(data, option=orjson.OPT_INDENT_2, default=orjson_util.default),
-            headers={
-                "Content-Disposition": "attachment; filename='hermes_archive.json'"
+            headers={"Content-Disposition": "attachment; filename=hermes_archive.json"},
+            media_type=MediaType.JSON,
+        )
+
+    @get("")
+    async def get_load_archive_page(self) -> Template:
+        csp, nonce = get_csp()
+        return Template(
+            "archives/import.jinja",
+            context={
+                "csp_nonce": nonce,
             },
+            media_type=MediaType.HTML,
+            status_code=200,
+            headers={"content-security-policy": csp},
         )

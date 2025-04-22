@@ -1,1 +1,1 @@
-piccolo migrations new home --auto
+uv run piccolo migrations new home --auto

@@ -1,11 +1,10 @@
-FROM python:3.10-alpine
+FROM ghcr.io/astral-sh/uv:python3.10-alpine
 
 # Ensure container is ready
 RUN apk update
 RUN apk add git go curl bash ruby-dev make
 
 WORKDIR /code
-RUN pip install poetry
 
 ### Setup gosec
 RUN curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v2.21.1
@@ -17,9 +16,10 @@ RUN gem install brakeman
 
 ## Program install steps
 COPY ./pyproject.toml /code/pyproject.toml
-COPY ./poetry.lock /code/poetry.lock
+COPY ./uv.lock /code/uv.lock
 
-RUN poetry install
+RUN uv sync --compile-bytecode
+RUN uv pip install semgrep
 
 COPY . /code
 

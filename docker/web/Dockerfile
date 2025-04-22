@@ -1,17 +1,16 @@
-FROM python:3.10-alpine
+FROM ghcr.io/astral-sh/uv:python3.10-alpine
+
 # Ensure container is ready
 RUN apk update
 RUN apk add bash
 
 WORKDIR /code
-RUN pip install poetry
 
 ## Program install steps
 COPY ./pyproject.toml /code/pyproject.toml
-COPY ./poetry.lock /code/poetry.lock
+COPY ./uv.lock /code/uv.lock
 
-RUN poetry install
-
+RUN uv sync --compile-bytecode
 COPY . /code
 
 RUN chmod +x /code/docker/web/entrypoint.sh

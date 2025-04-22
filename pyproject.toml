@@ -1,32 +1,45 @@
-[tool.poetry]
+[project]
 name = "hermes"
-package-mode = false
+version = "0.0.1"
 description = "A single pane of glass for static code analysis"
-authors = ["Skelmis <skelmis.craft@gmail.com>"]
-license = "MIT"
+authors = [{ name = "Skelmis", email = "skelmis.craft@gmail.com" }]
+requires-python = "~=3.10"
 readme = "README.md"
+license = "MIT"
+dependencies = [
+    "piccolo[all]>=1.16.0,<2",
+    "litestar[cryptography]>=2.14.0,<3",
+    "uvicorn>=0.34.0,<0.35",
+    "piccolo-admin>=1.6.0,<2",
+    "python-dotenv>=1.0.1,<2",
+    "orjson>=3.10.11,<4",
+    "skelmis-commons>=1.4.0,<2",
+    "pytz~=2025.1",
+    "piccolo-api>=1.4.1,<2",
+    "bandit>=1.7.9,<2",
+    "saq[hiredis, web]>=0.20.1,<0.21",
+    "anyio>=4.6.2.post1,<5",
+]
 
-[tool.poetry.dependencies]
-python = "^3.10"
-piccolo = {extras = ["all"], version = "^1.16.0"}
-litestar = {extras = ["cryptography"], version = "^2.14.0"}
-uvicorn = "^0.34.0"
-piccolo-admin = "^1.6.0"
-python-dotenv = "^1.0.1"
-orjson = "^3.10.11"
-skelmis-commons = "^1.4.0"
-pytz = "^2025.1"
-piccolo-api = "^1.4.1"
-bandit = "^1.7.9"
-semgrep = "^1.96.0"
-saq = {extras = ["hiredis", "web"], version = "^0.20.1"}
-anyio = "^4.6.2.post1"
+[dependency-groups]
+dev = [
+    "black>=24.4.2,<25",
+    "ruff>=0.6.4,<0.7",
+    "pytest>=8.3.5,<9",
+    "pytest-asyncio>=0.26.0,<0.27",
+    "pytest-env>=1.1.5,<2",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.4.2"
-ruff = "^0.6.4"
+[tool.uv]
+package = false
+no-build-isolation-package = ["semgrep"]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+env = [
+    "PICCOLO_TEST_RUNNER=True",
+    "PICCOLO_CONF=piccolo_conf_test",
+]

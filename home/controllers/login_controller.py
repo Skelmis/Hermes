@@ -13,9 +13,9 @@ from piccolo_api.session_auth.tables import SessionsBase
 from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
 
+from home.configs import ALLOW_REGISTRATION
 from home.util import get_csp
 from home.util.flash import alert
-from piccolo_conf import ALLOW_REGISTRATION
 
 
 # Taken from the underlying Piccolo class and modified to work with Litestar

@@ -73,7 +73,7 @@ class Project(Table):
     @property
     def scanner_path(self) -> str:
         """The path input to a given scanner"""
-        from piccolo_conf import BASE_PROJECT_DIR
+        from home.configs import BASE_PROJECT_DIR
 
         return str(BASE_PROJECT_DIR / self.directory)
 
@@ -153,7 +153,7 @@ class Project(Table):
         Designed to be run in the background
         due to how long it may take
         """
-        from piccolo_conf import REGISTERED_INTERFACES
+        from home.configs import REGISTERED_INTERFACES
         from home.analysis import AnalysisInterface
 
         fail_count = 0

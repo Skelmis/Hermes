@@ -10,7 +10,7 @@ from piccolo.apps.user.tables import BaseUser
 
 from home.util import get_csp
 from home.util.flash import alert
-from piccolo_conf import ALLOW_REGISTRATION
+from home.configs import ALLOW_REGISTRATION
 
 SIMPLE_EMAIL_REGEX = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
 

@@ -28,6 +28,7 @@ dev = [
     "pytest>=8.3.5,<9",
     "pytest-asyncio>=0.26.0,<0.27",
     "pytest-env>=1.1.5,<2",
+    "freezegun>=1.5.1",
 ]
 
 [tool.uv]
@@ -37,9 +38,3 @@ no-build-isolation-package = ["semgrep"]
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[tool.pytest.ini_options]
-env = [
-    "PICCOLO_TEST_RUNNER=True",
-    "PICCOLO_CONF=piccolo_conf_test",
-]

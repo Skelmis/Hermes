@@ -16,7 +16,7 @@ from piccolo.columns import (
 from piccolo.table import Table
 
 if typing.TYPE_CHECKING:
-    from home.tables import Project
+    from home.tables import Project, Vulnerability
 
 
 class Scan(Table):
@@ -58,3 +58,30 @@ class Scan(Table):
         """Fetches the next scan number for a given project"""
         count = await Scan.count().where(Scan.project == project)
         return count + 1
+
+    async def export_as_json(self) -> dict[str, ...]:
+        """Export this scan as a JSON object."""
+        from home.tables import Vulnerability
+
+        base_data = (
+            await Scan.select(
+                Scan.project.all_columns(
+                    exclude=[Scan.project.directory, Scan.project.other_users]
+                ),
+                Scan.project.owner.username,
+                Scan.project.owner.first_name,
+                Scan.project.owner.last_name,
+                Scan.project.owner.email,
+                Scan.all_columns(exclude=["number", "created_at"]),
+                Scan.number.as_alias("scan_number"),
+                Scan.created_at.as_alias("scanned_at"),
+            )
+            .output(nested=True)
+            .where(Scan.id == self.id)
+            .first()
+        )
+        vulns = await Vulnerability.select(
+            Vulnerability.all_columns(exclude=["project", "scan"])
+        ).where(Vulnerability.scan == self)
+        base_data["vulnerabilities"] = vulns
+        return base_data

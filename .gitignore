@@ -1,5 +1,7 @@
 # Piccolo testing things
 pr_test.py
+*.sqlite
+tests/.projects
 
 ### Python template
 # Byte-compiled / optimized / DLL files

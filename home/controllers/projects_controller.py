@@ -21,7 +21,7 @@ from home.tables import Project, Vulnerability, Scan, Profile
 from home.tables.vulnerability import VulnerabilityExploitability, VulnerabilityState
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
-from piccolo_conf import REGISTERED_INTERFACES, BASE_PROJECT_DIR
+from home.configs import REGISTERED_INTERFACES, BASE_PROJECT_DIR
 from home.saq import SAQ_QUEUE, SAQ_TIMEOUT
 
 log = logging.getLogger(__name__)

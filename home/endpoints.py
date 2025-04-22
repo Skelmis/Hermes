@@ -1,13 +1,13 @@
 from litestar import MediaType, Request, get
 from litestar.response import Template
 
+from home.configs import REGISTERED_INTERFACES
 from home.controllers.api import APIProjectController
 from home.custom_request import HermesRequest
 from home.filters.datetime import format_datetime
 from home.middleware import EnsureAuth
 from home.tables import Profile, Vulnerability
 from home.util import get_csp
-from piccolo_conf import REGISTERED_INTERFACES
 
 
 @get(path="/", include_in_schema=False, middleware=[EnsureAuth])

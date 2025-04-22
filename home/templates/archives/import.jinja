@@ -1,0 +1,30 @@
+{% extends 'base.jinja' %}
+{% block title %}Load Archive{% endblock %}
+{% block content %}
+    <div class="page page-center">
+        <div class="container container-xl py-4">
+            {% include 'alerts.jinja' %}
+            <form class="card" method="post" enctype="multipart/form-data">
+                {{ csrf_input|safe }}
+                <div class="card-header">
+                    <h3 class="card-title">Import Archive</h3>
+                </div>
+                <div class="card-body">
+                    <p>Please upload your Hermes archive file here.</p>
+                    <div class="mb-3">
+                        <div class="form-label">Archive file.</div>
+                        <input id="file" name="file" type="file" class="form-control" accept="application/json"/>
+                        <small class="form-hint">
+                            Please provide a json file containing your prior artifacts.
+                            These should only come from a scan export.
+                        </small>
+                    </div>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+{% endblock %}

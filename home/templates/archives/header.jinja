@@ -1,0 +1,53 @@
+{% if is_small %}
+    <div class="container-xl">
+        <div class="row g-2 align-items-center">
+            <div class="col-6 col-sm-4 col-md-2 col-xl py-3">
+                <a href="/archives/{{ archive_uuid }}" class="btn btn-outline-primary w-100">
+                    Overview
+                </a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    {#            Only user the header on big screens so it doesnt break #}
+    <header class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+            <div class="navbar">
+                <div class="container-xl">
+                    <ul class="navbar-nav">
+                        <li class="nav-item {% if active=='overview' %}active{% endif %}">
+                            <a class="nav-link" href="/archives/{{ archive_uuid }}">
+                <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                  <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                       stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                       stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path
+                          d="M5 12l-2 0l9 -9l9 9l-2 0"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"/><path
+                          d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"/></svg>
+                </span>
+                                <span class="nav-link-title">
+                  Overview
+                </span>
+                            </a>
+                        </li>
+                        <li class="nav-item {% if active=='vulnerabilities' %}active{% endif %}">
+                            <a class="nav-link" href="/archives/{{ archive_uuid }}/vulnerabilities">
+                <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                       stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                       class="icon icon-tabler icons-tabler-outline icon-tabler-alert-triangle"><path stroke="none"
+                                                                                                      d="M0 0h24v24H0z"
+                                                                                                      fill="none"></path><path
+                          d="M12 9v4"></path><path
+                          d="M10.363 3.591l-8.106 13.534a1.914 1.914 0 0 0 1.636 2.871h16.214a1.914 1.914 0 0 0 1.636 -2.87l-8.106 -13.536a1.914 1.914 0 0 0 -3.274 0z"></path><path
+                          d="M12 16h.01"></path></svg></span>
+                                <span class="nav-link-title">
+                  Vulnerabilities Viewer
+                </span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </header>
+{% endif %}

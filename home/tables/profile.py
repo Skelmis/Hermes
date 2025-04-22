@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 import uuid
 
+import arrow
 import pytz
 from piccolo.apps.user.tables import BaseUser
 from piccolo.columns import ForeignKey, UUID, Text
@@ -20,8 +21,11 @@ class Profile(Table):
     async def get_or_create(cls, user: BaseUser) -> Profile:
         return await Profile.objects().get_or_create(Profile.target == user)
 
-    def localize_dt(self, value: datetime.datetime | None):
+    def localize_dt(self, value: datetime.datetime | str):
         """Given a UTC dt, normalize to the users profile"""
+        if isinstance(value, str):
+            # To handle flexible archive schemas
+            value = arrow.get(value).datetime
 
         def tz_aware(dt):
             return dt.tzinfo is not None and dt.tzinfo.utcoffset(dt) is not None

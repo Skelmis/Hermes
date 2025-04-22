@@ -1,0 +1,88 @@
+{% extends 'base.jinja' %}
+{% block content %}
+    <div class="page">
+        <div class="page-wrapper">
+            <!-- Page header -->
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-1 align-items-center">
+                        <div class="col">
+                            <p></p>
+                            <p></p>
+                            <p></p>
+                            <h1 class="page-title">
+                                Hermes
+                            </h1>
+                        </div>
+                        <p>All of your loaded archives will be viewable here.</p>
+                    </div>
+                    <br>
+                    {% include 'alerts.jinja' %}
+                </div>
+            </div>
+
+            <div class="page-header d-print-none">
+                <div class="container-xl"><div class="col-6 col-sm-4 col-md-2 col-xl py-3">
+                    <a href="/archives/import" class="btn btn-outline-primary w-100">
+                        Import Archive
+                    </a>
+                </div>
+                    <div class="row g-2 align-items-center">
+
+                        <div class="col">
+                            <h2>
+                                Your archives
+                            </h2>
+                            <p class="small">Sorted by date loaded.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Page body -->
+            <div class="page-body">
+                <div class="container-xl">
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="table-default" class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>
+                                            <button class="table-sort" data-sort="sort-name">Name</button>
+                                        </th>
+                                        <th>
+                                            <button class="table-sort" data-sort="sort-desc">Description</button>
+                                        </th>
+                                        <th>
+                                            <button class="table-sort" data-sort="sort-scanned">Archive Scanned At</button>
+                                        </th>
+                                        <th>
+                                            <button class="table-sort" data-sort="sort-tv">Total vulnerabilities
+                                            </button>
+                                        </th>
+                                        <th>
+                                            <button class="table-sort" data-sort="sort-view">View</button>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody class="table-tbody">
+                                    {% for data in archive_table %}
+                                        <tr>
+                                            <td class="sort-name">{{ data.0 }}</td>
+                                            <td class="sort-description">{{ data.1 }}</td>
+                                            <td class="sort-scanned">{{ profile.localize_dt(data.2)|fmt('full') }}</td>
+                                            <td class="sort-tv">{{ data.3 }}</td>
+                                            <td class="sort-view"><a href="/archives/{{ data.4 }}">View</a></td>
+                                        </tr>
+                                    {% endfor %}
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,112 @@
+{% extends 'base.jinja' %}
+{% block title %}Archive overview{% endblock %}
+{% block content %}
+    <div class="page">
+        {% include 'archives/header.jinja' %}
+        <div class="page-wrapper">
+            <div class="page-header d-print-none">
+                <div class="container-xl">
+                    <div class="row g-2 align-items-center">
+                        <div class="col">
+                            <h2 class="page-title">
+                                {{ project_title }} Overview
+                            </h2><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page body -->
+            <div class="page-body">
+                <div class="container-xl">
+                    {% include 'alerts.jinja' %}
+                    <div class="row row-cards row-deck">
+                        <div class="col-12">
+                            <div class="card">
+                                {% if project.description %}
+                                    <div class="card-body">
+                                        {{ project.description }}
+                                    </div>
+                                {% endif %}
+                                <div class="card-footer">
+                                    <div class="card-body">
+                                        <div class="datagrid">
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Project Created At</div>
+                                                <div class="datagrid-content">{{ profile.localize_dt(project.created_at)|fmt('full') }}</div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Scan Number</div>
+                                                <div class="datagrid-content">This was scan #{{ scan.scan_number }}</div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Scan Ran At</div>
+                                                <div class="datagrid-content">
+                                                    {{ profile.localize_dt(scan.scanned_at)|fmt('full') if scan is not none else "N/A" }}
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Scanner Versions Used</div>
+                                                <div class="datagrid-content">{{ ', '.join(scan.scanner_versions_used) if scan is not none else "N/A" }}</div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="table-responsive">
+                                    <table
+                                            class="table table-vcenter card-table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th class="w-25">Title</th>
+                                            <th class="w-50">Description</th>
+                                            <th class="w-1">Scanner</th>
+                                            <th class="w-1">State</th>
+                                            <th class="w-1">Exploitability</th>
+                                            <th class="w-1">File</th>
+                                            <th class="w-1"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for vuln in scan.vulnerabilities %}
+                                            <tr>
+                                                <td>{{ vuln.title }}</td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.description }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.found_by|capitalize }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.state|capitalize }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.exploitability|capitalize }}
+                                                </td>
+                                                <td class="text-secondary">
+                                                    {{ vuln.code_file }}
+                                                </td>
+                                                <td>
+                                                    <a href="/archives/{{ archive_uuid }}/vulnerabilities/{{ loop.index0 }}">View</a>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

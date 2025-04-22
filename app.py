@@ -51,6 +51,7 @@ from home.tables import (
     ProjectAutomation,
     Scan,
     Vulnerability,
+    Archives,
 )
 
 load_dotenv()
@@ -113,6 +114,17 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
             Vulnerability.created_at,
         ],
     )
+    archives_tc = TableConfig(
+        Archives,
+        menu_group="Project Management",
+        order_by=[OrderBy(Archives.created_at, ascending=False)],
+        visible_columns=[
+            Archives.id,
+            Archives.owner,
+            Archives.created_at,
+            Archives.archive_created_at,
+        ],
+    )
 
     await create_admin(
         tables=[
@@ -123,6 +135,7 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
             automation_tc,
             scan_tc,
             vulnerability_tc,
+            archives_tc,
         ],
         production=IS_PRODUCTION,
         allowed_hosts=["hermes.skelmis.co.nz"],

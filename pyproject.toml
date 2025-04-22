@@ -19,6 +19,7 @@ dependencies = [
     "bandit>=1.7.9,<2",
     "saq[hiredis, web]>=0.20.1,<0.21",
     "anyio>=4.6.2.post1,<5",
+    "arrow>=1.3.0",
 ]
 
 [dependency-groups]

@@ -3,6 +3,7 @@ from .logout_controller import LogoutController
 from .signup_controller import SignUpController
 from .projects_controller import ProjectsController
 from .password_controller import PasswordController
+from .archives_controller import ArchivesController
 
 __all__ = (
     "LoginController",
@@ -11,4 +12,5 @@ __all__ = (
     "ProjectsController",
     "PasswordController",
     "api",
+    "ArchivesController",
 )

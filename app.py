@@ -31,6 +31,7 @@ from home.controllers import (
     SignUpController,
     ProjectsController,
     PasswordController,
+    ArchivesController,
 )
 from home.controllers.api import APIProjectController
 from home.custom_request import HermesRequest
@@ -197,6 +198,7 @@ app = Litestar(
         SignUpController,
         ProjectsController,
         PasswordController,
+        ArchivesController,
     ],
     template_config=template_config,
     static_files_config=[

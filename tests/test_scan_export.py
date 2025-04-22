@@ -1,5 +1,6 @@
 import datetime
 
+from dateutil.tz import tzutc
 from freezegun import freeze_time
 from piccolo.apps.user.tables import BaseUser
 
@@ -20,71 +21,80 @@ async def test_scan_as_json():
     await vuln_2.save()
 
     expected = {
-        "id": scan_1.id,
-        "project": {
-            "code_scanners": ["bandit"],
-            "created_at": datetime.datetime(
+        "archive_created_at": datetime.datetime(2025, 1, 10, 0, 0, tzinfo=tzutc()),
+        "archive_creator": {
+            "email": "",
+            "first_name": "",
+            "last_name": "",
+            "username": "ethan",
+        },
+        "scan": {
+            "id": scan_1.id,
+            "project": {
+                "code_scanners": ["bandit"],
+                "created_at": datetime.datetime(
+                    2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
+                ),
+                "description": "",
+                "id": project_1.id,
+                "is_git_based": False,
+                "is_public": False,
+                "owner": {
+                    "email": "",
+                    "first_name": "",
+                    "last_name": "",
+                    "username": "ethan",
+                },
+                "title": "Project",
+            },
+            "scan_number": 1,
+            "scanned_at": datetime.datetime(
                 2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
             ),
-            "description": "",
-            "id": project_1.id,
-            "is_git_based": False,
-            "is_public": False,
-            "owner": {
-                "email": "",
-                "first_name": "",
-                "last_name": "",
-                "username": "ethan",
-            },
-            "title": "Project",
+            "scanner_versions_used": ["Bandit 1.2.3"],
+            "vulnerabilities": [
+                {
+                    "code_context": "",
+                    "code_file": "",
+                    "code_line": "",
+                    "confidence": "",
+                    "created_at": datetime.datetime(
+                        2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
+                    ),
+                    "description": "",
+                    "exploitability": "Unknown",
+                    "extra_metadata": "{}",
+                    "found_by": "Unknown",
+                    "id": vuln_1.id,
+                    "impact": "",
+                    "likelihood": "",
+                    "notes": "",
+                    "severity": "",
+                    "state": "New",
+                    "title": "Vuln 1",
+                },
+                {
+                    "code_context": "",
+                    "code_file": "",
+                    "code_line": "",
+                    "confidence": "",
+                    "created_at": datetime.datetime(
+                        2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
+                    ),
+                    "description": "",
+                    "exploitability": "Unknown",
+                    "extra_metadata": "{}",
+                    "found_by": "Unknown",
+                    "id": vuln_2.id,
+                    "impact": "",
+                    "likelihood": "",
+                    "notes": "",
+                    "severity": "",
+                    "state": "New",
+                    "title": "Vuln 2",
+                },
+            ],
         },
-        "scan_number": 1,
-        "scanned_at": datetime.datetime(
-            2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
-        ),
-        "scanner_versions_used": ["Bandit 1.2.3"],
-        "vulnerabilities": [
-            {
-                "code_context": "",
-                "code_file": "",
-                "code_line": "",
-                "confidence": "",
-                "created_at": datetime.datetime(
-                    2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
-                ),
-                "description": "",
-                "exploitability": "Unknown",
-                "extra_metadata": "{}",
-                "found_by": "Unknown",
-                "id": vuln_1.id,
-                "impact": "",
-                "likelihood": "",
-                "notes": "",
-                "severity": "",
-                "state": "New",
-                "title": "Vuln 1",
-            },
-            {
-                "code_context": "",
-                "code_file": "",
-                "code_line": "",
-                "confidence": "",
-                "created_at": datetime.datetime(
-                    2025, 1, 10, 0, 0, tzinfo=datetime.timezone.utc
-                ),
-                "description": "",
-                "exploitability": "Unknown",
-                "extra_metadata": "{}",
-                "found_by": "Unknown",
-                "id": vuln_2.id,
-                "impact": "",
-                "likelihood": "",
-                "notes": "",
-                "severity": "",
-                "state": "New",
-                "title": "Vuln 2",
-            },
-        ],
     }
-    data = await scan_1.export_as_json()
+    data = await scan_1.export_as_json(user_1)
     assert data == expected

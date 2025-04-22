@@ -4,6 +4,7 @@ import datetime
 import typing
 import uuid
 
+from piccolo.apps.user.tables import BaseUser
 from piccolo.columns import (
     UUID,
     ForeignKey,
@@ -14,6 +15,7 @@ from piccolo.columns import (
     Text,
 )
 from piccolo.table import Table
+import arrow
 
 if typing.TYPE_CHECKING:
     from home.tables import Project, Vulnerability
@@ -59,7 +61,7 @@ class Scan(Table):
         count = await Scan.count().where(Scan.project == project)
         return count + 1
 
-    async def export_as_json(self) -> dict[str, ...]:
+    async def export_as_json(self, requester: BaseUser) -> dict[str, ...]:
         """Export this scan as a JSON object."""
         from home.tables import Vulnerability
 
@@ -84,4 +86,14 @@ class Scan(Table):
             Vulnerability.all_columns(exclude=["project", "scan"])
         ).where(Vulnerability.scan == self)
         base_data["vulnerabilities"] = vulns
-        return base_data
+
+        data = {}
+        data["scan"] = base_data
+        data["archive_created_at"] = arrow.utcnow().datetime
+        data["archive_creator"] = {
+            "username": requester.username,
+            "first_name": requester.first_name,
+            "last_name": requester.last_name,
+            "email": requester.email,
+        }
+        return data

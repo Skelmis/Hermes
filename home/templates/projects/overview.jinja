@@ -40,9 +40,10 @@
                                             <label for="select-scan" class="form-label">Currently showing
                                                 vulnerabilities for:</label>
                                             <select type="text" class="form-select" id="select-scan">
-                                                <option value="{{ scan.number }}">Scan {{ scan.number }}</option>
                                                 {% for val in range(1, total_scans) %}
-                                                    {% if val != scan.number %}
+                                                    {% if val == scan.number %}
+                                                        <option value="{{ val }}" selected="selected">Scan {{ val }}</option>
+                                                    {% else %}
                                                         <option value="{{ val }}">Scan {{ val }}</option>
                                                     {% endif %}
                                                 {% endfor %}

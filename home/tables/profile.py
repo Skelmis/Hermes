@@ -20,7 +20,7 @@ class Profile(Table):
     async def get_or_create(cls, user: BaseUser) -> Profile:
         return await Profile.objects().get_or_create(Profile.target == user)
 
-    def localize_dt(self, value: datetime.datetime):
+    def localize_dt(self, value: datetime.datetime | None):
         """Given a UTC dt, normalize to the users profile"""
 
         def tz_aware(dt):

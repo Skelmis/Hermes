@@ -19,11 +19,22 @@ async def home(request: HermesRequest) -> Template:
     for project in projects:
         scan = await project.get_last_scan()
         if scan:
-            latest_scan = format_datetime(profile.localize_dt(scan.scanned_at))
-            total_vulns = await Vulnerability.count().where(Vulnerability.scan == scan)
-            total_resolved_vulns = await Vulnerability.count().where(
-                Vulnerability.scan == scan
-            )
+            if scan.scanned_at is None:
+                # We check scanned_at is None as there is a race condition
+                # where we request a project page just as the scan was created
+                # so this hasn't been set yet
+                latest_scan = "Latest scan still running"
+                total_vulns = "N/A"
+                total_resolved_vulns = "N/A"
+
+            else:
+                latest_scan = format_datetime(profile.localize_dt(scan.scanned_at))
+                total_vulns = await Vulnerability.count().where(
+                    Vulnerability.scan == scan
+                )
+                total_resolved_vulns = await Vulnerability.count().where(
+                    Vulnerability.scan == scan
+                )
 
         else:
             latest_scan = "No scan run"

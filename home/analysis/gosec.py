@@ -34,8 +34,14 @@ class GoSec(AnalysisInterface):
             f"{self.project.scanner_path}/./...",
         ]
 
+    async def get_version_string(self) -> str:
+        result = await self.run_command(["gosec", "--version"])
+        result = result.decode().split("\n")[0].split(": ")[1]
+        return f"{self.name} {result}"
+
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         scan = await self.get_scan(scan)
+        await self.set_version_string(scan)
         result_str = await self.run_scanner()
         result: GoSecResult = orjson.loads(result_str)
         vulns: list[Vulnerability] = []

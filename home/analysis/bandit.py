@@ -73,8 +73,14 @@ class Bandit(AnalysisInterface):
             self.project.scanner_path,
         ]
 
+    async def get_version_string(self) -> str:
+        result = await self.run_command(["bandit", "--version"])
+        result = result.decode()
+        return result.split("\n")[0].capitalize()
+
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
-        scan = await self.get_scan(scan)
+        scan: Scan = await self.get_scan(scan)
+        await self.set_version_string(scan)
         result_str = await self.run_scanner()
         result: BanditOutput = orjson.loads(result_str)
 

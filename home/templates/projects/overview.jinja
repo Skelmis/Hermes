@@ -11,7 +11,6 @@
                             <h2 class="page-title">
                                 {{ project_title }} Overview
                             </h2><br>
-                            <p>{{ project.description }}</p>
                         </div>
                     </div>
                 </div>
@@ -24,36 +23,76 @@
                     <div class="row row-cards row-deck">
                         <div class="col-12">
                             <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title">{{ project.title }}</h3>
-                                </div>
                                 {% if project.description %}
                                     <div class="card-body">
                                         {{ project.description }}
                                     </div>
                                 {% endif %}
                                 <div class="card-footer">
-                                    Project created <b>{{ profile.localize_dt(project.created_at)|fmt('full') }}</b>
-                                    {% if scan %}
-                                        <br><br>
-                                        <div {% if not is_small %}class="mb-3 col-3"{% endif %}>
-                                            <label for="select-scan" class="form-label">Currently showing
-                                                vulnerabilities for:</label>
-                                            <select type="text" class="form-select" id="select-scan">
-                                                {% for val in range(1, total_scans) %}
-                                                    {% if val == scan.number %}
-                                                        <option value="{{ val }}" selected="selected">Scan {{ val }}</option>
-                                                    {% else %}
-                                                        <option value="{{ val }}">Scan {{ val }}</option>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </select>
+                                    <div class="card-body">
+                                        <div class="datagrid">
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Project Created At</div>
+                                                <div class="datagrid-content">{{ profile.localize_dt(project.created_at)|fmt('full') }}</div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Currently Shown Scan</div>
+                                                <div class="datagrid-content">Scan #<b>{{ scan.number }}</b></div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Scan Ran At</div>
+                                                <div class="datagrid-content">
+                                                    {{ profile.localize_dt(scan.created_at)|fmt('full') if scan is not none else "N/A" }}
+                                                </div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Scanner Versions Used</div>
+                                                <div class="datagrid-content">{{ scan.scanner_versions if scan is not none else "N/A" }}</div>
+                                            </div>
                                         </div>
-                                        Shown scan run at <b>
-                                        {{ profile.localize_dt(scan.created_at)|fmt('full') }}</b>
-                                    {% else %}
-                                        No scan run
-                                    {% endif %}
+                                        <br>
+                                        {% if scan is not none %}
+                                            <form action="/projects/{{ project.uuid }}/ui/metadata"
+                                                  method="POST"
+                                                  enctype="multipart/form-data">
+                                                {{ csrf_input|safe }}
+                                                <div class="datagrid">
+
+                                                    <div class="datagrid-item">
+                                                        <div class="datagrid-title">Select Different Scan</div>
+                                                        <select type="text" class="form-select" id="scan_number"
+                                                                name="scan_number">
+                                                            {% for val in range(1, total_scans) %}
+                                                                {% if val == scan.number %}
+                                                                    <option value="{{ val }}" selected="selected">
+                                                                        Scan {{ val }}</option>
+                                                                {% else %}
+                                                                    <option value="{{ val }}">Scan {{ val }}</option>
+                                                                {% endif %}
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <div class="datagrid-item">
+                                                        <div class="datagrid-title">⠀</div>
+                                                        <div class="datagrid-content">
+                                                            <button type="submit" class="btn btn-outline-info">
+                                                                Show Selected Scan
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="datagrid-item">
+                                                        <div class="datagrid-title">Scan Export Options</div>
+                                                        <div class="datagrid-content">Under Construction</div>
+                                                    </div>
+                                                    <div class="datagrid-item">
+                                                        <div class="datagrid-title">Scan Export Options</div>
+                                                        <div class="datagrid-content">Under Construction</div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -111,5 +150,4 @@
 
         </div>
     </div>
-    <script src="/static/projects.js" nonce="{{ csp_nonce }}"></script>
 {% endblock %}

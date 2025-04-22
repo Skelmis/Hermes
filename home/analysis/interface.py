@@ -20,9 +20,9 @@ class AnalysisInterface(abc.ABC):
 
         return scan
 
-    async def run_scanner(self) -> bytes:
+    async def run_command(self, command: list[str]) -> bytes:
         try:
-            result_str = await anyio.run_process(self.generate_command())
+            result_str = await anyio.run_process(command)
             result_str = result_str.stdout
         except subprocess.CalledProcessError as e:
             if e.returncode != 1:
@@ -31,6 +31,14 @@ class AnalysisInterface(abc.ABC):
             # Lol this is likely fine
             result_str = e.stdout
         return result_str
+
+    async def run_scanner(self) -> bytes:
+        return await self.run_command(self.generate_command())
+
+    async def set_version_string(self, scan: Scan) -> None:
+        scanner_version = await self.get_version_string()
+        scan.scanner_versions_used.append(scanner_version)
+        await scan.save()
 
     @classmethod
     @property
@@ -64,4 +72,9 @@ class AnalysisInterface(abc.ABC):
     @abc.abstractmethod
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         """Run a scan using the tooling and generate a list of vulnerabilities"""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    async def get_version_string(self) -> str:
+        """Return the current version of the scanner"""
         raise NotImplementedError

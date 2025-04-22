@@ -38,6 +38,10 @@ class VulnerabilityMetaData(BaseModel):
     state: VulnerabilityState
 
 
+class ProjectMetaData(BaseModel):
+    scan_number: int | None = None
+
+
 class VulnerabilityNotesData(BaseModel):
     notes: str
 
@@ -138,7 +142,7 @@ class ProjectsController(Controller):
         self,
         request: HermesRequest,
         project_id: str,
-        scan_number: int = None,
+        scan_number: int | None = None,
     ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
@@ -169,6 +173,9 @@ class ProjectsController(Controller):
         return Template(
             "projects/overview.jinja",
             context={
+                # scan is still scan: Scan | None
+                # at this point and templates should
+                # treat it as such where required
                 "scan": scan,
                 "is_small": request.is_small,
                 "csp_nonce": nonce,
@@ -239,6 +246,24 @@ class ProjectsController(Controller):
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @post(
+        path="/{project_id:str}/ui/metadata",
+        include_in_schema=False,
+    )
+    async def project_metdata(
+        self,
+        project_id: str,
+        data: Annotated[
+            ProjectMetaData, Body(media_type=RequestEncodingType.MULTI_PART)
+        ],
+    ) -> Redirect:
+        # TODO Handle pre-existing query parameters? Currently not required
+        if data.scan_number:
+            return Redirect(f"/projects/{project_id}?scan_number={data.scan_number}")
+
+        # TODO Change to support exporting scans
+        return Redirect(f"/projects/{project_id}")
 
     @post(
         path="/{project_id:str}/vulnerabilities/{vuln_id:str}/attributes",

@@ -10,6 +10,8 @@ from piccolo.columns import (
     Integer,
     Timestamptz,
     LazyTableReference,
+    Array,
+    Text,
 )
 from piccolo.table import Table
 
@@ -29,6 +31,10 @@ class Scan(Table):
         index=True,
         help_text="What number scan this is, in relation to a specific project",
     )
+    scanner_versions_used = Array(
+        base_column=Text(),
+        help_text="A list of <Scanner <Version>> for each scanner used for this scan.",
+    )
 
     @property
     def scanned_at(self) -> datetime.datetime:
@@ -37,6 +43,15 @@ class Scan(Table):
     @property
     def uuid(self) -> str:
         return str(self.id)
+
+    @property
+    def scanner_versions(self) -> str:
+        """Returns the version of scanners used."""
+        return_str = ", ".join(self.scanner_versions_used)
+        if not return_str:
+            return "Unknown"
+
+        return return_str
 
     @classmethod
     async def get_next_number(cls, project: Project) -> int:

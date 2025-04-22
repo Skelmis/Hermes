@@ -59,8 +59,14 @@ class Semgrep(AnalysisInterface):
             self.project.scanner_path,
         ]
 
+    async def get_version_string(self) -> str:
+        result = await self.run_command(["semgrep", "--version"])
+        result = result.decode().split("\n")[0]
+        return f"{self.name} {result}"
+
     async def scan(self, scan: Scan | None = None) -> list[Vulnerability]:
         scan = await self.get_scan(scan)
+        await self.set_version_string(scan)
         result_str = await self.run_scanner()
         result: SemgrepOutput = orjson.loads(result_str)
         vulns: list[Vulnerability] = []

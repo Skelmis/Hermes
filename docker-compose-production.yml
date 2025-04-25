@@ -1,10 +1,11 @@
+# You need to set the relevant passwords
 x-shared-variables: &common-variables
   POSTGRES_HOST: db_hermes
   POSTGRES_DB: hermes_db
   POSTGRES_USER: hermes_db_user
-  POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
+  POSTGRES_PASSWORD:
   POSTGRES_PORT: 8801
-  REDIS_URL: "redis://default:haziness-sloppy-cycle-deduct-superman-undertook@redis_hermes:8802/0"
+  REDIS_URL: "redis://default:<PASSWORD>@redis_hermes:8802/0"
 
 services:
   hermes_db:
@@ -13,12 +14,10 @@ services:
     restart: always
     command: -p 8801
     ports:
-      - "8801:8801"
+      - "127.0.0.1:8801:8801"
     environment:
+      <<: *common-variables
       PGDATA: /var/lib/postgresql/data/pgdata
-      POSTGRES_DB: hermes_db
-      POSTGRES_USER: hermes_db_user
-      POSTGRES_PASSWORD: product-defeat-follow-worshiper-swimwear-drown
     volumes:
       - .db:/var/lib/postgresql/data
   hermes_web:
@@ -28,18 +27,20 @@ services:
     volumes:
       - projects:/code/.projects
     ports:
-      - "8800:8800"
+      - "127.0.0.1:8800:8800"
     depends_on:
       - hermes_db
       - hermes_redis
     environment:
       <<: *common-variables
       SERVING_DOMAIN: "hermes.skelmis.co.nz"
-      CSRF_TOKEN: 02bea54b1b317930f14317938f48d785d0adf5909bf19480fcee2fac1253e522
+      CSRF_TOKEN:
   hermes_saq:
     image: ghcr.io/skelmis/hermes_saq:master
     container_name: "saq_hermes"
     restart: always
+    ports:
+      - "127.0.0.1:8803:8080"
     volumes:
       - projects:/code/.projects
     depends_on:
@@ -51,8 +52,8 @@ services:
     container_name: "redis_hermes"
     restart: always
     ports:
-      - '8802:8802'
-    command: redis-server --port 8802 --save 20 1 --loglevel warning --requirepass haziness-sloppy-cycle-deduct-superman-undertook
+      - '127.0.0.1:8802:8802'
+    command: redis-server --port 8802 --save 20 1 --loglevel warning --requirepass <YOURPASSWORDCHOICCE>
     volumes:
       - cache:/data
 

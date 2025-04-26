@@ -39,8 +39,9 @@ services:
     image: ghcr.io/skelmis/hermes_saq:master
     container_name: "saq_hermes"
     restart: always
-    ports:
-      - "127.0.0.1:8803:8080"
+    # Uncomment if you want the SAQ dashboard
+#    ports:
+#      - "127.0.0.1:8803:8080"
     volumes:
       - projects:/code/.projects
     depends_on:

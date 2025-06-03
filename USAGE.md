@@ -1,3 +1,11 @@
+### Quick Start Guide
+
+1. `git clone https://github.com/Skelmis/Hermes.git hermes`
+2. `cd hermes`
+3. `docker compose -f ./docker-compose-dev.yml up`
+4. Navigate to http://127.0.0.1:8800
+5. Create an account and you are good to go.
+
 ### Configuration Options
 
 Note that project zip files currently enforce a maximum file size of `250 mb`. If you find yourself over this, consider using git or opening an issue at which point I can work to make it configurable.
@@ -12,6 +20,7 @@ Note that project zip files currently enforce a maximum file size of `250 mb`. I
 - `POSTGRES_HOST`: The host Postgres is running on.
 - `POSTGRES_PORT`: The port for Postgres.
 - `REDIS_URL`: The URL to use when attempting to connect to Redis.
+- `SERVING_DOMAIN`: The domain this site will run on. Used for cookies etc.
 
 #### Optional
 *These are optional feature flags to provide*
@@ -47,3 +56,16 @@ Run `main.py` with a configured `.env` and either of the following:
 docker compose -f ./docker-compose-dev.yml up hermes_saq hermes_redis hermes_db
 docker compose -f ./docker-compose-dev.yml up --build hermes_saq hermes_redis hermes_db
 ```
+
+### Deployment Recommendations
+
+While efforts have been taken to secure this application, it is inherently a tool that wraps command line scanners and stores project files on disk.
+
+It is recommended that if you do wish to deploy this outside of your own laptop that the following conditions are met:
+- Ensure debug mode is not enabled
+- Disable user sign up (`ALLOW_REGISTRATION=false`)
+- Ensure platform users are considered relatively trusted (I.e. friends, other internal users on the lan, etc)
+- Set strong passwords for Postgres and Redis as well as ensuring they are only exposed to the local network
+- Set a strong CSRF token
+
+If you encounter security issues when deploying in environments that meet the above expectations I'd love to hear about it! When doing so please follow the security policy located [here](https://github.com/Skelmis/Hermes/security/policy).

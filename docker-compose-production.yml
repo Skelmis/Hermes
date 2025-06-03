@@ -33,7 +33,7 @@ services:
       - hermes_redis
     environment:
       <<: *common-variables
-      SERVING_DOMAIN: "hermes.skelmis.co.nz"
+      SERVING_DOMAIN: "SET THIS"
       CSRF_TOKEN:
   hermes_saq:
     image: ghcr.io/skelmis/hermes_saq:master

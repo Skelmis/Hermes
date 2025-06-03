@@ -24,12 +24,12 @@
     <script src="/static/theme.js" nonce="{{ csp_nonce }}"></script>
     <script src="/static/main.js" nonce="{{ csp_nonce }}"></script>
     {% block content %}{% endblock %}
-    {% if is_small is defined %}
-        {% if is_small %}
-        <div class="sidebar_bottom ">
-            Not for commercial usage
-        </div>
-        {% endif %}
-    {% endif %}
+{#    {% if is_small is defined %}#}
+{#        {% if is_small %}#}
+{#        <div class="sidebar_bottom ">#}
+{#            Not for commercial usage#}
+{#        </div>#}
+{#        {% endif %}#}
+{#    {% endif %}#}
   </body>
 </html>

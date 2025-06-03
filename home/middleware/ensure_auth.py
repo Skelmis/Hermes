@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+import os
+import secrets
+
+from commons import value_to_bool
 from litestar.connection import ASGIConnection
 from litestar.exceptions import NotAuthorizedException
 from litestar.middleware import (
@@ -23,10 +27,23 @@ class EnsureAuth(AbstractAuthenticationMiddleware):
         self.superuser_only = False
         self.active_only = True
         self.increase_expiry = None
+        self.auth_is_disabled = value_to_bool(os.environ.get("DISABLE_AUTH", False))
 
     async def authenticate_request(
         self, connection: ASGIConnection
     ) -> AuthenticationResult:
+        if self.auth_is_disabled:
+            user: BaseUser | None = await BaseUser.objects().get(
+                BaseUser.username == "hermes"  # type: ignore
+            )
+            if user is None:
+                user = await BaseUser.create_user(
+                    "hermes",
+                    password=secrets.token_hex(32),
+                )
+
+            return AuthenticationResult(user=user, auth=None)
+
         possible_redirect = (
             f"{connection.url.path}?{connection.url.query}"
             if connection.url.query

@@ -26,7 +26,7 @@ For deployment configurations and other usage information refer to [this documen
 - Access to the raw SAST scanner output within each vulnerability for when more details are required.
 - A full featured admin panel providing raw access to data as required.
 - Open source so you can open issues and pull requests to your hearts content.
-- Background processing for large tasks. Fire off scans at will and come back later once they have actually finished without impact site performance.
+- Background processing for large tasks. Fire off scans at will and come back later once they have actually finished without impacting site performance.
 
 #### Example application images
 

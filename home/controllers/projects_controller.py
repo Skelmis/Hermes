@@ -123,10 +123,6 @@ class ProjectsController(Controller):
             if vuln.id == current_vulnerability.id:
                 if len(vulns) - 1 == i:
                     # Its last vuln so loop around
-                    alert(
-                        request,
-                        "FYI, this is the last vulnerability for this scan.",
-                    )
                     return vulns[0].id
                 else:
                     return vulns[i + 1].id

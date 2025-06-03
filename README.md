@@ -4,13 +4,15 @@ A single pane of glass for static code analysis
 
 ---
 
-It's the perfect addition to any bug bounty hunters toolkit. This tool takes in __any__ output from a Static Application Security Testing (SAST) scanner and makes it pretty while adding functionality such as easy triaging and vulnerability related note-taking.
+It's the perfect addition to any bug bounty hunters toolkit. This tool takes in _any_ output from a Static Application Security Testing (SAST) scanner and makes it pretty while adding functionality such as easy triaging and vulnerability related note-taking.
 
 By default, the following scanners / languages are supported:
 - [Bandit](https://github.com/PyCQA/bandit) - Python
 - [Brakeman](https://brakemanscanner.org/) - Ruby
 - [GoSec](https://github.com/securego/gosec) - Go
 - [Semgrep](https://semgrep.dev/) - Multiple Languages
+
+For deployment configurations and other usage information refer to [this document](https://github.com/Skelmis/Hermes/blob/master/USAGE.md).
 
 #### Features
 

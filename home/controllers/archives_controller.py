@@ -10,6 +10,7 @@ from litestar.response import Redirect, Template
 from pydantic import BaseModel, ConfigDict
 
 from home.controllers import ProjectsController
+from home.controllers.api import APIProjectController
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
 from home.tables import Scan, Archives, Profile
@@ -81,6 +82,7 @@ class ArchivesController(Controller):
                 "csp_nonce": nonce,
                 "archive_table": archive_table,
                 "profile": await Profile.get_or_create(request.user),
+                "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,
             status_code=200,
@@ -153,6 +155,7 @@ class ArchivesController(Controller):
                 "active": "overview",
                 "vulnerabilities": vulnerabilities,
                 "profile": await Profile.get_or_create(request.user),
+                "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,
             status_code=200,
@@ -209,6 +212,7 @@ class ArchivesController(Controller):
                 "active": "vulnerabilities",
                 "next_vuln_id": next_vuln_id,
                 "profile": await Profile.get_or_create(request.user),
+                "projects": await APIProjectController.get_user_projects(request.user),
             },
             media_type=MediaType.HTML,
             status_code=200,

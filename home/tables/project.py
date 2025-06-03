@@ -46,7 +46,7 @@ class Project(Table):
         default=False,
         help_text="Should anyone be able to see and interact with this project?",
     )
-    other_users: list[BaseUser] = Array(
+    other_users: list[int] = Array(
         base_column=Integer(),
         help_text="Other users who should have access to this. "
         "Defaults to user id since array foreign keys aren't allowed and i dont wanna do M2M",

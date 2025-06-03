@@ -2,9 +2,9 @@
 
 1. `git clone https://github.com/Skelmis/Hermes.git hermes`
 2. `cd hermes`
-3. `docker compose -f ./docker-compose-dev.yml up`
-4. Navigate to http://127.0.0.1:8800
-5. Create an account and you are good to go.
+3. Modify `DISABLE_AUTH: false` to `DISABLE_AUTH: true` in the `docker-compose-dev.yml` file if you don't want to have to create an account.
+4. `docker compose -f ./docker-compose-dev.yml up`
+5. Navigate to http://127.0.0.1:8800 and you are good to go.
 
 ### Configuration Options
 

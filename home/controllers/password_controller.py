@@ -1,6 +1,8 @@
 import hmac
+import os
 from typing import Any, cast
 
+import commons
 from commons.hibp import has_password_been_pwned
 from litestar import Controller, get, MediaType, Request, post
 from litestar.exceptions import SerializationException
@@ -92,7 +94,9 @@ class PasswordController(Controller):
             alert(request, "Your current password was wrong.", level="error")
             return Redirect("/passwords/change")
 
-        if await has_password_been_pwned(new_password):
+        if not commons.value_to_bool(
+            os.environ.get("DISABLE_HIBP", False)
+        ) and await has_password_been_pwned(new_password):
             alert(
                 request,
                 "Your new password appears in breach databases, "

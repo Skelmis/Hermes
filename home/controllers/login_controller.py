@@ -3,6 +3,7 @@ import typing as t
 import warnings
 from datetime import timedelta, datetime
 
+import commons
 from commons import value_to_bool
 from commons.hibp import has_password_been_pwned
 from litestar import Controller, get, Request, post, MediaType
@@ -168,7 +169,9 @@ class LoginController(Controller):
             )
             warnings.warn(message)
 
-        if await has_password_been_pwned(password):
+        if not commons.value_to_bool(
+            os.environ.get("DISABLE_HIBP", False)
+        ) and await has_password_been_pwned(password):
             alert(
                 request,
                 "Your password appears in breach databases, consider changing it.",

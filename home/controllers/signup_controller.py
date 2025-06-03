@@ -1,7 +1,9 @@
+import os
 import re
 import typing as t
 from hmac import compare_digest
 
+import commons
 from commons.hibp import has_password_been_pwned
 from litestar import Controller, get, Request, post, MediaType
 from litestar.exceptions import SerializationException
@@ -81,7 +83,9 @@ class SignUpController(Controller):
                 media_type=MediaType.HTML,
             )
 
-        if await has_password_been_pwned(password):
+        if not commons.value_to_bool(
+            os.environ.get("DISABLE_HIBP", False)
+        ) and await has_password_been_pwned(password):
             alert(
                 request,
                 "This password appears in breach databases, "

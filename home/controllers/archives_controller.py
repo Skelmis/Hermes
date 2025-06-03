@@ -104,8 +104,8 @@ class ArchivesController(Controller):
 
     @post(
         path="/import",
-        # 100 Megabytes max file size
-        request_max_body_size=100 * 1_048_576,
+        # 250 Megabytes max file size
+        request_max_body_size=250 * 1_048_576,
     )
     async def create_project(
         self,

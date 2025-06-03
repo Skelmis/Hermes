@@ -29,11 +29,11 @@ Note that project zip files currently enforce a maximum file size of `250 mb`. I
 - `ALLOW_REGISTRATION`: Whether to let user's self sign up for accounts on the platform. Defaults to `true`. If you want to disable this, set it to `false`.
 - `PROJECT_DIR`: The directory to store project files in. Defaults to `.projects`.
 - `DISABLE_HIBP`: If set to a truthy value, bypass the Have I Been Pwned checks on passwords. Defaults to `false`.
-- `DISABLE_AUTH`: If set to a truthy value, disable the requirement for authentication on the platform. Internally this sets everyone as a user without a usable password and automatically logs them in, although they don't have admin portal access. Defaults to `false`.
+- `DISABLE_AUTH`: If set to a truthy value, disable the requirement for authentication on the platform. Internally this sets everyone as a shared user without a usable password and automatically logs them in, although they don't have admin portal access. Defaults to `false`.
 
 #### Developer Docker Compose Defaults
 
-The following is an example `.env` file for the `docker-compose-dev.yml` file. It is recommended you change these values.
+The following is an example `.env` file for the `docker-compose-dev.yml` file when used in conjunction with the [Local Development](#local-development) commands. It is recommended you change these values.
 
 Set `CSRF_TOKEN` to the output of `openssl rand -hex 32`
 
@@ -49,7 +49,7 @@ DEBUG=1
 REDIS_URL=redis://default:haziness-sloppy-cycle-deduct-superman-undertook@localhost:8802/0
 ```
 
-### Local Development
+#### Local Development
 
 Run `main.py` with a configured `.env` and either of the following:
 ```shell
@@ -57,7 +57,7 @@ docker compose -f ./docker-compose-dev.yml up hermes_saq hermes_redis hermes_db
 docker compose -f ./docker-compose-dev.yml up --build hermes_saq hermes_redis hermes_db
 ```
 
-### Deployment Recommendations
+### Deployment Hardening
 
 While efforts have been taken to secure this application, it is inherently a tool that wraps command line scanners and stores project files on disk.
 
@@ -69,3 +69,21 @@ It is recommended that if you do wish to deploy this outside of your own laptop 
 - Set a strong CSRF token
 
 If you encounter security issues when deploying in environments that meet the above expectations I'd love to hear about it! When doing so please follow the security policy located [here](https://github.com/Skelmis/Hermes/security/policy).
+
+#### User Model
+
+There are three types of user's within the application. These are Regular Users, Admins and Superusers.
+
+###### Regular Users
+
+The bread and butter of users. Can use all the application besides the admin panel.
+
+###### Admins
+
+Same as Regular Users but also have access to the admin panel at `/admin/`.
+
+###### Superusers
+
+Same as Admins but they can also create new users via the admin panel. Basically a requirement if self sign up is turned off.
+
+Creating users via the command line is also possible with the command `uv run piccolo user create` within the web applications Docker image.

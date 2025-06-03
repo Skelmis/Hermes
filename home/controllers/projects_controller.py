@@ -157,9 +157,12 @@ class ProjectsController(Controller):
             # Ensure we always have the latest
             scan = await scan_query.order_by(Scan.number, ascending=False).first()
 
-        vulnerabilities = await APIVulnerabilitiesController.get_scan_vulnerabilities(
-            request.user, scan
+        vulnerabilities: list[Vulnerability] = (
+            await APIVulnerabilitiesController.get_scan_vulnerabilities(
+                request.user, scan
+            )
         )
+        vulnerabilities = sorted(vulnerabilities, key=lambda v: v.title.title())
         total_scans = (await APIProjectController.get_total_scans(project)) + 1
 
         if request.is_small and len(project.title) > 20:

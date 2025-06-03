@@ -1,25 +1,43 @@
+import datetime
 import typing as t
+import uuid
 
 from litestar import Controller, get, Request, post, patch
 from litestar.exceptions import NotFoundException
 from piccolo.apps.user.tables import BaseUser
-from piccolo.columns import Or
-from piccolo.utils.pydantic import create_pydantic_model
+from pydantic import BaseModel, Field
 
 from home.middleware import EnsureAuth
 from home.tables import Project, Scan
 
-ProjectModelIn: t.Any = create_pydantic_model(
-    table=Project,
-    exclude_columns=(Project.id, Project.owner),
-    model_name="ProjectModelIn",
-)
-ProjectModelOut: t.Any = create_pydantic_model(
-    table=Project,
-    include_default_columns=True,
-    model_name="ProjectModelOut",
-    nested=True,
-)
+
+class User(BaseModel):
+    id: int
+    username: str
+    email: str
+
+
+class ProjectModelIn(BaseModel):
+    created_at: datetime.datetime
+    title: str
+    description: str
+    is_git_based: bool = Field(default=False)
+    code_scanners: list[str] = Field(
+        description="A list of Analysis Interface id's to use",
+    )
+    is_public: bool = Field(
+        default=False,
+        description="Should anyone be able to see and interact with this project?",
+    )
+    other_users: list[int] = Field(
+        description="Other users who should have access to this. "
+        "Defaults to user id since array foreign keys aren't allowed and i dont wanna do M2M",
+    )
+
+
+class ProjectModelOut(ProjectModelIn):
+    id: uuid.UUID
+    owner: User
 
 
 class APIProjectController(Controller):
@@ -29,7 +47,8 @@ class APIProjectController(Controller):
     @classmethod
     async def get_user_projects(cls, user: BaseUser) -> t.List[Project]:
         return await Project.add_ownership_where(
-            Project.objects().order_by(Project.id, ascending=False), user
+            Project.objects(Project.owner).order_by(Project.id, ascending=False),
+            user,
         )
 
     @classmethod
@@ -40,7 +59,10 @@ class APIProjectController(Controller):
 
     @get(tags=["Projects API"])
     async def projects(self, request: Request) -> t.List[ProjectModelOut]:
-        return await self.get_user_projects(request.user)
+        data: list[ProjectModelOut] = []
+        for project in await self.get_user_projects(request.user):
+            data.append(ProjectModelOut(**project.to_dict()))
+        return data
 
     @post("/", tags=["Projects API"])
     async def create_project(
@@ -49,7 +71,7 @@ class APIProjectController(Controller):
         project: Project = Project(**data.model_dump())
         project.owner = request.user
         await project.save()
-        return project.to_dict()
+        return ProjectModelOut(**project.to_dict())
 
     @patch("/{project_id:str}", tags=["Projects API"])
     async def update_project(
@@ -70,4 +92,4 @@ class APIProjectController(Controller):
             setattr(project, key, value)
 
         await project.save()
-        return project.to_dict()
+        return ProjectModelOut(**project.to_dict())

@@ -137,6 +137,9 @@ class ArchivesController(Controller):
             return Redirect("/archives")
 
         scan = orjson.loads(archive.scan)
+        vulnerabilities = sorted(
+            scan["vulnerabilities"], key=lambda v: v["title"].title()
+        )
 
         csp, nonce = get_csp()
         return Template(
@@ -148,6 +151,7 @@ class ArchivesController(Controller):
                 "project": scan["project"],
                 "scan": scan,
                 "active": "overview",
+                "vulnerabilities": vulnerabilities,
                 "profile": await Profile.get_or_create(request.user),
             },
             media_type=MediaType.HTML,

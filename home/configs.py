@@ -11,7 +11,7 @@ REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {
     GoSec.id: GoSec,
     Brakeman.id: Brakeman,
 }
-BASE_PROJECT_DIR: Path = Path(".projects")
+BASE_PROJECT_DIR: Path = Path(os.environ.get("PROJECT_DIR", ".projects"))
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists
 
 

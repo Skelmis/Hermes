@@ -30,7 +30,7 @@ class APIVulnerabilitiesController(Controller):
     ) -> t.List[Vulnerability]:
         return await Vulnerability.add_ownership_where(
             Vulnerability.objects()
-            .where(Vulnerability.scan.project == project)
+            .where(Vulnerability.scan.project == project)  # type: ignore
             .order_by(Vulnerability.id, ascending=False),
             user,
         )
@@ -41,7 +41,7 @@ class APIVulnerabilitiesController(Controller):
     ) -> t.List[Vulnerability]:
         return await Vulnerability.add_ownership_where(
             Vulnerability.objects()
-            .where(Vulnerability.scan == scan)
+            .where(Vulnerability.scan == scan)  # type: ignore
             .order_by(Vulnerability.id, ascending=False),
             user,
         )

@@ -30,10 +30,10 @@ async def home(request: HermesRequest) -> Template:
             else:
                 latest_scan = format_datetime(profile.localize_dt(scan.scanned_at))
                 total_vulns = await Vulnerability.count().where(
-                    Vulnerability.scan == scan
+                    Vulnerability.scan == scan  # type: ignore
                 )
                 total_resolved_vulns = await Vulnerability.count().where(
-                    Vulnerability.scan == scan
+                    Vulnerability.scan == scan  # type: ignore
                 )
 
         else:

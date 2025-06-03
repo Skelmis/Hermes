@@ -34,7 +34,9 @@ class APIProjectController(Controller):
 
     @classmethod
     async def get_total_scans(cls, project: Project):
-        return await Scan.count().where(Scan.project == project)
+        return await Scan.count().where(
+            Scan.project == project,  # type: ignore
+        )
 
     @get(tags=["Projects API"])
     async def projects(self, request: Request) -> t.List[ProjectModelOut]:
@@ -44,7 +46,7 @@ class APIProjectController(Controller):
     async def create_project(
         self, request: Request, data: ProjectModelIn
     ) -> ProjectModelOut:
-        project = Project(**data.dict())
+        project: Project = Project(**data.model_dump())
         project.owner = request.user
         await project.save()
         return project.to_dict()
@@ -54,13 +56,17 @@ class APIProjectController(Controller):
         self, request: Request, project_id: str, data: ProjectModelIn
     ) -> ProjectModelOut:
         project = Project.add_ownership_where(
-            await Project.objects().where(Project.id == project_id).first(),
+            await Project.objects()
+            .where(
+                Project.id == project_id,  # type: ignore
+            )
+            .first(),
             request.user,
         )
         if not project:
             raise NotFoundException("Project does not exist")
 
-        for key, value in data.dict().items():
+        for key, value in data.model_dump().items():
             setattr(project, key, value)
 
         await project.save()

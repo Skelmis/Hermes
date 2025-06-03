@@ -59,7 +59,7 @@ class PasswordController(Controller):
     async def change_password_post(self, request: Request) -> Template | Redirect:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
-        body: Any = request.scope.get("form")
+        body: Any = request.scope.get("form")  # type: ignore
 
         if not body:
             try:

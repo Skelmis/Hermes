@@ -14,6 +14,7 @@ from piccolo_api.shared.auth.styles import Styles
 from starlette.exceptions import HTTPException
 
 from home.configs import ALLOW_REGISTRATION
+from home.custom_request import HermesRequest
 from home.util import get_csp
 from home.util.flash import alert
 
@@ -33,14 +34,14 @@ class LoginController(Controller):
     _captcha = None
     _styles = Styles()
 
-    def _render_template(self, request: Request, status_code=200) -> Template:
+    def _render_template(self, request: HermesRequest, status_code=200) -> Template:
         # If CSRF middleware is present, we have to include a form field with
         # the CSRF token. It only works if CSRFMiddleware has
         # allow_form_param=True, otherwise it only looks for the token in the
         # header.
         csp, nonce = get_csp()
-        csrftoken = request.scope.get("csrftoken")
-        csrf_cookie_name = request.scope.get("csrf_cookie_name")
+        csrftoken = request.scope.get("csrftoken")  # type: ignore
+        csrf_cookie_name = request.scope.get("csrf_cookie_name")  # type: ignore
         return Template(
             "auth/login.jinja",
             context={
@@ -69,11 +70,11 @@ class LoginController(Controller):
 
     @post(tags=["Auth"])
     async def post(
-        self, request: Request, next_route: str = "/"
+        self, request: HermesRequest, next_route: str = "/"
     ) -> Template | Redirect:
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
-        body: t.Any = request.scope.get("form")
+        body: t.Any = request.scope.get("form")  # type: ignore
 
         if not body:
             try:

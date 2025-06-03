@@ -38,7 +38,7 @@ class ArchivesController(Controller):
             return redirect
 
         scan: Scan | None = await Scan.objects().get(
-            (Scan.project == project) & (Scan.number == scan_number)
+            (Scan.project == project) & (Scan.number == scan_number)  # type: ignore
         )
         if scan is None:
             alert(
@@ -59,7 +59,7 @@ class ArchivesController(Controller):
     @get("")
     async def view_all_archives(self, request: HermesRequest) -> Template:
         archives: list[Archives] = await Archives.objects().where(
-            Archives.owner == request.user
+            Archives.owner == request.user  # type: ignore
         )
         archive_table = []
         for archive in archives:
@@ -128,7 +128,7 @@ class ArchivesController(Controller):
         self, request: HermesRequest, archive_id: str
     ) -> Template | Redirect:
         archive: Archives | None = await Archives.objects().get(
-            (Archives.owner == request.user) & (Archives.id == archive_id)
+            (Archives.owner == request.user) & (Archives.id == archive_id)  # type: ignore
         )
         if archive is None:
             alert(
@@ -174,7 +174,7 @@ class ArchivesController(Controller):
         vulnerability_id: int,
     ) -> Template | Redirect:
         archive: Archives | None = await Archives.objects().get(
-            (Archives.owner == request.user) & (Archives.id == archive_id)
+            (Archives.owner == request.user) & (Archives.id == archive_id)  # type: ignore
         )
         if archive is None:
             alert(request, "Looks like that archive doesn't exist.", level="error")

@@ -46,7 +46,7 @@ class SignUpController(Controller):
 
         # Some middleware (for example CSRF) has already awaited the request
         # body, and adds it to the request.
-        body: t.Any = request.scope.get("form")
+        body: t.Any = request.scope.get("form")  # type: ignore
 
         if not body:
             try:
@@ -93,7 +93,9 @@ class SignUpController(Controller):
                 media_type=MediaType.HTML,
             )
 
-        if await BaseUser.exists().where(BaseUser.username == username):
+        if await BaseUser.exists().where(
+            BaseUser.username == username,  # type: ignore
+        ):
             alert(
                 request,
                 "This user already exists, consider signing in instead.",

@@ -6,7 +6,7 @@ import anyio
 import commons
 import saq
 from piccolo.apps.user.tables import BaseUser
-from saq import CronJob, Queue
+from saq import Queue
 from saq.types import SettingsDict
 
 from home.tables import Project, Notification
@@ -15,7 +15,9 @@ log = logging.getLogger(__name__)
 
 
 async def git_clone(_, *, git, path_to_stuff, project_id: str, user_id: str):
-    project: Project = await Project.objects().get(Project.id == project_id)
+    project: Project = await Project.objects().get(
+        Project.id == project_id,  # type: ignore
+    )
     user: BaseUser = await BaseUser.objects().get(BaseUser.id == user_id)
     cmd = ["git", "clone", "--recursive", git, path_to_stuff]
     try:
@@ -37,13 +39,17 @@ async def git_clone(_, *, git, path_to_stuff, project_id: str, user_id: str):
 
 
 async def run_scanners(_, *, project_id: str, user_id: str):
-    project: Project = await Project.objects().get(Project.id == project_id)
+    project: Project = await Project.objects().get(
+        Project.id == project_id,  # type: ignore
+    )
     user: BaseUser = await BaseUser.objects().get(BaseUser.id == user_id)
     await project.run_scanners(user)
 
 
 async def update_from_source(_, *, project_id: str, user_id: str):
-    project: Project = await Project.objects().get(Project.id == project_id)
+    project: Project = await Project.objects().get(
+        Project.id == project_id,  # type: ignore
+    )
     user: BaseUser = await BaseUser.objects().get(BaseUser.id == user_id)
     await project.update_from_source(user)
 

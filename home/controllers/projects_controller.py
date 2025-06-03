@@ -56,16 +56,20 @@ class ProjectsController(Controller):
         code_path = Path(project.scanner_path)
         shutil.rmtree(code_path, ignore_errors=True)
 
-        await Scan.delete().where(Scan.project == project)
-        await Vulnerability.delete().where(Vulnerability.project == project)
-        await project.delete().where(Project.id == project.uuid)
+        await Scan.delete().where(Scan.project == project)  # type: ignore
+        await Vulnerability.delete().where(Vulnerability.project == project)  # type: ignore
+        await project.delete().where(Project.id == project.uuid)  # type: ignore
 
     @classmethod
     async def get_project(
         cls, request: Request, project_id: str
     ) -> tuple[Project | None, Redirect | None]:
         project = await Project.add_ownership_where(
-            Project.objects(Project.owner).where(Project.id == project_id).first(),
+            Project.objects(Project.owner)
+            .where(
+                Project.id == project_id,  # type: ignore
+            )
+            .first(),
             request.user,
         )
         if not project:
@@ -85,7 +89,7 @@ class ProjectsController(Controller):
         vuln = await Vulnerability.add_ownership_where(
             Vulnerability.objects()
             .prefetch(Vulnerability.project)
-            .where(Vulnerability.id == vulnerability_id)
+            .where(Vulnerability.id == vulnerability_id)  # type: ignore
             .first(),
             request.user,
         )
@@ -127,6 +131,8 @@ class ProjectsController(Controller):
                 else:
                     return vulns[i + 1].id
 
+        raise ValueError("Should never get here")
+
     @get(
         "/",
         include_in_schema=False,
@@ -149,7 +155,9 @@ class ProjectsController(Controller):
             return redirect
 
         scan: Scan | None = None
-        scan_query = Scan.objects().where(Scan.project == project)
+        scan_query = Scan.objects().where(
+            Scan.project == project,  # type: ignore
+        )
         if scan_number:
             scan = await scan_query.where(Scan.number == scan_number).first()
 
@@ -323,7 +331,9 @@ class ProjectsController(Controller):
         path="/{project_id:str}/settings",
         include_in_schema=False,
     )
-    async def settings(self, request: Request, project_id: str) -> Template | Redirect:
+    async def settings(
+        self, request: HermesRequest, project_id: str
+    ) -> Template | Redirect:
         project, redirect = await self.get_project(request, project_id)
         if redirect:
             return redirect
@@ -346,7 +356,7 @@ class ProjectsController(Controller):
         path="/create",
         include_in_schema=False,
     )
-    async def create_get(self, request: Request) -> Template:
+    async def create_get(self, request: HermesRequest) -> Template:
         csp, nonce = get_csp()
         return Template(
             "projects/create.jinja",
@@ -484,8 +494,12 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        await Scan.delete().where(Scan.project == project)
-        await Vulnerability.delete().where(Vulnerability.project == project)
+        await Scan.delete().where(
+            Scan.project == project,  # type: ignore
+        )
+        await Vulnerability.delete().where(
+            Vulnerability.project == project,  # type: ignore
+        )
         alert(
             request,
             "Deleted all vulnerabilities associated with this project",

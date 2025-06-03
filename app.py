@@ -21,10 +21,7 @@ from litestar.types import Receive, Scope, Send
 from piccolo.apps.user.tables import BaseUser
 from piccolo.engine import engine_finder
 from piccolo_admin.endpoints import create_admin, TableConfig, OrderBy
-from redis.commands.graph import Path
-from saq.web.starlette import saq_web
 
-from home.analysis import Bandit, Semgrep, GoSec, Brakeman, AnalysisInterface
 from home.controllers import (
     LoginController,
     LogoutController,
@@ -185,7 +182,8 @@ csrf_config = CSRFConfig(
     ],
 )
 rate_limit_config = RateLimitConfig(
-    rate_limit=("second", 5), exclude=["/docs", "/admin"]
+    rate_limit=("second", 5),  # type: ignore
+    exclude=["/docs", "/admin"],
 )
 ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(

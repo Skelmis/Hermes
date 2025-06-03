@@ -1,4 +1,6 @@
 x-shared-variables: &common-variables
+  DISABLE_HIBP: true
+  DISABLE_AUTH: false
   POSTGRES_HOST: db_hermes
   POSTGRES_DB: hermes_db
   POSTGRES_USER: hermes_db_user

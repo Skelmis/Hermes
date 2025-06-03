@@ -214,3 +214,53 @@ class ArchivesController(Controller):
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @post(
+        path="/{archive_id:str}/settings/delete",
+        include_in_schema=False,
+    )
+    async def delete_archive_route(
+        self, request: HermesRequest, archive_id: str
+    ) -> Redirect:
+        archive: Archives | None = await Archives.objects().get(
+            (Archives.owner == request.user) & (Archives.id == archive_id)  # type: ignore
+        )
+        if archive is None:
+            alert(request, "Looks like that archive doesn't exist.", level="error")
+            return Redirect("/archives")
+
+        scan = orjson.loads(archive.scan)
+        archive_title = scan["project"]["title"]
+        await Archives.delete().where(
+            (Archives.owner == request.user) & (Archives.id == archive_id)  # type: ignore
+        )
+        alert(
+            request,
+            f"Deleted archive '{archive_title}'",
+            level="success",
+        )
+        return Redirect("/archives")
+
+    @post(
+        path="/{archive_id:str}/settings/export",
+        include_in_schema=False,
+    )
+    async def archive_export(self, request: HermesRequest, archive_id: str) -> Response:
+        """Re-export a scan"""
+        archive: Archives | None = await Archives.objects().get(
+            (Archives.owner == request.user) & (Archives.id == archive_id)  # type: ignore
+        )
+        if archive is None:
+            alert(request, "Looks like that archive doesn't exist.", level="error")
+            return Redirect("/archives")
+
+        data = {
+            "scan": archive.scan,
+            "archive_created_at": archive.created_at,
+            "archive_creator": archive.archive_creator,
+        }
+        return Response(
+            orjson.dumps(data, option=orjson.OPT_INDENT_2, default=orjson_util.default),
+            headers={"Content-Disposition": "attachment; filename=hermes_archive.json"},
+            media_type=MediaType.JSON,
+        )

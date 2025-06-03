@@ -87,13 +87,14 @@ class Scan(Table):
         ).where(Vulnerability.scan == self)
         base_data["vulnerabilities"] = vulns
 
-        data = {}
-        data["scan"] = base_data
-        data["archive_created_at"] = arrow.utcnow().datetime
-        data["archive_creator"] = {
-            "username": requester.username,
-            "first_name": requester.first_name,
-            "last_name": requester.last_name,
-            "email": requester.email,
+        data = {
+            "scan": base_data,
+            "archive_created_at": arrow.utcnow().datetime,
+            "archive_creator": {
+                "username": requester.username,
+                "first_name": requester.first_name,
+                "last_name": requester.last_name,
+                "email": requester.email,
+            },
         }
         return data

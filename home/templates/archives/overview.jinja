@@ -1,4 +1,27 @@
 {% extends 'base.jinja' %}
+{% macro button(display_text, btn_id, btn_title, btn_description, btn_confirm, setting_url, btn_theme='info') %}
+    <a href="#" class="btn btn-outline-{{ btn_theme }} w-100" data-bs-toggle="modal" data-bs-target="#{{ btn_id }}">
+        {{ display_text }}
+    </a>
+    <div class="modal modal-blur fade" id="{{ btn_id }}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <div class="modal-title">{{ btn_title }}</div>
+                    <div>{{ btn_description }}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Cancel
+                    </button>
+                    <form action="/archives/{{ archive_uuid }}/settings/{{ setting_url }}" method="POST">
+                        {{ csrf_input|safe }}
+                        <button type="submit" class="btn btn-danger" data-bs-dismiss="modal">{{ btn_confirm }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
 {% block title %}Archive overview{% endblock %}
 {% block content %}
     <div class="page">
@@ -10,8 +33,10 @@
                         <div class="col">
                             <h2 class="page-title">
                                 {{ project_title }} Overview
-                            </h2><br>
+                            </h2>
+                            <br>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -48,6 +73,14 @@
                                             <div class="datagrid-item">
                                                 <div class="datagrid-title">Scanner Versions Used</div>
                                                 <div class="datagrid-content">{{ ', '.join(scan.scanner_versions_used) if scan is not none else "N/A" }}</div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Re-export to JSON</div>
+                                                <div class="datagrid-content">{{ button('Export', 'export', 'Export Archive', 'Re-export this archive to JSON?', 'Yes', 'export', 'secondary') }}</div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Delete this archive</div>
+                                               <div class="datagrid-content">{{ button('Delete', 'delete', 'Delete Archive', 'Are you sure you want to delete this archive?', 'Yes', 'delete', 'danger') }}</div>
                                             </div>
                                         </div>
                                         <br>

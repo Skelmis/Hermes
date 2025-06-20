@@ -182,7 +182,7 @@ csrf_config = CSRFConfig(
     ],
 )
 rate_limit_config = RateLimitConfig(
-    rate_limit=("second", 5),  # type: ignore
+    rate_limit=("second", 15),  # type: ignore
     exclude=["/docs", "/admin"],
 )
 ENVIRONMENT = jinja2.Environment(

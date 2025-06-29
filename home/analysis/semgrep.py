@@ -44,7 +44,7 @@ class SemgrepOutput(TypedDict):
 class Semgrep(AnalysisInterface):
     id = "semgrep"
     name = "Semgrep"
-    language = "Generic"
+    language = "Generic (Non-Commercial)"
     short_description = "A generic code scanner for all languages."
 
     def generate_command(self) -> list[str]:

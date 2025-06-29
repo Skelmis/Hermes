@@ -30,6 +30,7 @@ Note that project zip files currently enforce a maximum file size of `250 mb`. I
 - `PROJECT_DIR`: The directory to store project files in. Defaults to `.projects`.
 - `DISABLE_HIBP`: If set to a truthy value, bypass the Have I Been Pwned checks on passwords. Defaults to `false`.
 - `DISABLE_AUTH`: If set to a truthy value, disable the requirement for authentication on the platform. Internally this sets everyone as a shared user without a usable password and automatically logs them in, although they don't have admin portal access. Defaults to `false`.
+- `CSRF_COOKIE_SECURE`: If set to false, disable the secure flag of csrf cookies.
 
 #### Developer Docker Compose Defaults
 

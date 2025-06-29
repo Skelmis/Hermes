@@ -164,13 +164,16 @@ cors_config = CORSConfig(
     allow_methods=[],
     allow_credentials=False,
 )
-CSRF_TOKEN = os.environ.get("CSRF_TOKEN", secrets.token_hex(32))
+CSRF_TOKEN = os.environ.get("CSRF_TOKEN", False)
+if IS_PRODUCTION and CSRF_TOKEN is False:
+    raise ValueError("Please set environment variable CSRF_TOKEN")
+
 csrf_config = CSRFConfig(
     secret=CSRF_TOKEN,
     # Aptly named so it doesnt clash
     # with piccolo 'csrftoken' cookies
     cookie_name="csrf_token",
-    cookie_secure=True,
+    cookie_secure=value_to_bool(os.environ.get("CSRF_COOKIE_SECURE", True)),
     cookie_httponly=True,
     # Exclude routes Piccolo handles itself
     # and our api routes
@@ -182,7 +185,7 @@ csrf_config = CSRFConfig(
     ],
 )
 rate_limit_config = RateLimitConfig(
-    rate_limit=("second", 5),  # type: ignore
+    rate_limit=("second", 15),  # type: ignore
     exclude=["/docs", "/admin"],
 )
 ENVIRONMENT = jinja2.Environment(

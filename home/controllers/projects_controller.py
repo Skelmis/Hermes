@@ -88,7 +88,7 @@ class ProjectsController(Controller):
     ) -> tuple[Vulnerability | None, Redirect | None]:
         vuln = await Vulnerability.add_ownership_where(
             Vulnerability.objects()
-            .prefetch(Vulnerability.project)
+            .prefetch(Vulnerability.project, Vulnerability.scan)
             .where(Vulnerability.id == vulnerability_id)  # type: ignore
             .first(),
             request.user,
@@ -105,15 +105,12 @@ class ProjectsController(Controller):
 
     @classmethod
     async def get_next_vulnerability(
-        cls, request: Request, current_vulnerability: Vulnerability
+        cls, request: Request, current_vulnerability: Vulnerability, scan: int
     ) -> str:
         """Fetch the 'next' vulnerability id to review"""
         # Given the use of UUID's this is so cooked hahaha
-        vulns = await Vulnerability.add_ownership_where(
-            Vulnerability.objects()
-            .order_by(Vulnerability.id)
-            .where(Vulnerability.scan == current_vulnerability.scan),  # type: ignore
-            request.user,
+        vulns = await APIVulnerabilitiesController.get_scan_vulnerabilities(
+            request.user, scan
         )
         if not vulns:
             # Fuck knows what went wrong
@@ -166,7 +163,6 @@ class ProjectsController(Controller):
                 request.user, scan
             )
         )
-        vulnerabilities = sorted(vulnerabilities, key=lambda v: v.title.title())
         total_scans = (await APIProjectController.get_total_scans(project)) + 1
 
         if request.is_small and len(project.title) > 20:
@@ -226,7 +222,7 @@ class ProjectsController(Controller):
         if redirect:
             return redirect
 
-        next_vuln_id = await self.get_next_vulnerability(request, vuln)
+        next_vuln_id = await self.get_next_vulnerability(request, vuln, vuln.scan)
 
         if request.is_small and len(vuln.title) > 20:
             # We need to split this into bits

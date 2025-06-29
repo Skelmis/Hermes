@@ -19,7 +19,6 @@ COPY ./pyproject.toml /code/pyproject.toml
 COPY ./uv.lock /code/uv.lock
 
 RUN uv sync --compile-bytecode
-RUN uv pip install semgrep
 
 COPY . /code
 

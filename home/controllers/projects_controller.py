@@ -34,7 +34,7 @@ log = logging.getLogger(__name__)
 class CreateProjectFormData(BaseModel):
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    file: UploadFile | None
+    file: UploadFile | str | None = None
 
 
 class VulnerabilityMetaData(BaseModel):
@@ -450,7 +450,7 @@ class ProjectsController(Controller):
         ],
     ) -> Redirect:
         has_errors = False
-        file = data.file
+        file = data.file if isinstance(data.file, UploadFile) else None
         form_data = await request.form()
         title: str | None = form_data.get("title", None)
         description: str = form_data.get("description") or ""

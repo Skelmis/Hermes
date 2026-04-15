@@ -7,6 +7,7 @@ from home.custom_request import HermesRequest
 from home.filters.datetime import format_datetime
 from home.middleware import EnsureAuth
 from home.tables import Profile, Vulnerability
+from home.tables.vulnerability import VulnerabilityState
 from home.util import get_csp
 
 
@@ -32,8 +33,10 @@ async def home(request: HermesRequest) -> Template:
                 total_vulns = await Vulnerability.count().where(
                     Vulnerability.scan == scan  # type: ignore
                 )
-                total_resolved_vulns = await Vulnerability.count().where(
-                    Vulnerability.scan == scan  # type: ignore
+                total_resolved_vulns = (
+                    await Vulnerability.count()
+                    .where(Vulnerability.scan == scan)  # type: ignore
+                    .where(Vulnerability.state != VulnerabilityState.RESOLVED)
                 )
 
         else:

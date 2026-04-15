@@ -27,6 +27,7 @@ For deployment configurations and other usage information refer to [this documen
 - A full featured admin panel providing raw access to data as required.
 - Open source so you can open issues and pull requests to your hearts content.
 - Background processing for large tasks. Fire off scans at will and come back later once they have actually finished without impacting site performance.
+- Filtering of scan results to minimise the noise. Ignore that darn tests' directory!
 
 #### Example application images
 

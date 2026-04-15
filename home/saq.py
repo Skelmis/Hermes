@@ -38,7 +38,7 @@ async def git_clone(_, *, git, path_to_stuff, project_id: str, user_id: str):
         )
 
 
-async def run_scanners(_, *, project_id: str, user_id: str):
+async def run_scanners(_, *, project_id: str, user_id: int):
     project: Project = await Project.objects().get(
         Project.id == project_id,  # type: ignore
     )

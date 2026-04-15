@@ -34,14 +34,3 @@ class APIVulnerabilitiesController(Controller):
             .order_by(Vulnerability.title, ascending=False),
             user,
         )
-
-    @classmethod
-    async def get_scan_vulnerabilities(
-        cls, user: BaseUser, scan: Scan
-    ) -> t.List[Vulnerability]:
-        return await Vulnerability.add_ownership_where(
-            Vulnerability.objects()
-            .where(Vulnerability.scan == scan)  # type: ignore
-            .order_by(Vulnerability.title, ascending=False),
-            user,
-        )

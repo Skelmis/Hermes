@@ -5,6 +5,7 @@ from .scan import Scan
 from .vulnerability import Vulnerability
 from .project import Project
 from .archives import Archives
+from .project_filters import ProjectFilters
 
 __all__ = (
     "Profile",
@@ -15,4 +16,5 @@ __all__ = (
     "Vulnerability",
     "Project",
     "Archives",
+    "ProjectFilters",
 )

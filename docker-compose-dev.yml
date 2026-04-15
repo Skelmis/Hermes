@@ -47,7 +47,7 @@ services:
     ports:
       - "127.0.0.1:8803:8080"
     volumes:
-      - projects:/code/.projects
+      - .projects:/code/.projects
     depends_on:
       - hermes_redis
     environment:

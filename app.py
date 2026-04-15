@@ -49,6 +49,7 @@ from home.tables import (
     Scan,
     Vulnerability,
     Archives,
+    ProjectFilters,
 )
 
 load_dotenv()
@@ -56,7 +57,7 @@ IS_PRODUCTION = not value_to_bool(os.environ.get("DEBUG"))
 
 
 # mounting Piccolo Admin
-@asgi("/admin/", is_mount=True)
+@asgi("/admin/", is_mount=True, copy_scope=True)
 async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
     user_tc = TableConfig(BaseUser, menu_group="User Management")
     profile_tc = TableConfig(Profile, menu_group="User Management")
@@ -80,6 +81,19 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
             Project.created_at,
             Project.is_git_based,
             Project.code_scanners,
+        ],
+    )
+    project_filter_tc = TableConfig(
+        ProjectFilters,
+        menu_group="Project Management",
+        order_by=[
+            OrderBy(ProjectFilters.user),
+            OrderBy(ProjectFilters.project, ascending=False),
+        ],
+        visible_columns=[
+            ProjectFilters.id,
+            ProjectFilters.user,
+            ProjectFilters.project,
         ],
     )
     automation_tc = TableConfig(
@@ -133,6 +147,7 @@ async def admin(scope: "Scope", receive: "Receive", send: "Send") -> None:
             scan_tc,
             vulnerability_tc,
             archives_tc,
+            project_filter_tc,
         ],
         production=IS_PRODUCTION,
         allowed_hosts=["hermes.skelmis.co.nz"],

@@ -7,17 +7,21 @@ import zipfile
 from pathlib import Path
 from typing import Annotated
 
+import orjson
 from litestar import Controller, get, Request, MediaType, post
 from litestar.datastructures import UploadFile
 from litestar.enums import RequestEncodingType
 from litestar.params import Body
 from litestar.response import Template, Redirect
+from piccolo.columns import Or, Where
+from piccolo.columns.operators import ILike
 from pydantic import BaseModel, ConfigDict
 
 from home.controllers.api import APIProjectController, APIVulnerabilitiesController
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
-from home.tables import Project, Vulnerability, Scan, Profile
+from home.tables import Project, Vulnerability, Scan, Profile, ProjectFilters
+from home.tables.project_filters import AnalysisInterfaceFilter
 from home.tables.vulnerability import VulnerabilityExploitability, VulnerabilityState
 from home.util import get_csp, inject_spaces_into_string
 from home.util.flash import alert
@@ -109,9 +113,18 @@ class ProjectsController(Controller):
     ) -> str:
         """Fetch the 'next' vulnerability id to review"""
         # Given the use of UUID's this is so cooked hahaha
-        vulns = await APIVulnerabilitiesController.get_scan_vulnerabilities(
-            request.user, scan
+        filter_obj = await ProjectFilters.get_object(
+            user=request.user, project=current_vulnerability.project
         )
+
+        vuln_query = Vulnerability.add_ownership_where(
+            Vulnerability.objects()
+            .where(Vulnerability.scan == scan)  # type: ignore
+            .order_by(Vulnerability.title, ascending=False),
+            request.user,
+        )
+        vuln_query = filter_obj.add_to_query(vuln_query)
+        vulns = await vuln_query
         if not vulns:
             # Fuck knows what went wrong
             return current_vulnerability.id
@@ -158,11 +171,6 @@ class ProjectsController(Controller):
             # Ensure we always have the latest
             scan = await scan_query.order_by(Scan.number, ascending=False).first()
 
-        vulnerabilities: list[Vulnerability] = (
-            await APIVulnerabilitiesController.get_scan_vulnerabilities(
-                request.user, scan
-            )
-        )
         total_scans = (await APIProjectController.get_total_scans(project)) + 1
 
         if request.is_small and len(project.title) > 20:
@@ -172,6 +180,17 @@ class ProjectsController(Controller):
         else:
             project_title = project.title
 
+        filter_obj = await ProjectFilters.get_object(user=request.user, project=project)
+
+        vuln_query = Vulnerability.add_ownership_where(
+            Vulnerability.objects()
+            .where(Vulnerability.scan == scan)  # type: ignore
+            .order_by(Vulnerability.title, ascending=False),
+            request.user,
+        )
+        vuln_query = filter_obj.add_to_query(vuln_query)
+
+        vulnerabilities: list[Vulnerability] = await vuln_query
         csp, nonce = get_csp()
         return Template(
             "projects/overview.jinja",
@@ -189,11 +208,61 @@ class ProjectsController(Controller):
                 "profile": await Profile.get_or_create(request.user),
                 "projects": await APIProjectController.get_user_projects(request.user),
                 "vulnerabilities": vulnerabilities,
+                "filters": filter_obj.configuration_model,
             },
             media_type=MediaType.HTML,
             status_code=200,
             headers={"content-security-policy": csp},
         )
+
+    @post(
+        path="/{project_id:str}/filters",
+        include_in_schema=False,
+    )
+    async def manage_filters(
+        self,
+        request: HermesRequest,
+        project_id: str,
+    ) -> Redirect:
+        project, redirect = await self.get_project(request, project_id)
+        if redirect:
+            return redirect
+
+        filter_obj = await ProjectFilters.get_object(user=request.user, project=project)
+        conf = filter_obj.configuration_model
+        form_data = await request.form()
+        conf.search = form_data.get("search") if form_data.get("search") else None
+        conf.excluded_file_path = (
+            form_data.get("exclude-file") if form_data.get("exclude-file") else None
+        )
+        selected_interfaces = []
+        for pi, name in REGISTERED_INTERFACES.items():
+            if pi in project.code_scanners:
+                present = form_data.get(pi, None)
+                selected_interfaces.append(
+                    AnalysisInterfaceFilter(
+                        id=pi,
+                        name=name.name,
+                        ticked=present == "on",
+                    )
+                )
+
+        conf.analysis_interfaces = selected_interfaces
+        conf.state.new = form_data.get("state-new", None) == "on"
+        conf.state.triage = form_data.get("state-triage", None) == "on"
+        conf.state.resolved = form_data.get("state-resolved", None) == "on"
+        conf.exploitability.unknown = (
+            form_data.get("exploitability-unknown", None) == "on"
+        )
+        conf.exploitability.not_exploitable = (
+            form_data.get("exploitability-not_exploitable", None) == "on"
+        )
+        conf.exploitability.exploitable = (
+            form_data.get("exploitability-exploitable", None) == "on"
+        )
+        filter_obj.configuration_model = conf
+        await filter_obj.save()
+        return Redirect(f"/projects/{project_id}")
 
     @get(
         path="/{project_id:str}/vulnerabilities",
@@ -386,6 +455,7 @@ class ProjectsController(Controller):
         title: str | None = form_data.get("title", None)
         description: str = form_data.get("description") or ""
         git: str | None = form_data.get("git", None)
+        git = None if git == "" else git
         selected_interfaces = []
         for pi in REGISTERED_INTERFACES.keys():
             present = form_data.get(pi, None)

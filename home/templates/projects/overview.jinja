@@ -80,74 +80,77 @@
                                                             </button>
                                                         </div>
                                                     </div>
-
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title">Export Scan As JSON</div>
-                                                        <div class="datagrid-content"><a href="/archives/projects/{{ project.uuid }}/scans/{{ scan.number }}/export">Get Archive File</a></div>
-                                                    </div>
-                                                    <div class="datagrid-item">
-                                                        <div class="datagrid-title"></div>
-                                                        <div class="datagrid-content"></div>
-                                                    </div>
-                                                </div>
                                             </form>
+                                            <div class="datagrid-item">
+                                                <div class="datagrid-title">Export Scan As JSON</div>
+                                                <div class="datagrid-content"><a
+                                                        href="/archives/projects/{{ project.uuid }}/scans/{{ scan.number }}/export">Get
+                                                    Archive File</a></div>
+                                            </div>
+                                            <div class="datagrid-item">
+                                                {% include 'projects/filters.jinja' %}
+                                                <div class="datagrid-title"></div>
+                                                <div class="datagrid-content"></div>
+                                            </div>
+                                            </div>
+
                                         {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row row-cards">
-                        <div class="col-12">
-                            <div class="card">
-                                <div class="table-responsive">
-                                    <table
-                                            class="table table-vcenter card-table table-striped">
-                                        <thead>
-                                        <tr>
-                                            <th class="w-25">Title</th>
-                                            <th class="w-50">Description</th>
-                                            <th class="w-1">Scanner</th>
-                                            <th class="w-1">State</th>
-                                            <th class="w-1">Exploitability</th>
-                                            <th class="w-1">File</th>
-                                            <th class="w-1"></th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {% for vuln in vulnerabilities %}
-                                            <tr>
-                                                <td>{{ vuln.title }}</td>
-                                                <td class="text-secondary">
-                                                    {{ vuln.short_description }}
-                                                </td>
-                                                <td class="text-secondary">
-                                                    {{ vuln.found_by|capitalize }}
-                                                </td>
-                                                <td class="text-secondary">
-                                                    {{ vuln.state|capitalize }}
-                                                </td>
-                                                <td class="text-secondary">
-                                                    {{ vuln.exploitability|capitalize }}
-                                                </td>
-                                                <td class="text-secondary">
-                                                    {{ vuln.code_file }}
-                                                </td>
-                                                <td>
-                                                    <a href="/projects/{{ project.uuid }}/vulnerabilities/{{ vuln.uuid }}">View</a>
-                                                </td>
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <br>
+                <div class="row row-cards">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="table-responsive">
+                                <table
+                                        class="table table-vcenter card-table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th class="w-25">Title</th>
+                                        <th class="w-50">Description</th>
+                                        <th class="w-1">Scanner</th>
+                                        <th class="w-1">State</th>
+                                        <th class="w-1">Exploitability</th>
+                                        <th class="w-1">File</th>
+                                        <th class="w-1"></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for vuln in vulnerabilities %}
+                                        <tr>
+                                            <td>{{ vuln.title }}</td>
+                                            <td class="text-secondary">
+                                                {{ vuln.short_description }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                {{ vuln.found_by|capitalize }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                {{ vuln.state|capitalize }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                {{ vuln.exploitability|capitalize }}
+                                            </td>
+                                            <td class="text-secondary">
+                                                {{ vuln.code_file }}
+                                            </td>
+                                            <td>
+                                                <a href="/projects/{{ project.uuid }}/vulnerabilities/{{ vuln.uuid }}">View</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
+
+    </div>
     </div>
 {% endblock %}

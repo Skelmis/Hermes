@@ -1,0 +1,121 @@
+<a class="btn btn-animate-icon btn-animate-icon-rotate" data-bs-toggle="modal" data-bs-target="#filters">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+         class="icon icon-tabler icons-tabler-outline icon-tabler-filter-2-cog">
+        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+        <path d="M4 6h16"></path>
+        <path d="M6 12h12"></path>
+        <path d="M9 18h3"></path>
+        <path d="M19.001 21c-.53 0 -1.039 -.211 -1.414 -.586c-.375 -.375 -.586 -.884 -.586 -1.414c0 -.53 .211 -1.039 .586 -1.414c.375 -.375 .884 -.586 1.414 -.586m0 4c.53 0 1.039 -.211 1.414 -.586c.375 -.375 .586 -.884 .586 -1.414c0 -.53 -.211 -1.039 -.586 -1.414c-.375 -.375 -.884 -.586 -1.414 -.586m0 4v1.5m0 -5.5v-1.5m3.031 1.75l-1.299 .75m-3.463 2l-1.3 .75m0 -3.5l1.3 .75m3.463 2l1.3 .75"></path>
+    </svg>
+    Filter Rows</a>
+<div class="modal modal-blur fade" id="filters" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form action="/projects/{{ project.uuid }}/filters" method="POST" enctype="multipart/form-data">
+                {{ csrf_input|safe }}
+                <div class="modal-header">
+                    <h5 class="modal-title">Filter Rows</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="search" class="form-label">Text Search</label>
+                        <textarea rows="1" type="text" class="form-control" id="search" name="search"
+                                  placeholder="Hashing">{% if filters.search -%}{{ filters.search }}{% endif %}</textarea>
+                        <small>This will search across <i>title, description, notes, code and file path</i></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exclude-file" class="form-label">Exclude File Path</label>
+                        <textarea rows="1" type="text" class="form-control" id="exclude-file" name="exclude-file"
+                                  placeholder="/tests/">{% if filters.excluded_file_path -%}{{ filters.excluded_file_path }}{% endif %}</textarea>
+                        <small>Exclude results where the file path contains the input. Useful for excluding test
+                            directories.</small>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    {% if filters.analysis_interfaces %}
+                        <div class="mb-3">
+                            <label for="scanners" class="form-label">Filter By Analysis Tool</label>
+                            <div>
+                                {% for interface in filters.analysis_interfaces %}
+                                    <label class="form-check">
+                                        <input id="{{ interface.id }}" name="{{ interface.id }}"
+                                               class="form-check-input" type="checkbox"
+                                                {% if interface.ticked %} checked=""{% endif %}>
+                                        <span class="form-check-label">{{ interface.name }}</span>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label for="state" class="form-label">Filter By State</label>
+                        <div>
+
+                            <label class="form-check">
+                                <input id="state-new" name="state-new"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.state and filters.state.new %} checked=""{% endif %}>
+                                <span class="form-check-label">New</span>
+                            </label>
+                            <label class="form-check">
+                                <input id="state-triage" name="state-triage"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.state and filters.state.triage %} checked=""{% endif %}>
+                                <span class="form-check-label">Under Triage</span>
+                            </label>
+                            <label class="form-check">
+                                <input id="state-resolved" name="state-resolved"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.state and filters.state.resolved %} checked=""{% endif %}>
+                                <span class="form-check-label">Resolved</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exploitability" class="form-label">Filter By Exploitability</label>
+                        <div>
+
+                            <label class="form-check">
+                                <input id="exploitability-unknown" name="exploitability-unknown"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.exploitability and filters.exploitability.unknown %} checked=""{% endif %}>
+                                <span class="form-check-label">Unknown</span>
+                            </label>
+                            <label class="form-check">
+                                <input id="exploitability-not_exploitable" name="exploitability-not_exploitable"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.exploitability and filters.exploitability.not_exploitable %} checked=""{% endif %}>
+                                <span class="form-check-label">Not Exploitable</span>
+                            </label>
+                            <label class="form-check">
+                                <input id="exploitability-exploitable" name="exploitability-exploitable"
+                                       class="form-check-input" type="checkbox"
+                                        {% if filters.exploitability and filters.exploitability.exploitable %} checked=""{% endif %}>
+                                <span class="form-check-label">Exploitable</span>
+                            </label>
+                        </div>
+                    </div>
+                    <small>Blue items will be shown.</small>
+
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-link link-secondary btn-3" data-bs-dismiss="modal"> Cancel </a>
+                    <button type="submit" class="btn btn-primary btn-5 ms-auto" data-bs-dismiss="modal">
+                        <!-- Download SVG icon from http://tabler.io/icons/icon/plus -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                             class="icon icon-tabler icons-tabler-outline icon-tabler-device-floppy">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2"></path>
+                            <path d="M10 14a2 2 0 1 0 4 0a2 2 0 1 0 -4 0"></path>
+                            <path d="M14 4l0 4l-6 0l0 -4"></path>
+                        </svg>
+                        Save Filters
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

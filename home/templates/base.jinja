@@ -6,9 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>{% block title %}Hermes{% endblock %}</title>
     <!-- CSS files -->
-    <script src="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/js/tabler.min.js" nonce="{{ csp_nonce }}"></script>
-    {#<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0-beta17/dist/css/tabler.min.css">#}
-    <link href="/static/main.css" rel="stylesheet" nonce="{{ csp_nonce }}"/>
+    <script
+            src="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/js/tabler.min.js" nonce="{{ csp_nonce }}">
+    </script>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@tabler/core@1.4.0/dist/css/tabler.min.css" nonce="{{ csp_nonce }}"/>
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -21,7 +23,6 @@
   </head>
   <body >
     {% include 'sidebar.jinja' %}
-    <script src="/static/theme.js" nonce="{{ csp_nonce }}"></script>
     <script src="/static/main.js" nonce="{{ csp_nonce }}"></script>
     {% block content %}{% endblock %}
 {#    {% if is_small is defined %}#}

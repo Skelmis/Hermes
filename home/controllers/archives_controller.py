@@ -13,7 +13,7 @@ from home.controllers import ProjectsController
 from home.controllers.api import APIProjectController
 from home.custom_request import HermesRequest
 from home.middleware import EnsureAuth
-from home.tables import Scan, Archives, Profile
+from home.tables import Scan, Archives, Profile, ProjectFilters
 from home.util import orjson_util, get_csp
 from home.util.flash import alert
 
@@ -51,6 +51,16 @@ class ArchivesController(Controller):
             return Redirect("/")
 
         data = await scan.export_as_json(request.user)
+
+        # So that within test data one can see
+        # 'hey they ignored the tests directory when reading,
+        # makes sense they are not resolved' at a glance without asking
+        filter_configuration = await ProjectFilters.get_object(
+            user=request.user, project=project
+        )
+        data["user_interface_filter_configuration"] = (
+            filter_configuration.configuration_model.model_dump()
+        )
         return Response(
             orjson.dumps(data, option=orjson.OPT_INDENT_2, default=orjson_util.default),
             headers={"Content-Disposition": "attachment; filename=hermes_archive.json"},

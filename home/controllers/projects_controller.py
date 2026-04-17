@@ -125,9 +125,24 @@ class ProjectsController(Controller):
         )
         vuln_query = filter_obj.add_to_query(vuln_query)
         vulns = await vuln_query
-        if not vulns:
+        if vulns is None:
             # Fuck knows what went wrong
+            alert(
+                request,
+                "Please raise a bug ticket about the"
+                " get_next_vulnerability method not returning any results "
+                "and including steps of what you just did",
+                level="warning",
+            )
             return current_vulnerability.id
+
+        if current_vulnerability.id not in [v.id for v in vulns]:
+            vulns.append(
+                await Vulnerability.objects().get(
+                    Vulnerability.id == current_vulnerability.id
+                )
+            )
+            vulns = list(sorted(vulns, key=lambda v: v.title, reverse=True))
 
         for i, vuln in enumerate(vulns):
             if vuln.id == current_vulnerability.id:
@@ -137,7 +152,13 @@ class ProjectsController(Controller):
                 else:
                     return vulns[i + 1].id
 
-        raise ValueError("Should never get here")
+        alert(
+            request,
+            "Please raise a bug ticket about the"
+            " get_next_vulnerability method and including steps of what you just did",
+            level="warning",
+        )
+        return current_vulnerability.id
 
     @get(
         "/",

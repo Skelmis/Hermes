@@ -3,13 +3,14 @@ from pathlib import Path
 
 from commons import value_to_bool
 
-from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec, Brakeman
+from home.analysis import AnalysisInterface, Bandit, Semgrep, GoSec, Brakeman, Opengrep
 
 REGISTERED_INTERFACES: dict[str, type[AnalysisInterface]] = {
     Bandit.id: Bandit,
     Semgrep.id: Semgrep,
     GoSec.id: GoSec,
     Brakeman.id: Brakeman,
+    Opengrep.id: Opengrep,
 }
 BASE_PROJECT_DIR: Path = Path(os.environ.get("PROJECT_DIR", ".projects"))
 BASE_PROJECT_DIR.mkdir(exist_ok=True)  # Ensure it exists

@@ -13,6 +13,10 @@ ENV PATH="/root/go/bin:$PATH"
 ### Setup brakeman
 RUN gem install brakeman
 
+### Setup opengrep
+RUN curl -fsSL https://raw.githubusercontent.com/opengrep/opengrep/main/install.sh | bash
+ENV PATH="/root/.opengrep/cli/latest:$PATH"
+
 
 ## Program install steps
 COPY ./pyproject.toml /code/pyproject.toml

@@ -11,6 +11,7 @@ By default, the following scanners / languages are supported:
 - [Brakeman](https://brakemanscanner.org/) - Ruby
 - [GoSec](https://github.com/securego/gosec) - Go
 - [Semgrep](https://semgrep.dev/) - Multiple Languages
+- [Opengrep](https://github.com/opengrep/opengrep) - Multiple Languages
 
 For deployment configurations and other usage information refer to [this document](https://github.com/Skelmis/Hermes/blob/master/USAGE.md).
 

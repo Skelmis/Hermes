@@ -120,10 +120,21 @@ class Project(Table):
         if not self.is_git_based:
             raise ValueError("Cannot update a non git based project")
 
+        from home.configs import BASE_PROJECT_DIR
+
+        ownership = [
+            "git",
+            "config",
+            "--global",
+            "--add",
+            "safe.directory",
+            str((BASE_PROJECT_DIR / self.directory).absolute()),
+        ]
         fetch = ["git", "fetch"]
         pull = ["git", "pull"]
         try:
             # TODO Move these to anyio
+            subprocess.check_output(ownership, cwd=self.scanner_path)
             subprocess.check_output(fetch, cwd=self.scanner_path)
             subprocess.check_output(pull, cwd=self.scanner_path)
         except Exception as e:

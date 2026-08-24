@@ -1,8 +1,18 @@
+# isort: skip_file
 from .interface import AnalysisInterface
 from .bandit import Bandit
-from .semgrep import Semgrep
-from .gosec import GoSec
 from .brakeman import Brakeman
+from .gosec import GoSec
 from .opengrep import Opengrep
+from .semgrep import Semgrep
+from .zizmor import Zizmor
 
-__all__ = ("Bandit", "Semgrep", "AnalysisInterface", "GoSec", "Brakeman", "Opengrep")
+__all__ = (
+    "AnalysisInterface",
+    "Bandit",
+    "Semgrep",
+    "GoSec",
+    "Brakeman",
+    "Opengrep",
+    "Zizmor",
+)

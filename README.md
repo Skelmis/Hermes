@@ -4,30 +4,38 @@ A single pane of glass for static code analysis
 
 ---
 
-It's the perfect addition to any bug bounty hunters toolkit. This tool takes in _any_ output from a Static Application Security Testing (SAST) scanner and makes it pretty while adding functionality such as easy triaging and vulnerability related note-taking.
+It's the perfect addition to any bug bounty hunters toolkit. This tool takes in _any_ output from a Static Application
+Security Testing (SAST) scanner and makes it pretty while adding functionality such as easy triaging and vulnerability
+related note-taking.
 
 By default, the following scanners / languages are supported:
+
 - [Bandit](https://github.com/PyCQA/bandit) - Python
 - [Brakeman](https://brakemanscanner.org/) - Ruby
 - [GoSec](https://github.com/securego/gosec) - Go
 - [Semgrep](https://semgrep.dev/) - Multiple Languages
 - [Opengrep](https://github.com/opengrep/opengrep) - Multiple Languages
+- [Zizmor](https://docs.zizmor.sh/) - CI/CD
 
-For deployment configurations and other usage information refer to [this document](https://github.com/Skelmis/Hermes/blob/master/USAGE.md).
+For deployment configurations and other usage information refer
+to [this document](https://github.com/Skelmis/Hermes/blob/master/USAGE.md).
 
 #### Features
 
 - Native Role Based Access Control (RBAC) so you can collaborate on projects with friends.
-- Native archiving support for when you need to export projects to store alongside other notes for later retrival and review.
+- Native archiving support for when you need to export projects to store alongside other notes for later retrival and
+  review.
 - Status fields per vulnerability for tracking vulnerability investigation progress.
 - Notes fields on every single vulnerability to ensure context remains tied to a given vulnerability.
 - Support for uploading Zip files, for those non git managed projects.
 - Support for Git repositories, as well as the ability to re-pull new versions at any stage.
-- Integration with any SAST tooling through analysis interfaces. See `home/analysis/` for current implementations that can be copied.
+- Integration with any SAST tooling through analysis interfaces. See `home/analysis/` for current implementations that
+  can be copied.
 - Access to the raw SAST scanner output within each vulnerability for when more details are required.
 - A full featured admin panel providing raw access to data as required.
 - Open source so you can open issues and pull requests to your hearts content.
-- Background processing for large tasks. Fire off scans at will and come back later once they have actually finished without impacting site performance.
+- Background processing for large tasks. Fire off scans at will and come back later once they have actually finished
+  without impacting site performance.
 - Filtering of scan results to minimise the noise. Ignore that darn tests' directory!
 
 #### Example application images
